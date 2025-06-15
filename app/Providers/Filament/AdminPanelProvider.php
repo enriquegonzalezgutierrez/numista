@@ -18,6 +18,10 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+use App\Filament\Pages\Tenancy\RegisterTenant;
+use App\Filament\Pages\Tenancy\EditTenantProfile;
+use App\Models\Tenant;
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -27,6 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->registration()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -53,6 +58,13 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->tenant(
+                model: Tenant::class,
+                slugAttribute: 'slug',
+                ownershipRelationship: 'tenants'
+            )
+            ->tenantRegistration(RegisterTenant::class)
+            ->tenantProfile(EditTenantProfile::class);
     }
 }
