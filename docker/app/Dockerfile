@@ -1,6 +1,6 @@
 # docker/app/Dockerfile
 
-# Base image (CHANGED to PHP 8.2)
+# Base image (PHP 8.2)
 FROM php:8.2-fpm-alpine
 
 # Set working directory
@@ -12,7 +12,7 @@ ARG UID
 RUN adduser -D -u ${UID:-1000} -s /bin/sh laravel
 
 # Install system dependencies
-# We need postgresql-dev to install the pdo_pgsql extension
+# ADDED: icu-dev for the intl extension
 RUN apk add --no-cache \
     build-base \
     nginx \
@@ -24,12 +24,14 @@ RUN apk add --no-cache \
     libpng-dev \
     libjpeg-turbo-dev \
     freetype-dev \
-    postgresql-dev
+    postgresql-dev \
+    icu-dev
 
 # Install PHP extensions
+# ADDED: intl extension
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install pdo pdo_pgsql zip
+    && docker-php-ext-install pdo pdo_pgsql zip intl
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
