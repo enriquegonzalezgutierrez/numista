@@ -29,8 +29,8 @@ class ItemFactory extends Factory
             'quantity' => fake()->numberBetween(1, 5),
             'purchase_price' => fake()->randomFloat(2, 5, 100),
             'purchase_date' => fake()->date(),
-            'status' => fake()->randomElement(['en_coleccion', 'en_venta']), // Spanish status
-            'grade' => fake()->randomElement(['SC', 'EBC', 'MBC', 'BC', 'RC']), // Spanish grading scale
+            'status' => fake()->randomElement(['in_collection', 'for_sale', 'sold', 'featured', 'discounted']),
+            'grade' => fake()->randomElement(['UNC', 'AU', 'XF', 'VF', 'F', 'G']), // Using international grading
         ];
     }
 
@@ -39,8 +39,8 @@ class ItemFactory extends Factory
      */
     public function coin(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'type' => 'moneda', // Spanish type
+        return $this->state(fn(array $attributes) => [
+            'type' => 'coin',
             'name' => 'Moneda: ' . fake()->words(2, true),
             'country_id' => Country::inRandomOrder()->first()->id,
             'year' => fake()->numberBetween(1800, 2023),
@@ -56,8 +56,8 @@ class ItemFactory extends Factory
      */
     public function banknote(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'type' => 'billete', // Spanish type
+        return $this->state(fn(array $attributes) => [
+            'type' => 'banknote',
             'name' => 'Billete: ' . fake()->words(2, true),
             'country_id' => Country::inRandomOrder()->first()->id,
             'year' => fake()->numberBetween(1900, 2020),
@@ -71,7 +71,7 @@ class ItemFactory extends Factory
      */
     public function comic(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'type' => 'comic', // Kept in English for convention
             'name' => fake()->randomElement(['The Amazing Spider-Man', 'Action Comics', 'X-Men']),
             'grade' => fake()->randomElement(['CGC 9.8', 'NM', 'VF/NM']),

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\ItemStatusManager;
 use App\Filament\ItemTypeManager;
 use App\Filament\Resources\ItemResource\Pages;
 use App\Models\Item;
@@ -74,13 +75,10 @@ class ItemResource extends Resource
                         DatePicker::make('purchase_date')->label(__('item.field_purchase_date')),
                         Select::make('status')
                             ->label(__('item.field_status'))
-                            ->options([
-                                'en_coleccion' => __('item.status_in_collection'),
-                                'en_venta' => __('item.status_for_sale'),
-                                'vendido' => __('item.status_sold'),
-                            ])
-                            ->default('en_coleccion')
-                            ->required(),
+                            ->options(fn(ItemStatusManager $manager) => $manager->getStatusesForSelect())
+                            ->default('in_collection')
+                            ->required()
+                            ->live(),
                         TextInput::make('sale_price')
                             ->label(__('item.field_sale_price'))
                             ->numeric()
@@ -103,12 +101,18 @@ class ItemResource extends Resource
                 TextColumn::make('type')
                     ->label(__('item.field_type'))
                     ->badge()
+                    ->formatStateUsing(fn(string $state): string => __("item.type_{$state}"))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('status')
                     ->label(__('item.field_status'))
                     ->badge()
+                    ->formatStateUsing(function (string $state): string {
+                        // Instantiate the manager and get the translated value
+                        $manager = new ItemStatusManager();
+                        return $manager->getTranslatedStatus($state);
+                    })
                     ->searchable(),
 
                 TextColumn::make('quantity')

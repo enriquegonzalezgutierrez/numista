@@ -85,8 +85,10 @@ return [
     'type_craftsmanship' => 'Artesanía',
     'type_object' => 'Objeto de Colección',
 
-    // Status Options
+    // --- Status Options ---
     'status_in_collection' => 'En Colección',
-    'status_for_sale' => 'En Venta',
+    'status_for_sale' => 'Venta Directa',
     'status_sold' => 'Vendido',
+    'status_featured' => 'Destacado',
+    'status_discounted' => 'Con Descuento',
 ];
