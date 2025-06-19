@@ -13,12 +13,12 @@ class ItemSeeder extends Seeder
      */
     public function run(): void
     {
-        // Find the tenant we created in the DevelopmentSeeder
-        $tenant = Tenant::where('slug', 'numista-collection')->first();
+        // Find the tenant created in the DevelopmentSeeder
+        $tenant = Tenant::where('slug', 'coleccion-numista')->first();
 
-        // If the tenant doesn't exist, don't do anything.
+        // If the tenant doesn't exist, skip this seeder.
         if (! $tenant) {
-            $this->command->warn('Tenant "numista-collection" not found. Skipping ItemSeeder.');
+            $this->command->warn('Tenant "coleccion-numista" not found. Skipping ItemSeeder.');
             return;
         }
 

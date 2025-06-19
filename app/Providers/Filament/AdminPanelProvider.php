@@ -32,9 +32,16 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->registration()
+            // --- START OF CUSTOMIZATION ---
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Teal,
+                'gray' => Color::Slate,
             ])
+            ->font('Poppins')
+            ->brandName('Numista App')
+            ->brandLogo(asset('storage/logo.png'))
+            ->favicon(asset('storage/favicon.png'))
+            // --- END OF CUSTOMIZATION ---
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([

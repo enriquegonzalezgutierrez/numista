@@ -22,15 +22,15 @@ class ItemFactory extends Factory
      */
     public function definition(): array
     {
-        // Default state for any item
+        // Default state for any item. Faker will use the locale from .env.
         return [
             'name' => fake()->words(3, true),
             'description' => fake()->paragraph(),
             'quantity' => fake()->numberBetween(1, 5),
             'purchase_price' => fake()->randomFloat(2, 5, 100),
             'purchase_date' => fake()->date(),
-            'status' => fake()->randomElement(['in_collection', 'for_sale']),
-            'grade' => fake()->randomElement(['MS-60', 'VF', 'F', 'G']),
+            'status' => fake()->randomElement(['en_coleccion', 'en_venta']), // Spanish status
+            'grade' => fake()->randomElement(['SC', 'EBC', 'MBC', 'BC', 'RC']), // Spanish grading scale
         ];
     }
 
@@ -40,13 +40,13 @@ class ItemFactory extends Factory
     public function coin(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type' => 'coin',
-            'name' => 'Coin: ' . fake()->words(2, true),
+            'type' => 'moneda', // Spanish type
+            'name' => 'Moneda: ' . fake()->words(2, true),
             'country_id' => Country::inRandomOrder()->first()->id,
             'year' => fake()->numberBetween(1800, 2023),
-            'denomination' => fake()->randomElement(['1 Dollar', '25 Cents', '10 Pesos']),
-            'mint_mark' => fake()->randomElement(['S', 'D', 'P', 'O']),
-            'composition' => fake()->randomElement(['90% Silver', 'Copper-Nickel', 'Bronze']),
+            'denomination' => fake()->randomElement(['1 Dólar', '50 Pesetas', '100 Pesos']),
+            'mint_mark' => fake()->randomElement(['S', 'D', 'P', 'O', 'M']),
+            'composition' => fake()->randomElement(['90% Plata', 'Cobre-Níquel', 'Bronce']),
             'weight' => fake()->randomFloat(4, 2.5, 31.1035),
         ]);
     }
@@ -57,11 +57,11 @@ class ItemFactory extends Factory
     public function banknote(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type' => 'banknote',
-            'name' => 'Banknote: ' . fake()->words(2, true),
+            'type' => 'billete', // Spanish type
+            'name' => 'Billete: ' . fake()->words(2, true),
             'country_id' => Country::inRandomOrder()->first()->id,
             'year' => fake()->numberBetween(1900, 2020),
-            'denomination' => fake()->randomElement(['100 Pesetas', '5 Dollars', '20 Euros']),
+            'denomination' => fake()->randomElement(['100 Pesetas', '5 Dólares', '20 Euros']),
             'serial_number' => fake()->bothify('??########?'),
         ]);
     }
@@ -72,7 +72,7 @@ class ItemFactory extends Factory
     public function comic(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type' => 'comic',
+            'type' => 'comic', // Kept in English for convention
             'name' => fake()->randomElement(['The Amazing Spider-Man', 'Action Comics', 'X-Men']),
             'grade' => fake()->randomElement(['CGC 9.8', 'NM', 'VF/NM']),
             'publisher' => fake()->randomElement(['Marvel', 'DC Comics', 'Image']),

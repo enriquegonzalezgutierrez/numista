@@ -7,8 +7,6 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
 # Get variables from Laravel's .env file to use in commands
-# This ensures we use the correct DB credentials for db-shell
-# The '-' prefix prevents 'make' from failing if the file doesn't exist.
 -include .env.example
 export $(shell sed 's/=.*//' .env.example)
 
@@ -36,6 +34,8 @@ logs: ## View real-time logs for all services
 setup: ## Run initial setup: install deps, generate key, migrate DB
 	@echo "--- Starting project setup ---"
 	@make composer-install
+	@make npm a="install"
+	@make npm a="run build"
 	@make key-generate
 	@make migrate-fresh
 	@echo "--- ✅ Setup complete! The application is ready. ---"
@@ -46,6 +46,20 @@ cache-clear: ## Clear all application caches (config, route, view)
 	@make artisan a="route:clear"
 	@make artisan a="view:clear"
 	@echo "--- ✅ Caches cleared successfully! ---"
+
+clear-all: ## Clear ALL Laravel caches (config, route, view, compiled classes)
+	@echo "--- Clearing all Laravel application caches ---"
+	@make artisan a="optimize:clear"
+	@echo "--- ✅ All caches cleared successfully! ---"
+
+fix-permissions: ## Fix storage and bootstrap/cache permissions
+	@echo "--- Fixing file permissions ---"
+	@docker-compose exec -u root app chown -R laravel:www-data storage bootstrap/cache
+	@docker-compose exec -u root app find storage -type d -exec chmod 775 {} \;
+	@docker-compose exec -u root app find storage -type f -exec chmod 664 {} \;
+	@docker-compose exec -u root app find bootstrap/cache -type d -exec chmod 775 {} \;
+	@docker-compose exec -u root app find bootstrap/cache -type f -exec chmod 664 {} \;
+	@echo "--- ✅ Permissions fixed! ---"
 
 # ==============================================================================
 # Artisan Commands (use 'a' variable for arguments)
@@ -72,6 +86,12 @@ composer-install: ## Install composer dependencies
 	@docker-compose exec app composer install
 
 # ==============================================================================
+# NPM Commands (use 'a' variable for arguments)
+# ==============================================================================
+npm: ## Run any npm command. Ex: make npm a="install some-package"
+	@docker-compose exec app npm $(a)
+
+# ==============================================================================
 # Helper Commands
 # ==============================================================================
 bash: ## Get a shell ('sh') inside the app container
@@ -90,4 +110,4 @@ help: ## Show this help message
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 # Mark targets as not being actual files
-.PHONY: up down stop restart logs setup cache-clear artisan migrate migrate-fresh key-generate composer composer-install bash db-shell help
+.PHONY: up down stop restart logs setup cache-clear fix-permissions artisan migrate migrate-fresh key-generate composer composer-install npm bash db-shell help

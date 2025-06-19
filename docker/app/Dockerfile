@@ -7,12 +7,11 @@ FROM php:8.2-fpm-alpine
 WORKDIR /var/www/html
 
 # Add user for laravel application
-# The UID will be passed as a build argument
 ARG UID
 RUN adduser -D -u ${UID:-1000} -s /bin/sh laravel
 
 # Install system dependencies
-# ADDED: icu-dev for the intl extension
+# ADDED: nodejs and npm for frontend asset compilation
 RUN apk add --no-cache \
     build-base \
     nginx \
@@ -25,10 +24,11 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     freetype-dev \
     postgresql-dev \
-    icu-dev
+    icu-dev \
+    nodejs \
+    npm
 
 # Install PHP extensions
-# ADDED: intl extension
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install pdo pdo_pgsql zip intl
