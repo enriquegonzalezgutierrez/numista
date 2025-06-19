@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Item;
-use App\Models\Tenant;
 use Illuminate\Database\Seeder;
+use Numista\Collection\Domain\Models\Item;
+use Numista\Collection\Domain\Models\Tenant;
 
 class ItemSeeder extends Seeder
 {

@@ -91,4 +91,12 @@ return [
     'status_sold' => 'Vendido',
     'status_featured' => 'Destacado',
     'status_discounted' => 'Con Descuento',
+
+    // --- Grade Options ---
+    'grade_unc' => 'UNC (Sin Circular)',
+    'grade_au' => 'AU (Casi Sin Circular)',
+    'grade_xf' => 'XF (Excelentemente Bien Conservada)',
+    'grade_vf' => 'VF (Muy Bien Conservada)',
+    'grade_f' => 'F (Bien Conservada)',
+    'grade_g' => 'G (Regular Conservación)',
 ];

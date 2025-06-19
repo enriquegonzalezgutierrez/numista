@@ -2,9 +2,9 @@
 
 namespace Database\factories;
 
-use App\Models\Country;
-use App\Models\Item;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Numista\Collection\Domain\Models\Country;
+use Numista\Collection\Domain\Models\Item;
 
 class ItemFactory extends Factory
 {
@@ -30,7 +30,7 @@ class ItemFactory extends Factory
             'purchase_price' => fake()->randomFloat(2, 5, 100),
             'purchase_date' => fake()->date(),
             'status' => fake()->randomElement(['in_collection', 'for_sale', 'sold', 'featured', 'discounted']),
-            'grade' => fake()->randomElement(['UNC', 'AU', 'XF', 'VF', 'F', 'G']), // Using international grading
+            'grade' => fake()->randomElement(['unc', 'au', 'xf', 'vf', 'f', 'g']),
         ];
     }
 

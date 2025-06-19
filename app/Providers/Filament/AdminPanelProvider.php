@@ -18,9 +18,9 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-use App\Filament\Pages\Tenancy\RegisterTenant;
-use App\Filament\Pages\Tenancy\EditTenantProfile;
-use App\Models\Tenant;
+use Numista\Collection\Domain\Models\Tenant;
+use Numista\Collection\UI\Filament\Pages\Tenancy\RegisterTenant;
+use Numista\Collection\UI\Filament\Pages\Tenancy\EditTenantProfile;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -42,12 +42,12 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('storage/logo.png'))
             ->favicon(asset('storage/favicon.png'))
             // --- END OF CUSTOMIZATION ---
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverResources(in: base_path('src/Collection/UI/Filament/Resources'), for: 'Numista\\Collection\\UI\\Filament\\Resources')
+            ->discoverPages(in: base_path('src/Collection/UI/Filament/Pages'), for: 'Numista\\Collection\\UI\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->discoverWidgets(in: base_path('src/Collection/UI/Filament/Widgets'), for: 'Numista\\Collection\\UI\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
