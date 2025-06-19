@@ -2,19 +2,21 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\ItemTypeManager;
 use App\Filament\Resources\ItemResource\Pages;
-use App\Filament\Resources\ItemResource\RelationManagers;
 use App\Models\Item;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ItemResource extends Resource
 {
@@ -25,71 +27,107 @@ class ItemResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
-{
-    return $form
-        ->schema([
-            TextInput::make('name')
-                ->required()
-                ->maxLength(255)
-                ->columnSpan('full'),
+    {
+        return $form
+            ->schema([
+                // --- Section 1: Core and Common Fields ---
+                Forms\Components\Section::make(__('item.section_core'))
+                    ->schema([
+                        // Item Name field
+                        TextInput::make('name')
+                            ->label(__('item.field_name'))
+                            ->required()
+                            ->maxLength(255),
 
-            Select::make('type')
-                ->options([
-                    'coin' => 'Coin',
-                    'banknote' => 'Banknote',
-                    'comic' => 'Comic',
-                    'medal' => 'Medal',
-                ])
-                ->required(),
+                        // Item Type dropdown, now fully dynamic
+                        Select::make('type')
+                            ->label(__('item.field_type'))
+                            ->options(function (ItemTypeManager $manager): array {
+                                return $manager->getTypesForSelect();
+                            })
+                            ->required()
+                            ->live(), // Important for reactivity
 
-            TextInput::make('quantity')
-                ->required()
-                ->numeric()
-                ->default(1),
+                        // Description field, spans the full width
+                        Textarea::make('description')
+                            ->label(__('item.field_description'))
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(2),
 
-            TextInput::make('description')
-                ->columnSpan('full'),
-        ]);
-}
+                // --- Section 2: Dynamic Type-Specific Fields ---
+                // This placeholder will be dynamically filled based on the selected type.
+                Group::make()
+                    ->schema(function (Get $get): array {
+                        $typeKey = $get('type');
+                        $manager = new ItemTypeManager();
+                        return $manager->getFormComponentsForType($typeKey);
+                    })
+                    ->columnSpanFull(),
 
-public static function table(Table $table): Table
-{
-    return $table
-        ->columns([
-            TextColumn::make('name')
-                ->searchable()
-                ->sortable(),
+                // --- Section 3: Acquisition and Status (Always Visible) ---
+                Forms\Components\Section::make(__('item.section_acquisition'))
+                    ->schema([
+                        TextInput::make('grade')->label(__('item.field_grade')),
+                        TextInput::make('quantity')->label(__('item.field_quantity'))->required()->numeric()->default(1),
+                        TextInput::make('purchase_price')->label(__('item.field_purchase_price'))->numeric()->prefix('€'),
+                        DatePicker::make('purchase_date')->label(__('item.field_purchase_date')),
+                        Select::make('status')
+                            ->label(__('item.field_status'))
+                            ->options([
+                                'en_coleccion' => __('item.status_in_collection'),
+                                'en_venta' => __('item.status_for_sale'),
+                                'vendido' => __('item.status_sold'),
+                            ])
+                            ->default('en_coleccion')
+                            ->required(),
+                        TextInput::make('sale_price')
+                            ->label(__('item.field_sale_price'))
+                            ->numeric()
+                            ->prefix('€')
+                            ->hidden(fn(Get $get): bool => $get('status') !== 'en_venta'),
+                    ])
+                    ->columns(2),
+            ]);
+    }
 
-            TextColumn::make('type')
-                ->badge()
-                ->searchable()
-                ->sortable(),
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name')
+                    ->label(__('item.field_name'))
+                    ->searchable()
+                    ->sortable(),
 
-            TextColumn::make('status')
-                ->badge()
-                ->searchable(),
+                TextColumn::make('type')
+                    ->label(__('item.field_type'))
+                    ->badge()
+                    ->searchable()
+                    ->sortable(),
 
-            TextColumn::make('quantity')
-                ->sortable()
-                ->alignEnd(),
+                TextColumn::make('status')
+                    ->label(__('item.field_status'))
+                    ->badge()
+                    ->searchable(),
 
-            TextColumn::make('created_at')
-                ->dateTime('d/m/Y H:i')
-                ->sortable()
-                ->toggleable(isToggledHiddenByDefault: true),
-        ])
-        ->filters([
-            
-        ])
-        ->actions([
-            Tables\Actions\EditAction::make(),
-        ])
-        ->bulkActions([
-            Tables\Actions\BulkActionGroup::make([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]),
-        ]);
-}
+                TextColumn::make('quantity')
+                    ->label(__('item.field_quantity'))
+                    ->sortable()
+                    ->alignEnd(),
+            ])
+            ->filters([
+                // ...
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
 
     public static function getRelations(): array
     {
