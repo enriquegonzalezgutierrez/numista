@@ -6,6 +6,7 @@ use Database\factories\ItemFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Item extends Model
 {
@@ -25,6 +26,11 @@ class Item extends Model
         'gemstone', 'license_plate', 'chassis_number', 'record_label', 'face_value',
         'publisher_postcard', 'origin_location', 'photographer', 'location', 'technique',
         'conflict', 'sport', 'team', 'player', 'event', 'movie_title', 'character',
+        'images',
+    ];
+
+    protected $casts = [
+        'images' => 'array', // Automatically encode/decode the images column to/from JSON
     ];
 
     /**
@@ -41,6 +47,14 @@ class Item extends Model
     public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class);
+    }
+
+    /**
+     * Get all of the item's images.
+     */
+    public function images(): MorphMany
+    {
+        return $this->morphMany(Image::class, 'imageable');
     }
 
     /**

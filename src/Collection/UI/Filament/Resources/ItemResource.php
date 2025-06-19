@@ -19,6 +19,7 @@ use Filament\Tables\Table;
 use Numista\Collection\UI\Filament\ItemGradeManager;
 use Numista\Collection\UI\Filament\ItemStatusManager;
 use Numista\Collection\UI\Filament\ItemTypeManager;
+use Numista\Collection\UI\Filament\Resources\ItemResource\RelationManagers\ImagesRelationManager;
 
 class ItemResource extends Resource
 {
@@ -140,7 +141,7 @@ class ItemResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ImagesRelationManager::class,
         ];
     }
 

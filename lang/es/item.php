@@ -10,6 +10,7 @@ return [
     'section_banknote' => 'Específico de Billete',
     'section_comic' => 'Específico de Cómic',
     'section_acquisition' => 'Adquisición y Estado',
+    'section_images' => 'Imágenes',
     // We can add more specific sections later if needed
 
     // Field Labels
@@ -57,6 +58,11 @@ return [
     'field_event' => 'Evento',
     'field_movie_title' => 'Película',
     'field_character' => 'Personaje',
+    'field_images' => 'Imágenes',
+    'field_alt_text' => 'Texto Alternativo',
+
+    // --- Helper Texts ---
+    'helper_alt_text' => 'Una breve descripción de la imagen para SEO y accesibilidad.',
 
     // --- Item Type Options ---
     'type_coin' => 'Moneda',
@@ -99,4 +105,10 @@ return [
     'grade_vf' => 'VF (Muy Bien Conservada)',
     'grade_f' => 'F (Bien Conservada)',
     'grade_g' => 'G (Regular Conservación)',
+
+    // --- Modal / Action Buttons ---
+    'button_create' => 'Crear',
+    'button_cancel' => 'Cancelar',
+    'button_create_and_create_another' => 'Crear y crear otro',
+    'modal_create_image_title' => 'Crear Nueva Imagen',
 ];
