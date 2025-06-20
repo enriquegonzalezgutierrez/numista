@@ -40,6 +40,7 @@ class AdminPanelProvider extends PanelProvider
             ->font('Poppins')
             ->brandName('Numista App')
             ->brandLogo(asset('storage/logo.png'))
+            ->brandLogoHeight('48px')
             ->favicon(asset('storage/favicon.png'))
             // --- END OF CUSTOMIZATION ---
             ->discoverResources(in: base_path('src/Collection/UI/Filament/Resources'), for: 'Numista\\Collection\\UI\\Filament\\Resources')

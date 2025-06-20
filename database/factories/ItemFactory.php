@@ -1,31 +1,34 @@
 <?php
+// database/factories/ItemFactory.php
 
-namespace Database\factories;
+namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Numista\Collection\Domain\Models\Country;
 use Numista\Collection\Domain\Models\Item;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Numista\Collection\Domain\Models\Item>
+ */
 class ItemFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
-     *
      * @var string
      */
     protected $model = Item::class;
 
     /**
      * Define the model's default state.
-     *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
-        // Default state for any item. Faker will use the locale from .env.
+        // We now rely on the globally configured Faker instance, which is
+        // set to 'es_ES' in the DatabaseSeeder before this factory is called.
         return [
-            'name' => fake()->words(3, true),
-            'description' => fake()->paragraph(),
+            'name' => ucfirst(fake()->words(3, true)),
+            'description' => fake()->paragraph(2),
             'quantity' => fake()->numberBetween(1, 5),
             'purchase_price' => fake()->randomFloat(2, 5, 100),
             'purchase_date' => fake()->date(),
@@ -39,14 +42,14 @@ class ItemFactory extends Factory
      */
     public function coin(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'type' => 'coin',
-            'name' => 'Moneda: ' . fake()->words(2, true),
-            'country_id' => Country::inRandomOrder()->first()->id,
+            'name' => 'Moneda: ' . ucfirst(fake()->words(2, true)),
+            'country_id' => Country::inRandomOrder()->first()?->id,
             'year' => fake()->numberBetween(1800, 2023),
-            'denomination' => fake()->randomElement(['1 Dólar', '50 Pesetas', '100 Pesos']),
+            'denomination' => fake()->randomElement(['1 Dólar', '50 Pesetas', '100 Pesos', '2 Euros']),
             'mint_mark' => fake()->randomElement(['S', 'D', 'P', 'O', 'M']),
-            'composition' => fake()->randomElement(['90% Plata', 'Cobre-Níquel', 'Bronce']),
+            'composition' => fake()->randomElement(['90% Plata', 'Cobre-Níquel', 'Bronce', 'Oro']),
             'weight' => fake()->randomFloat(4, 2.5, 31.1035),
         ]);
     }
@@ -56,12 +59,12 @@ class ItemFactory extends Factory
      */
     public function banknote(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'type' => 'banknote',
-            'name' => 'Billete: ' . fake()->words(2, true),
-            'country_id' => Country::inRandomOrder()->first()->id,
+            'name' => 'Billete: ' . ucfirst(fake()->words(2, true)),
+            'country_id' => Country::inRandomOrder()->first()?->id,
             'year' => fake()->numberBetween(1900, 2020),
-            'denomination' => fake()->randomElement(['100 Pesetas', '5 Dólares', '20 Euros']),
+            'denomination' => fake()->randomElement(['100 Pesetas', '5 Dólares', '20 Euros', '50 Reales']),
             'serial_number' => fake()->bothify('??########?'),
         ]);
     }
@@ -71,11 +74,11 @@ class ItemFactory extends Factory
      */
     public function comic(): static
     {
-        return $this->state(fn(array $attributes) => [
-            'type' => 'comic', // Kept in English for convention
-            'name' => fake()->randomElement(['The Amazing Spider-Man', 'Action Comics', 'X-Men']),
-            'grade' => fake()->randomElement(['CGC 9.8', 'NM', 'VF/NM']),
-            'publisher' => fake()->randomElement(['Marvel', 'DC Comics', 'Image']),
+        return $this->state(fn (array $attributes) => [
+            'type' => 'comic',
+            'name' => fake()->randomElement(['The Amazing Spider-Man', 'Action Comics', 'X-Men', 'Watchmen']),
+            'grade' => fake()->randomElement(['CGC 9.8', 'NM', 'VF/NM', 'F/VF']),
+            'publisher' => fake()->randomElement(['Marvel', 'DC Comics', 'Image', 'Vertigo']),
             'issue_number' => fake()->numberBetween(1, 500),
             'cover_date' => fake()->date(),
         ]);

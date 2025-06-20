@@ -32,7 +32,7 @@ First, copy the Laravel example environment file:
 ```bash
 cp .env.example .env
 ```
-*Note: The `.env` file is already configured for the Docker setup. Remember to set `APP_LOCALE=es` for Spanish language support.*
+*Note: The `.env` file is already configured for the Docker setup. Remember to set `APP_LOCALE=es` and `APP_URL=http://localhost:8080` for a correct setup.*
 
 Second, create the `.env` file for Docker Compose to set your user ID. This avoids file permission issues.
 *On Linux/macOS:*
@@ -74,65 +74,41 @@ The application will be available at **[http://localhost:8080](http://localhost:
 - `make npm a="<command>"`: Run any `npm` command (e.g., `make npm a="install"`).
 - `make db-shell`: Connect to the PostgreSQL database shell.
 - `make clear-all`: Clear all Laravel application caches.
+- `make fix-permissions`: Fix file permissions for `storage` and `bootstrap/cache` directories.
 
 ---
 
-## 🏛️ Project Architecture: Managing Item Types
+## 🏛️ Project Architecture: Extensible Systems
 
-The application uses an extensible, SOLID-based architecture to manage different types of collectible items. To add a new item type (e.g., "Wine"), follow these steps. The `ItemTypeManager` acts as the single source of truth.
+The application uses a SOLID-based architecture to manage different entities like Item Types, Statuses, and Grades. The `...Manager` classes act as the single source of truth for each system.
 
-### Step 1: Add Translation
+### How to Add a New Item Type
 
-Add the new type's key and its Spanish translation to the `lang/es/item.php` file.
+1.  **Translation:** Add the new type's key (e.g., `type_wine`) and its Spanish translation to `lang/es/item.php`.
+2.  **Register Type:** Open `src/Collection/UI/Filament/ItemTypeManager.php` and add the new type key (e.g., `'wine'`) to the `$types` array. Set its value to `null` if it has no custom fields, or to a handler class name.
+3.  **(Optional) Custom Fields:** If the type requires specific fields:
+    -   Add `nullable` columns to the `items` table via a new migration.
+    -   Add the new columns to the `$fillable` array in the `Item` model.
+    -   Add translations for the new field labels in `lang/es/item.php`.
+    -   Create a new handler class in `src/Collection/UI/Filament/ItemTypes/` (e.g., `WineType.php`) that implements `ItemType`.
+    -   Update the `ItemTypeManager` to point the type key to your new handler class.
 
-```php
-// lang/es/item.php
-'type_wine' => 'Vino',
-```
+### How to Add a New Item Status
 
-### Step 2: Register the New Type
+The process is managed by the `ItemStatusManager`.
 
-Open `app/Filament/ItemTypeManager.php` and add the new type key to the `$types` array.
+1.  **Translation:** Add the new status key (e.g., `status_reserved`) and its Spanish translation to `lang/es/item.php`.
+2.  **Create Status Class:** Create a new empty class in `src/Collection/UI/Filament/ItemStatuses/` (e.g., `ReservedStatus.php`) that implements the `ItemStatus` interface.
+3.  **Register Status:** Open `src/Collection/UI/Filament/ItemStatusManager.php`, import your new class, and add it to the `$statuses` array (e.g., `'reserved' => ReservedStatus::class`).
 
-- If the new type only uses a generic form (no specific fields), set its value to `null`.
-- If it requires custom fields, you will point it to a new handler class (see Step 3).
+The `Select` dropdown in the form will update automatically.
 
-```php
-// app/Filament/ItemTypeManager.php
-protected array $types = [
-    // ... existing types
-    'wine' => null, // or WineType::class if it has custom fields
-];
-```
+### How to Add a New Item Grade
 
-### Step 3 (Optional): Create a Custom Form for the New Type
+The process is managed by the `ItemGradeManager` and is identical to adding a new status.
 
-If the new item type requires specific fields, create a new handler class.
+1.  **Translation:** Add the new grade key (e.g., `grade_pr`) and its Spanish translation (e.g., "PR (Proof)") to `lang/es/item.php`.
+2.  **Create Grade Class:** Create a new empty class in `src/Collection/UI/Filament/ItemGrades/` (e.g., `PrGrade.php`) that implements `ItemGrade`.
+3.  **Register Grade:** Open `src/Collection/UI/Filament/ItemGradeManager.php`, import your new class, and add it to the `$grades` array (e.g., `'pr' => PrGrade::class`).
 
-1.  **Add new columns to the database:** Create a new migration to add the required `nullable` columns to the `items` table.
-    ```bash
-    make artisan a="make:migration add_wine_fields_to_items_table --table=items"
-    ```
-2.  **Make fields fillable:** Add the new column names to the `$fillable` array in the `app/Models/Item.php` model.
-3.  **Add field translations:** Add the Spanish labels for the new fields in `lang/es/item.php`.
-4.  **Create the handler class:** Create a new class in `app/Filament/ItemTypes/` (e.g., `WineType.php`) that implements the `ItemType` interface and defines the new form components.
-    ```php
-    <?php
-    namespace App\Filament\ItemTypes;
-    use Filament\Forms\Components\{Section, TextInput};
-
-    class WineType implements ItemType {
-        public static function getFormComponents(): array {
-            return [
-                Section::make('Detalles del Vino')
-                    ->schema([
-                        TextInput::make('winery')->label(__('item.field_winery')),
-                        TextInput::make('region')->label(__('item.field_region')),
-                    ])
-            ];
-        }
-    }
-    ```
-5.  **Update the `ItemTypeManager`:** Change the value for your new type from `null` to the new class name: `'wine' => WineType::class,`.
-
-After following these steps, run `make artisan a="migrate"` and `make clear-all`. The new item type will be fully integrated into the system.
+After making changes, run `make clear-all` to ensure caches are updated.

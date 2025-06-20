@@ -19,6 +19,7 @@ use Filament\Tables\Table;
 use Numista\Collection\UI\Filament\ItemGradeManager;
 use Numista\Collection\UI\Filament\ItemStatusManager;
 use Numista\Collection\UI\Filament\ItemTypeManager;
+use Numista\Collection\UI\Filament\Resources\ItemResource\RelationManagers\CategoriesRelationManager;
 use Numista\Collection\UI\Filament\Resources\ItemResource\RelationManagers\ImagesRelationManager;
 
 class ItemResource extends Resource
@@ -28,6 +29,22 @@ class ItemResource extends Resource
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    // --- Using Translation Keys for Labels ---
+    public static function getNavigationLabel(): string
+    {
+        return __('panel.item_nav_label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('panel.item_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('panel.item_plural_label');
+    }
 
     public static function form(Form $form): Form
     {
@@ -141,6 +158,7 @@ class ItemResource extends Resource
     public static function getRelations(): array
     {
         return [
+            CategoriesRelationManager::class,
             ImagesRelationManager::class,
         ];
     }
