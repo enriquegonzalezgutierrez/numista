@@ -32,7 +32,7 @@ First, copy the Laravel example environment file:
 ```bash
 cp .env.example .env
 ```
-*Note: The `.env` file is already configured for the Docker setup. Remember to set `APP_LOCALE=es` and `APP_URL=http://localhost:8080` for a correct setup.*
+*Note: The `.env` file is already configured for the Docker setup. Remember to set `APP_LOCALE=es` and `APP_URL=http://localhost:8080`.*
 
 Second, create the `.env` file for Docker Compose to set your user ID. This avoids file permission issues.
 *On Linux/macOS:*
@@ -74,41 +74,31 @@ The application will be available at **[http://localhost:8080](http://localhost:
 - `make npm a="<command>"`: Run any `npm` command (e.g., `make npm a="install"`).
 - `make db-shell`: Connect to the PostgreSQL database shell.
 - `make clear-all`: Clear all Laravel application caches.
-- `make fix-permissions`: Fix file permissions for `storage` and `bootstrap/cache` directories.
+- `make fix-permissions`: Fix file permissions for `storage` and `bootstrap/cache`.
 
 ---
 
-## 🏛️ Project Architecture: Extensible Systems
+## 🏛️ Project Architecture
 
-The application uses a SOLID-based architecture to manage different entities like Item Types, Statuses, and Grades. The `...Manager` classes act as the single source of truth for each system.
+The project follows a Domain-Driven Design (DDD) inspired structure. The core business logic resides in `src/Collection`.
 
-### How to Add a New Item Type
+### Image Management
 
-1.  **Translation:** Add the new type's key (e.g., `type_wine`) and its Spanish translation to `lang/es/item.php`.
-2.  **Register Type:** Open `src/Collection/UI/Filament/ItemTypeManager.php` and add the new type key (e.g., `'wine'`) to the `$types` array. Set its value to `null` if it has no custom fields, or to a handler class name.
-3.  **(Optional) Custom Fields:** If the type requires specific fields:
-    -   Add `nullable` columns to the `items` table via a new migration.
-    -   Add the new columns to the `$fillable` array in the `Item` model.
-    -   Add translations for the new field labels in `lang/es/item.php`.
-    -   Create a new handler class in `src/Collection/UI/Filament/ItemTypes/` (e.g., `WineType.php`) that implements `ItemType`.
-    -   Update the `ItemTypeManager` to point the type key to your new handler class.
+- **Storage:** Images are stored in a private, tenant-specific directory (`storage/app/tenants/tenant-{id}`).
+- **Database:** An `Image` model with a polymorphic relationship allows images to be attached to any other model (currently `Item`). This relationship is managed via the `images` table.
+- **Access:** A dedicated route (`/tenant-files/{path}`) and controller (`TenantFileController`) are used to serve the private files securely.
+- **Background Processing:** Image uploads are processed asynchronously using Laravel Queues and a Supervisor-managed worker for a better user experience.
+- **UI:** The `ImagesRelationManager` on the `ItemResource` edit page handles the full image CRUD lifecycle.
 
-### How to Add a New Item Status
+### Extensible Systems: Item `Type`, `Status`, and `Grade`
 
-The process is managed by the `ItemStatusManager`.
+The application uses a manager-based, extensible pattern for key item attributes. This follows SOLID principles, especially Open/Closed. To add a new option (e.g., a new "Type"):
 
-1.  **Translation:** Add the new status key (e.g., `status_reserved`) and its Spanish translation to `lang/es/item.php`.
-2.  **Create Status Class:** Create a new empty class in `src/Collection/UI/Filament/ItemStatuses/` (e.g., `ReservedStatus.php`) that implements the `ItemStatus` interface.
-3.  **Register Status:** Open `src/Collection/UI/Filament/ItemStatusManager.php`, import your new class, and add it to the `$statuses` array (e.g., `'reserved' => ReservedStatus::class`).
+1.  **Translation:** Add the new key and its Spanish translation to the appropriate language file (e.g., `lang/es/item.php`).
+2.  **Handler Class (Optional):** If the new option requires special logic or fields, create a new handler class in the corresponding directory (e.g., `src/Collection/UI/Filament/ItemTypes/`).
+3.  **Manager Registration:** Add the new key and its handler class (or `null`) to the `types` array in the corresponding manager (e.g., `ItemTypeManager.php`).
 
-The `Select` dropdown in the form will update automatically.
+### Category Management
 
-### How to Add a New Item Grade
-
-The process is managed by the `ItemGradeManager` and is identical to adding a new status.
-
-1.  **Translation:** Add the new grade key (e.g., `grade_pr`) and its Spanish translation (e.g., "PR (Proof)") to `lang/es/item.php`.
-2.  **Create Grade Class:** Create a new empty class in `src/Collection/UI/Filament/ItemGrades/` (e.g., `PrGrade.php`) that implements `ItemGrade`.
-3.  **Register Grade:** Open `src/Collection/UI/Filament/ItemGradeManager.php`, import your new class, and add it to the `$grades` array (e.g., `'pr' => PrGrade::class`).
-
-After making changes, run `make clear-all` to ensure caches are updated.
+- **Category Management:** Categories are managed via the `CategoryResource`. This resource allows creating, editing, and deleting categories, including setting up parent-child relationships for a hierarchical structure.
+- **Assigning to Items:** From an item's edit page, categories can be attached or detached using the "Categorías" Relation Manager.

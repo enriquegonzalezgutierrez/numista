@@ -14,8 +14,11 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Numista\Collection\UI\Filament\ItemGradeManager;
 use Numista\Collection\UI\Filament\ItemStatusManager;
 use Numista\Collection\UI\Filament\ItemTypeManager;
@@ -114,11 +117,19 @@ class ItemResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // Use translation key for the search placeholder
+            ->searchPlaceholder(__('panel.search_placeholder'))
             ->columns([
                 TextColumn::make('name')
                     ->label(__('item.field_name'))
-                    ->searchable()
+                    ->searchable() // Search is enabled on this column
                     ->sortable(),
+
+                // Add the description column for searching, but keep it hidden by default
+                TextColumn::make('description')
+                    ->label(__('item.field_description'))
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('type')
                     ->label(__('item.field_type'))
@@ -130,11 +141,7 @@ class ItemResource extends Resource
                 TextColumn::make('status')
                     ->label(__('item.field_status'))
                     ->badge()
-                    ->formatStateUsing(function (string $state): string {
-                        // Instantiate the manager and get the translated value
-                        $manager = new ItemStatusManager();
-                        return $manager->getTranslatedStatus($state);
-                    })
+                    ->formatStateUsing(fn(string $state): string => __("item.status_{$state}"))
                     ->searchable(),
 
                 TextColumn::make('quantity')
@@ -143,13 +150,67 @@ class ItemResource extends Resource
                     ->alignEnd(),
             ])
             ->filters([
-                // ...
+                // --- Filter by Item Type ---
+                SelectFilter::make('type')
+                    ->label(__('panel.filter_item_type'))
+                    ->options(fn(\Numista\Collection\UI\Filament\ItemTypeManager $manager) => $manager->getTypesForSelect()),
+
+                // --- Filter by Item Status ---
+                SelectFilter::make('status')
+                    ->label(__('panel.filter_status'))
+                    ->options(fn(\Numista\Collection\UI\Filament\ItemStatusManager $manager) => $manager->getStatusesForSelect()),
+
+                // --- Filter by Category ---
+                SelectFilter::make('categories')
+                    ->label(__('panel.filter_category'))
+                    ->relationship('categories', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->multiple(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
+            // In ItemResource.php -> table()
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    // --- Bulk Action to change status ---
+                    BulkAction::make('change_status')
+                        ->label(__('panel.action_edit_status'))
+                        ->icon('heroicon-o-check-circle')
+                        ->requiresConfirmation() // Good practice to avoid accidental clicks
+                        ->form([
+                            Select::make('status')
+                                ->label(__('panel.field_new_status'))
+                                ->options(fn(ItemStatusManager $manager) => $manager->getStatusesForSelect())
+                                ->required(),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            $records->each->update(['status' => $data['status']]);
+                        })
+                        ->successNotificationTitle(__('panel.notification_status_updated')),
+
+                    // --- Bulk Action to attach categories ---
+                    BulkAction::make('attach_category')
+                        ->label(__('panel.action_attach_category'))
+                        ->icon('heroicon-o-tag')
+                        ->form([
+                            Select::make('categories')
+                                ->label(__('panel.field_select_categories'))
+                                ->relationship('categories', 'name')
+                                ->multiple()
+                                ->searchable()
+                                ->preload()
+                                ->required(),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            foreach ($records as $record) {
+                                $record->categories()->syncWithoutDetaching($data['categories']);
+                            }
+                        })
+                        ->successNotificationTitle(__('panel.notification_categories_attached')),
+
+                    // --- Default Delete Bulk Action ---
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
