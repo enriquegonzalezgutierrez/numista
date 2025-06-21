@@ -4,66 +4,66 @@
 
 return [
     //======================================================================
-    // General Resource Labels (used in navigation, titles, etc.)
+    // General Navigation & Resource Labels
     //======================================================================
-    'item_nav_label' => 'Ítems',
-    'item_label' => 'Ítem',
-    'item_plural_label' => 'Ítems',
+    'nav_items' => 'Ítems',
+    'label_item' => 'Ítem',
+    'label_items' => 'Ítems',
 
-    'category_nav_label' => 'Categorías',
-    'category_label' => 'Categoría',
-    'category_plural_label' => 'Categorías',
+    'nav_categories' => 'Categorías',
+    'label_category' => 'Categoría',
+    'label_categories' => 'Categorías',
 
     //======================================================================
-    // General Field Labels (reusable across forms)
+    // General Field Labels (reusable across different forms)
     //======================================================================
-    'field_category_name' => 'Nombre de la Categoría',
-    'field_parent_category' => 'Categoría Padre',
-    'field_is_visible' => 'Visible en la web pública',
+    'field_name' => 'Nombre',
     'field_slug' => 'Slug (URL)',
     'field_description' => 'Descripción',
+    'field_parent_category' => 'Categoría Superior',
+    'field_is_visible' => 'Visible en la web pública',
     'field_items_count' => 'Nº de Ítems',
     'field_new_status' => 'Nuevo Estado',
-    'field_select_categories' => 'Seleccionar Categorías',
-    'field_alt_text' => 'Texto Alternativo',
+    'field_categories' => 'Categorías',
+    'field_select_categories' => 'Seleccionar categorías',
 
     //======================================================================
-    // General Placeholders & Helper Texts
+    // Image-related Labels
     //======================================================================
-    'placeholder_none' => 'Ninguna',
-    'helper_alt_text' => 'Una breve descripción de la imagen para SEO y accesibilidad.',
+    'label_image_preview' => 'Vista Previa',
+    'label_alt_text' => 'Texto Alternativo',
+    'helper_alt_text' => 'Describe la imagen para accesibilidad y SEO.', // Versión más concisa
 
     //======================================================================
     // Table Functionality (Filters, Search)
     //======================================================================
-    'filter_item_type' => 'Tipo de Ítem',
-    'filter_status' => 'Estado',
-    'filter_category' => 'Categoría',
-    'search_placeholder' => 'Buscar por nombre o descripción',
+    'filter_type' => 'Filtrar por Tipo',
+    'filter_status' => 'Filtrar por Estado',
+    'filter_category' => 'Filtrar por Categoría',
+    'search_placeholder' => 'Buscar en la colección...',
 
     //======================================================================
     // Actions (Buttons, Modals, etc.)
     //======================================================================
-    // --- Bulk Actions ---
-    'action_edit_status' => 'Cambiar Estado',
-    'action_attach_category' => 'Asignar a Categoría',
+    // General Actions
+    'action_create' => 'Añadir Nuevo',
+    'action_edit' => 'Editar',
+    'action_delete' => 'Eliminar',
+    'action_attach' => 'Asociar',
+    'action_detach' => 'Desasociar',
 
-    // --- Relation Manager Actions ---
-    'action_attach' => 'Asociar Categoría',
-    'action_detach' => 'Quitar Asociación',
+    // Bulk Actions
+    'action_bulk_change_status' => 'Cambiar estado de los seleccionados',
+    'action_bulk_attach_category' => 'Asignar categoría a los seleccionados',
+
+    // Modal Titles & Buttons
     'modal_attach_title' => 'Asociar Categorías',
-    'modal_attach_button' => 'Asociar seleccionadas',
-
-    // --- Image Manager Actions ---
-    'image_table_preview' => 'Vista Previa',
-    'image_table_alt_text' => 'Texto Alternativo',
-    'action_create_image' => 'Crear Imagen',
-    'action_edit_image' => 'Editar',
-    'action_delete_image' => 'Borrar',
+    'modal_attach_button' => 'Asociar Selección',
+    'modal_create_image_title' => 'Añadir Nueva Imagen',
 
     //======================================================================
     // Notifications
     //======================================================================
-    'notification_status_updated' => 'Estado de los ítems actualizado.',
-    'notification_categories_attached' => 'Categorías asignadas a los ítems.',
+    'notification_status_updated' => 'El estado de los ítems ha sido actualizado.',
+    'notification_categories_attached' => 'Las categorías han sido asignadas correctamente.',
 ];

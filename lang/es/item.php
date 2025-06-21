@@ -3,112 +3,125 @@
 // lang/es/item.php
 
 return [
+    //======================================================================
     // Section Titles
+    //======================================================================
     'section_core' => 'Información Principal',
-    'section_numismatic' => 'Detalles Numismáticos',
-    'section_coin' => 'Específico de Moneda',
-    'section_banknote' => 'Específico de Billete',
-    'section_comic' => 'Específico de Cómic',
-    'section_acquisition' => 'Adquisición y Estado',
-    'section_images' => 'Imágenes',
-    // We can add more specific sections later if needed
+    'section_numismatic' => 'Datos Numismáticos',
+    'section_coin' => 'Detalles de Moneda',
+    'section_banknote' => 'Detalles de Billete',
+    'section_comic' => 'Detalles de Cómic',
+    'section_acquisition' => 'Datos de Adquisición y Venta',
+    'section_images' => 'Imágenes del Ítem',
 
+    //======================================================================
     // Field Labels
+    //======================================================================
     'field_name' => 'Nombre del Ítem',
     'field_type' => 'Tipo de Ítem',
     'field_description' => 'Descripción',
-    'field_country' => 'País',
-    'field_year' => 'Año',
-    'field_denomination' => 'Denominación',
-    'field_mint_mark' => 'Marca de Ceca',
-    'field_composition' => 'Composición',
-    'field_weight' => 'Peso',
+    'field_country' => 'País de Origen',
+    'field_year' => 'Año de Emisión',
+    'field_denomination' => 'Valor Nominal / Denominación',
+    'field_mint_mark' => 'Marca de Ceca / Ceca',
+    'field_composition' => 'Composición / Material',
+    'field_weight' => 'Peso (gramos)',
     'field_serial_number' => 'Número de Serie',
     'field_publisher' => 'Editorial',
     'field_series_title' => 'Título de la Serie',
-    'field_issue_number' => 'Número',
+    'field_issue_number' => 'Número de Ejemplar',
     'field_cover_date' => 'Fecha de Portada',
-    'field_grade' => 'Grado / Condición',
+    'field_grade' => 'Grado de Conservación',
     'field_quantity' => 'Cantidad',
     'field_purchase_price' => 'Precio de Compra',
     'field_purchase_date' => 'Fecha de Compra',
-    'field_status' => 'Estado',
+    'field_status' => 'Estado Actual',
     'field_sale_price' => 'Precio de Venta',
-    'field_brand' => 'Marca',
+    'field_brand' => 'Marca / Fabricante',
     'field_model' => 'Modelo',
-    'field_material' => 'Material',
-    'field_author' => 'Autor',
+    'field_material' => 'Material Principal',
+    'field_author' => 'Autor / Creador',
     'field_isbn' => 'ISBN',
     'field_artist' => 'Artista',
-    'field_dimensions' => 'Dimensiones',
-    'field_gemstone' => 'Piedra Preciosa',
+    'field_dimensions' => 'Dimensiones (ej: 30x40 cm)',
+    'field_gemstone' => 'Gema / Piedra Principal',
     'field_license_plate' => 'Matrícula',
     'field_chassis_number' => 'Número de Bastidor',
     'field_record_label' => 'Sello Discográfico',
     'field_face_value' => 'Valor Facial',
-    'field_publisher_postcard' => 'Editor (Postal)',
+    'field_publisher_postcard' => 'Editor de la Postal',
     'field_origin_location' => 'Lugar de Origen',
     'field_photographer' => 'Fotógrafo',
-    'field_location' => 'Lugar',
-    'field_technique' => 'Técnica',
-    'field_conflict' => 'Conflicto / Época',
+    'field_location' => 'Lugar / Localización',
+    'field_technique' => 'Técnica / Procedimiento',
+    'field_conflict' => 'Conflicto / Periodo Histórico',
     'field_sport' => 'Deporte',
-    'field_team' => 'Equipo',
-    'field_player' => 'Jugador',
-    'field_event' => 'Evento',
-    'field_movie_title' => 'Película',
+    'field_team' => 'Equipo / Club',
+    'field_player' => 'Jugador / Atleta',
+    'field_event' => 'Evento / Competición',
+    'field_movie_title' => 'Título de la Película',
     'field_character' => 'Personaje',
-    'field_images' => 'Imágenes',
-    'field_alt_text' => 'Texto Alternativo',
+    'field_images' => 'Archivos de Imagen',
+    'field_alt_text' => 'Texto Alternativo (SEO)',
 
-    // --- Helper Texts ---
-    'helper_alt_text' => 'Una breve descripción de la imagen para SEO y accesibilidad.',
+    //======================================================================
+    // Helper Texts
+    //======================================================================
+    'helper_alt_text' => 'Describe brevemente la imagen para mejorar la accesibilidad y el posicionamiento en buscadores.',
 
-    // --- Item Type Options ---
+    //======================================================================
+    // Item Type Options
+    //======================================================================
     'type_coin' => 'Moneda',
     'type_banknote' => 'Billete',
-    'type_comic' => 'Cómic o Tebeo',
-    'type_medal' => 'Medalla',
-    'type_stamp' => 'Sello (Filatelia)',
-    'type_postcard' => 'Postal',
+    'type_comic' => 'Cómic / Tebeo',
+    'type_medal' => 'Medalla / Condecoración',
+    'type_stamp' => 'Sello / Filatelia',
+    'type_postcard' => 'Tarjeta Postal',
     'type_photo' => 'Fotografía Antigua',
-    'type_book' => 'Libro',
-    'type_vinyl_record' => 'Disco de Música / Vinilo',
-    'type_toy' => 'Juguete o Juego',
+    'type_book' => 'Libro / Manuscrito',
+    'type_vinyl_record' => 'Disco / Vinilo',
+    'type_toy' => 'Juguete / Juego',
     'type_watch' => 'Reloj',
-    'type_jewelry' => 'Joyería',
-    'type_pen' => 'Estilográfica o Bolígrafo',
+    'type_jewelry' => 'Joya / Orfebrería',
+    'type_pen' => 'Instrumento de Escritura',
     'type_antique' => 'Antigüedad',
-    'type_art' => 'Arte',
+    'type_art' => 'Obra de Arte',
     'type_vintage_item' => 'Objeto Vintage',
-    'type_vehicle' => 'Vehículo (Coche o Moto)',
-    'type_military' => 'Coleccionismo Militar',
-    'type_sports' => 'Coleccionismo Deportivo',
-    'type_paper' => 'Coleccionismo de Papel',
-    'type_camera' => 'Cámara Fotográfica',
-    'type_radio' => 'Radio o Gramófono',
-    'type_movie_collectible' => 'Coleccionismo de Cine',
+    'type_vehicle' => 'Vehículo Clásico',
+    'type_military' => 'Militaria / Coleccionismo Militar',
+    'type_sports' => 'Memorabilia Deportiva',
+    'type_paper' => 'Documento / Coleccionismo de Papel',
+    'type_camera' => 'Cámara / Equipo Fotográfico',
+    'type_radio' => 'Radio / Gramófono',
+    'type_movie_collectible' => 'Póster / Cine',
     'type_craftsmanship' => 'Artesanía',
     'type_object' => 'Objeto de Colección',
 
-    // --- Status Options ---
-    'status_in_collection' => 'En Colección',
-    'status_for_sale' => 'Venta Directa',
+    //======================================================================
+    // Status Options
+    //======================================================================
+    'status_in_collection' => 'En mi colección',
+    'status_for_sale' => 'En venta directa',
     'status_sold' => 'Vendido',
     'status_featured' => 'Destacado',
-    'status_discounted' => 'Con Descuento',
+    'status_discounted' => 'En oferta / Con descuento',
 
-    // --- Grade Options ---
+    //======================================================================
+    // Grade Options
+    //======================================================================
     'grade_unc' => 'UNC (Sin Circular)',
     'grade_au' => 'AU (Casi Sin Circular)',
-    'grade_xf' => 'XF (Excelentemente Bien Conservada)',
-    'grade_vf' => 'VF (Muy Bien Conservada)',
-    'grade_f' => 'F (Bien Conservada)',
-    'grade_g' => 'G (Regular Conservación)',
+    'grade_xf' => 'XF (Excelentemente Conservado)',
+    'grade_vf' => 'VF (Muy Bien Conservado)',
+    'grade_f' => 'F (Bien Conservado)',
+    'grade_g' => 'G (Regular)',
 
-    // --- Modal / Action Buttons ---
+    //======================================================================
+    // Modal & Action Buttons (Estos podrían ir en panel.php, pero los dejamos aquí si son específicos de item)
+    //======================================================================
     'button_create' => 'Crear',
     'button_cancel' => 'Cancelar',
-    'button_create_and_create_another' => 'Crear y crear otro',
-    'modal_create_image_title' => 'Crear Nueva Imagen',
+    'button_create_and_create_another' => 'Crear y Añadir Otro',
+    'modal_create_image_title' => 'Añadir Nueva Imagen',
 ];

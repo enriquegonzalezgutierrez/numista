@@ -4,7 +4,7 @@ This is a web application for managing numismatic and other collectible collecti
 
 - **Backend**: Laravel 12 (dev)
 - **Frontend**: Livewire 3 & Blade
-- **Admin Panel**: Filament 3
+- **Admin Panel**: Filament 3, **featuring dynamic forms, relation managers, advanced filters, and bulk actions.**
 - **Database**: PostgreSQL 16
 - **PHP**: 8.2
 - **Web Server**: Nginx
@@ -58,6 +58,7 @@ The application will be available at **[http://localhost:8080](http://localhost:
 
 - **Default User:** `admin@numista.es`
 - **Password:** `admin`
+- **Test Images:** The database seeder assigns random images to the generated items. For these images to display correctly, you need to place your own sample images in `storage/app/tenants/tenant-1/item-images/`. The seeder expects files like `Moneda-Antigua.png`, `Cómic-Clásico.png`, etc.
 
 ---
 
