@@ -23,7 +23,7 @@ class CategoriesRelationManager extends RelationManager
      */
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
-        return __('panel.category_plural_label'); // Using our existing translation key for "Categorías"
+        return __('panel.label_categories'); // Using our existing translation key for "Categorías"
     }
 
     // We don't need a form here because we are not creating/editing categories,
@@ -40,7 +40,7 @@ class CategoriesRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('name')
-                    ->label(__('panel.field_category_name')),
+                    ->label(__('panel.field_name')),
             ])
             ->filters([
                 // No filters needed for this simple table.
@@ -54,7 +54,8 @@ class CategoriesRelationManager extends RelationManager
             ])
             ->actions([
                 // This action detaches the category from the item.
-                DetachAction::make(),
+                DetachAction::make()
+                    ->label(__('panel.action_detach')),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

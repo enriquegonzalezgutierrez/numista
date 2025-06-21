@@ -25,20 +25,17 @@ class CategoryResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-tag';
     protected static ?int $navigationSort = 2;
 
-    // --- Using Translation Keys for Labels ---
     public static function getNavigationLabel(): string
     {
-        return __('panel.category_nav_label');
+        return __('panel.nav_categories');
     }
-
     public static function getModelLabel(): string
     {
-        return __('panel.category_label');
+        return __('panel.label_category');
     }
-
     public static function getPluralModelLabel(): string
     {
-        return __('panel.category_plural_label');
+        return __('panel.label_categories');
     }
 
     public static function form(Form $form): Form

@@ -15,10 +15,13 @@ use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Numista\Collection\UI\Filament\ItemGradeManager;
 use Numista\Collection\UI\Filament\ItemStatusManager;
 use Numista\Collection\UI\Filament\ItemTypeManager;
@@ -33,20 +36,17 @@ class ItemResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    // --- Using Translation Keys for Labels ---
     public static function getNavigationLabel(): string
     {
-        return __('panel.item_nav_label');
+        return __('panel.nav_items');
     }
-
     public static function getModelLabel(): string
     {
-        return __('panel.item_label');
+        return __('panel.label_item');
     }
-
     public static function getPluralModelLabel(): string
     {
-        return __('panel.item_plural_label');
+        return __('panel.label_items');
     }
 
     public static function form(Form $form): Form
@@ -120,6 +120,15 @@ class ItemResource extends Resource
             // Use translation key for the search placeholder
             ->searchPlaceholder(__('panel.search_placeholder'))
             ->columns([
+                ImageColumn::make('thumbnail')
+                    ->label(__('panel.label_image_preview'))
+                    ->disk('tenants')
+                    ->circular()
+                    ->defaultImageUrl(url('/images/placeholder.png'))
+                    ->state(function (Model $record): ?string {
+                        return $record->images->first()?->path;
+                    }),
+
                 TextColumn::make('name')
                     ->label(__('item.field_name'))
                     ->searchable() // Search is enabled on this column
@@ -152,7 +161,7 @@ class ItemResource extends Resource
             ->filters([
                 // --- Filter by Item Type ---
                 SelectFilter::make('type')
-                    ->label(__('panel.filter_item_type'))
+                    ->label(__('panel.filter_type'))
                     ->options(fn(\Numista\Collection\UI\Filament\ItemTypeManager $manager) => $manager->getTypesForSelect()),
 
                 // --- Filter by Item Status ---
@@ -176,7 +185,7 @@ class ItemResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     // --- Bulk Action to change status ---
                     BulkAction::make('change_status')
-                        ->label(__('panel.action_edit_status'))
+                        ->label(__('panel.action_bulk_change_status'))
                         ->icon('heroicon-o-check-circle')
                         ->requiresConfirmation() // Good practice to avoid accidental clicks
                         ->form([
@@ -192,7 +201,7 @@ class ItemResource extends Resource
 
                     // --- Bulk Action to attach categories ---
                     BulkAction::make('attach_category')
-                        ->label(__('panel.action_attach_category'))
+                        ->label(__('panel.action_bulk_attach_category'))
                         ->icon('heroicon-o-tag')
                         ->form([
                             Select::make('categories')
@@ -231,5 +240,10 @@ class ItemResource extends Resource
             'create' => Pages\CreateItem::route('/create'),
             'edit' => Pages\EditItem::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with('images');
     }
 }

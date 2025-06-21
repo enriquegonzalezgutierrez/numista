@@ -31,7 +31,7 @@ class Item extends Model
     ];
 
     protected $casts = [
-        'images' => 'array', // Automatically encode/decode the images column to/from JSON
+        //
     ];
 
     /**

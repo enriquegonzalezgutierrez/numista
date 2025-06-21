@@ -1,12 +1,11 @@
 <?php
-
 // lang/es/item.php
 
 return [
     //======================================================================
-    // Section Titles
+    // Section Titles (Specific to Item Form)
     //======================================================================
-    'section_core' => 'Información Principal',
+    'section_core' => 'Información Principal del Ítem',
     'section_numismatic' => 'Datos Numismáticos',
     'section_coin' => 'Detalles de Moneda',
     'section_banknote' => 'Detalles de Billete',
@@ -15,16 +14,15 @@ return [
     'section_images' => 'Imágenes del Ítem',
 
     //======================================================================
-    // Field Labels
+    // Field Labels (Specific to Item)
     //======================================================================
     'field_name' => 'Nombre del Ítem',
     'field_type' => 'Tipo de Ítem',
-    'field_description' => 'Descripción',
     'field_country' => 'País de Origen',
     'field_year' => 'Año de Emisión',
     'field_denomination' => 'Valor Nominal / Denominación',
-    'field_mint_mark' => 'Marca de Ceca / Ceca',
-    'field_composition' => 'Composición / Material',
+    'field_mint_mark' => 'Marca de Ceca',
+    'field_composition' => 'Composición',
     'field_weight' => 'Peso (gramos)',
     'field_serial_number' => 'Número de Serie',
     'field_publisher' => 'Editorial',
@@ -43,7 +41,7 @@ return [
     'field_author' => 'Autor / Creador',
     'field_isbn' => 'ISBN',
     'field_artist' => 'Artista',
-    'field_dimensions' => 'Dimensiones (ej: 30x40 cm)',
+    'field_dimensions' => 'Dimensiones',
     'field_gemstone' => 'Gema / Piedra Principal',
     'field_license_plate' => 'Matrícula',
     'field_chassis_number' => 'Número de Bastidor',
@@ -53,7 +51,7 @@ return [
     'field_origin_location' => 'Lugar de Origen',
     'field_photographer' => 'Fotógrafo',
     'field_location' => 'Lugar / Localización',
-    'field_technique' => 'Técnica / Procedimiento',
+    'field_technique' => 'Técnica',
     'field_conflict' => 'Conflicto / Periodo Histórico',
     'field_sport' => 'Deporte',
     'field_team' => 'Equipo / Club',
@@ -61,14 +59,7 @@ return [
     'field_event' => 'Evento / Competición',
     'field_movie_title' => 'Título de la Película',
     'field_character' => 'Personaje',
-    'field_images' => 'Archivos de Imagen',
-    'field_alt_text' => 'Texto Alternativo (SEO)',
-
-    //======================================================================
-    // Helper Texts
-    //======================================================================
-    'helper_alt_text' => 'Describe brevemente la imagen para mejorar la accesibilidad y el posicionamiento en buscadores.',
-
+    
     //======================================================================
     // Item Type Options
     //======================================================================
@@ -116,12 +107,4 @@ return [
     'grade_vf' => 'VF (Muy Bien Conservado)',
     'grade_f' => 'F (Bien Conservado)',
     'grade_g' => 'G (Regular)',
-
-    //======================================================================
-    // Modal & Action Buttons (Estos podrían ir en panel.php, pero los dejamos aquí si son específicos de item)
-    //======================================================================
-    'button_create' => 'Crear',
-    'button_cancel' => 'Cancelar',
-    'button_create_and_create_another' => 'Crear y Añadir Otro',
-    'modal_create_image_title' => 'Añadir Nueva Imagen',
 ];
