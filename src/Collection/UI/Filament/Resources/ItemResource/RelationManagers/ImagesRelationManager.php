@@ -44,26 +44,27 @@ class ImagesRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('path')
-            ->reorderable('order_column') // Enable reordering
+            ->reorderable('order_column')
             ->columns([
                 Tables\Columns\ImageColumn::make('path')
-                    ->label('Preview')
-                    ->disk('tenants'), // Tell the column to use our custom disk
+                    ->label(__('panel.image_table_preview'))
+                    ->disk('tenants'),
 
                 Tables\Columns\TextColumn::make('alt_text')
-                    ->label('Alternative Text'),
+                    ->label(__('panel.image_table_alt_text')),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->label(__('item.button_create'))
-                    ->modalHeading(__('item.modal_create_image_title')),
+                    ->label(__('panel.action_create_image')),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label(__('panel.action_edit_image')),
+                Tables\Actions\DeleteAction::make()
+                    ->label(__('panel.action_delete_image')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

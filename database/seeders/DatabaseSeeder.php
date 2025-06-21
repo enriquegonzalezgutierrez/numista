@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             DevelopmentSeeder::class,
 
             CountrySeeder::class,
+            CategorySeeder::class,
             ItemSeeder::class,
         ]);
     }
