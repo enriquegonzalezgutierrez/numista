@@ -1,47 +1,44 @@
 name: Laravel CI
 
-    # This workflow runs on pushes to the main branch and on any pull request
-    on:
-      push:
-        branches: [ "main" ]
-      pull_request:
-        branches: [ "main" ]
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
-    jobs:
-      laravel-tests:
-        name: Run Tests
-        runs-on: ubuntu-latest
+jobs:
+  laravel-tests:
+    name: Run Laravel Tests
+    runs-on: ubuntu-latest
 
-        steps:
-        # 1. Checkout the code from the repository
-        - name: Checkout code
-          uses: actions/checkout@v4
+    steps:
+    # 1. Checkout the code from the repository
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-        # 2. Set up PHP with extensions
-        # Uses a popular action to simplify PHP setup
-        - name: Setup PHP
-          uses: shivammathur/setup-php@v2
-          with:
-            php-version: '8.2' # Must match our project's PHP version
-            extensions: pdo, pdo_pgsql, pdo_sqlite, zip, intl, gd # Extensions our app needs
-            
-        # 3. Copy the .env file for testing
-        - name: Copy .env file
-          run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+    # 2. Set up PHP with extensions
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: pdo, pdo_pgsql, pdo_sqlite, zip, intl, gd
+        
+    # 3. Copy the .env file for testing
+    - name: Copy .env file
+      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-        # 4. Install Composer dependencies
-        - name: Install Composer dependencies
-          run: composer install --no-progress --prefer-dist --optimize-autoloader
+    # 4. Install Composer dependencies
+    - name: Install Composer dependencies
+      run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-        # 5. Generate application key
-        - name: Generate app key
-          run: php artisan key:generate
+    # 5. Generate application key
+    - name: Generate app key
+      run: php artisan key:generate
 
-        # 6. Run database migrations (on the in-memory SQLite DB)
-        # This is needed so Pest knows the schema.
-        - name: Run migrations
-          run: php artisan migrate
+    # 6. Run database migrations (on the in-memory SQLite DB)
+    - name: Run migrations
+      run: php artisan migrate
 
-        # 7. Run Pest tests
-        - name: Execute tests (Pest)
-          run: php artisan test
+    # 7. Run Pest tests
+    - name: Execute tests (Pest)
+      run: php artisan test
