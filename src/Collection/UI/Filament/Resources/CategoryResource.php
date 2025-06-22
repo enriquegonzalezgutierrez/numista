@@ -43,23 +43,29 @@ class CategoryResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')
-                    ->label(__('panel.field_category_name'))
+                    ->label(__('panel.field_name'))
                     ->required()
-                    ->reactive()
-                    ->afterStateUpdated(fn($state, $set) => $set('slug', Str::slug($state)))
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn($state, callable $set) => $set('slug', Str::slug($state)))
                     ->columnSpanFull(),
+
                 TextInput::make('slug')
                     ->label(__('panel.field_slug'))
                     ->required()
-                    ->unique(ignoreRecord: true)
+                    ->unique(Category::class, 'slug', ignoreRecord: true)
+                    ->disabled()
+                    ->dehydrated()
                     ->columnSpanFull(),
+
                 Select::make('parent_id')
                     ->label(__('panel.field_parent_category'))
                     ->relationship('parent', 'name')
                     ->searchable()
                     ->placeholder(__('panel.placeholder_none')),
+
                 Toggle::make('is_visible')
                     ->label(__('panel.field_is_visible')),
+
                 Textarea::make('description')
                     ->label(__('panel.field_description'))
                     ->columnSpanFull(),
@@ -70,7 +76,7 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label(__('panel.field_category_name'))->searchable()->sortable(),
+                TextColumn::make('name')->label(__('panel.field_name'))->searchable()->sortable(),
                 TextColumn::make('parent.name')->label(__('panel.field_parent_category'))->searchable()->sortable()->placeholder(__('panel.placeholder_none')),
                 IconColumn::make('is_visible')->label(__('panel.field_is_visible'))->boolean(),
                 TextColumn::make('items_count')->counts('items')->label(__('panel.field_items_count')),

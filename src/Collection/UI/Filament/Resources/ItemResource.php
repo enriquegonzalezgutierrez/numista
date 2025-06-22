@@ -27,6 +27,7 @@ use Numista\Collection\UI\Filament\ItemStatusManager;
 use Numista\Collection\UI\Filament\ItemTypeManager;
 use Numista\Collection\UI\Filament\Resources\ItemResource\RelationManagers\CategoriesRelationManager;
 use Numista\Collection\UI\Filament\Resources\ItemResource\RelationManagers\ImagesRelationManager;
+use Illuminate\Support\Str;
 
 class ItemResource extends Resource
 {
@@ -60,7 +61,17 @@ class ItemResource extends Resource
                         TextInput::make('name')
                             ->label(__('item.field_name'))
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->live(onBlur: true) // Trigger update when user leaves the field
+                            ->afterStateUpdated(fn($state, callable $set) => $set('slug', Str::slug($state))), // Generate slug on the fly
+
+                        // --- NEW: Slug Field ---
+                        TextInput::make('slug')
+                            ->label(__('panel.field_slug'))
+                            ->required()
+                            ->unique(Item::class, 'slug', ignoreRecord: true)
+                            ->disabled() // User cannot edit it directly
+                            ->dehydrated(), // Ensures the value is saved even though it's disabled
 
                         // Item Type dropdown, now fully dynamic
                         Select::make('type')
@@ -95,15 +106,20 @@ class ItemResource extends Resource
                             ->label(__('item.field_grade'))
                             ->options(fn(ItemGradeManager $manager) => $manager->getGradesForSelect())
                             ->searchable(),
+
                         TextInput::make('quantity')->label(__('item.field_quantity'))->required()->numeric()->default(1),
+
                         TextInput::make('purchase_price')->label(__('item.field_purchase_price'))->numeric()->prefix('€'),
+
                         DatePicker::make('purchase_date')->label(__('item.field_purchase_date')),
+
                         Select::make('status')
                             ->label(__('item.field_status'))
                             ->options(fn(ItemStatusManager $manager) => $manager->getStatusesForSelect())
                             ->default('in_collection')
                             ->required()
                             ->live(),
+
                         TextInput::make('sale_price')
                             ->label(__('item.field_sale_price'))
                             ->numeric()
@@ -161,17 +177,17 @@ class ItemResource extends Resource
             ->filters([
                 // --- Filter by Item Type ---
                 SelectFilter::make('type')
-                    ->label(__('panel.filter_type'))
+                    ->label(__('panel.field_type'))
                     ->options(fn(\Numista\Collection\UI\Filament\ItemTypeManager $manager) => $manager->getTypesForSelect()),
 
                 // --- Filter by Item Status ---
                 SelectFilter::make('status')
-                    ->label(__('panel.filter_status'))
+                    ->label(__('panel.field_status'))
                     ->options(fn(\Numista\Collection\UI\Filament\ItemStatusManager $manager) => $manager->getStatusesForSelect()),
 
                 // --- Filter by Category ---
                 SelectFilter::make('categories')
-                    ->label(__('panel.filter_category'))
+                    ->label(__('panel.label_categories'))
                     ->relationship('categories', 'name')
                     ->searchable()
                     ->preload()

@@ -60,7 +60,7 @@ class CategorySeeder extends Seeder
             'tenant_id' => $tenant->id,
             'parent_id' => $parentId,
             'name' => $name,
-            'slug' => Str::slug($name),
+            // 'slug' => Str::slug($name),
             'description' => fake()->paragraph(2),
             'is_visible' => true,
         ]);
