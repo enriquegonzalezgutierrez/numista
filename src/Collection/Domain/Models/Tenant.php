@@ -3,6 +3,7 @@
 namespace Numista\Collection\Domain\Models;
 
 use App\Models\User;
+use Database\Factories\TenantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -36,5 +37,10 @@ class Tenant extends Model
     public function items(): HasMany
     {
         return $this->hasMany(Item::class);
+    }
+
+    protected static function newFactory(): TenantFactory
+    {
+        return TenantFactory::new();
     }
 }

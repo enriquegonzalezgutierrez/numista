@@ -4,10 +4,10 @@ This is a web application for managing numismatic and other collectible collecti
 
 - **Backend**: Laravel 12 (dev)
 - **Frontend**: Livewire 3 & Blade
-- **Admin Panel**: Filament 3, **featuring dynamic forms, relation managers, advanced filters, and bulk actions.**
+- **Admin Panel**: Filament 3, featuring dynamic forms, relation managers, advanced filters, and bulk actions.
 - **Database**: PostgreSQL 16
 - **PHP**: 8.2
-- **Web Server**: Nginx
+- **Testing**: Pest (PHPUnit)
 - **Environment**: Docker
 
 ---
@@ -62,10 +62,22 @@ The application will be available at **[http://localhost:8080](http://localhost:
 
 ---
 
+## ✅ Running Tests
+
+The project uses Pest for testing. The test environment is configured to use an in-memory SQLite database to ensure tests are fast and do not interfere with your development data.
+
+- `make test`: Run the entire test suite.
+- `make test-feature`: Run only the Feature tests.
+- `make test-unit`: Run only the Unit tests.
+- `make test-coverage`: Run tests and generate a code coverage report in the terminal.
+
+---
+
 ## 🛠️ Useful Make Commands
 
 - `make up`: Build and start all containers.
 - `make setup`: **Run this after `make up` on a fresh install.** Installs dependencies, generates key, and runs migrations with seeders.
+- `make test`: Run all automated tests.
 - `make down`: Stop and remove all containers, networks, and volumes.
 - `make stop`: Stop containers without removing them.
 - `make logs`: View real-time logs for all services.
@@ -81,7 +93,13 @@ The application will be available at **[http://localhost:8080](http://localhost:
 
 ## 🏛️ Project Architecture
 
-The project follows a Domain-Driven Design (DDD) inspired structure. The core business logic resides in `src/Collection`.
+The project follows a Domain-Driven Design (DDD) inspired structure and is tested to ensure code quality and stability.
+
+### Automated Testing
+
+- **Strategy:** We focus on a combination of Unit and Feature tests to cover our core business logic.
+- **Unit Tests:** Located in `tests/Unit`, they verify individual classes in isolation (e.g., Managers).
+- **Feature Tests:** Located in `tests/Feature`, they test the integration of different parts of the application, including model relationships and observer logic, by interacting with an in-memory test database.
 
 ### Image Management
 

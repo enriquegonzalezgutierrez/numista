@@ -6,6 +6,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Numista\Collection\Domain\Models\Country;
 use Numista\Collection\Domain\Models\Item;
+use Numista\Collection\Domain\Models\Tenant;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Numista\Collection\Domain\Models\Item>
@@ -27,8 +28,10 @@ class ItemFactory extends Factory
         // We now rely on the globally configured Faker instance, which is
         // set to 'es_ES' in the DatabaseSeeder before this factory is called.
         return [
+            'tenant_id' => Tenant::factory(),
             'name' => ucfirst(fake()->words(3, true)),
             'description' => fake()->paragraph(2),
+            'type' => 'coin',
             'quantity' => fake()->numberBetween(1, 5),
             'purchase_price' => fake()->randomFloat(2, 5, 100),
             'purchase_date' => fake()->date(),

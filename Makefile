@@ -92,6 +92,22 @@ npm: ## Run any npm command. Ex: make npm a="install some-package"
 	@docker-compose exec app npm $(a)
 
 # ==============================================================================
+# Testing Commands
+# ==============================================================================
+test: ## Run the entire test suite (Unit & Feature)
+	@echo "--- Running all tests ---"
+	@make artisan a="test"
+
+test-feature: ## Run only Feature tests
+	@make artisan a="test --testsuite=Feature"
+
+test-unit: ## Run only Unit tests
+	@make artisan a="test --testsuite=Unit"
+
+test-coverage: ## Run tests and generate a code coverage report
+	@make artisan a="test --coverage"
+
+# ==============================================================================
 # Helper Commands
 # ==============================================================================
 bash: ## Get a shell ('sh') inside the app container
@@ -110,4 +126,4 @@ help: ## Show this help message
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 # Mark targets as not being actual files
-.PHONY: up down stop restart logs setup cache-clear fix-permissions artisan migrate migrate-fresh key-generate composer composer-install npm bash db-shell help
+.PHONY: up down stop restart logs setup cache-clear fix-permissions artisan migrate migrate-fresh key-generate composer composer-install npm test test-feature test-unit test-coverage bash db-shell help
