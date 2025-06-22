@@ -6,12 +6,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile as BaseEditTenantProfile;
 use Illuminate\Support\Str;
+use Numista\Collection\Domain\Models\Tenant;
 
 class EditTenantProfile extends BaseEditTenantProfile
 {
     public static function getLabel(): string
     {
-        return 'Collection profile'; // Custom label
+        return __('panel.page_edit_tenant_title');
     }
 
     public function form(Form $form): Form
@@ -19,16 +20,17 @@ class EditTenantProfile extends BaseEditTenantProfile
         return $form
             ->schema([
                 TextInput::make('name')
-                    ->label('Collection Name')
+                    ->label(__('panel.field_collection_name'))
                     ->required()
                     ->live(onBlur: true)
-                    ->afterStateUpdated(function (callable $set, $state) {
-                        $set('slug', Str::slug($state));
-                    }),
+                    ->afterStateUpdated(fn($state, callable $set) => $set('slug', Str::slug($state))),
+
                 TextInput::make('slug')
-                    ->label('URL Slug')
+                    ->label(__('panel.field_collection_slug'))
                     ->required()
-                    ->unique(ignoreRecord: true),
+                    ->unique(Tenant::class, 'slug', ignoreRecord: true)
+                    ->disabled()
+                    ->dehydrated(),
             ]);
     }
 }

@@ -12,7 +12,7 @@ return [
     'nav_categories' => 'Categorías',
     'label_category' => 'Categoría',
     'label_categories' => 'Categorías',
-    
+
     'label_image_preview' => 'Vista Previa',
     'label_alt_text' => 'Texto Alternativo',
     'label_image_files' => 'Archivos de Imagen',
@@ -32,6 +32,7 @@ return [
     'field_items_count' => 'Nº de Ítems',
     'field_new_status' => 'Nuevo Estado',
     'field_select_categories' => 'Seleccionar categorías',
+    'field_visibility' => 'Visibilidad',
 
     //======================================================================
     // Table Filters
@@ -48,9 +49,10 @@ return [
     'action_delete' => 'Eliminar',
     'action_attach' => 'Asociar',
     'action_detach' => 'Desasociar',
-    
+
     'action_bulk_change_status' => 'Cambiar estado',
     'action_bulk_attach_category' => 'Asignar categoría',
+    'action_bulk_change_visibility' => 'Cambiar visibilidad',
 
     'modal_attach_title' => 'Asociar Categorías',
     'modal_attach_button' => 'Asociar Selección',
@@ -61,6 +63,7 @@ return [
     //======================================================================
     'notification_status_updated' => 'El estado de los ítems ha sido actualizado.',
     'notification_categories_attached' => 'Las categorías han sido asignadas correctamente.',
+    'notification_visibility_updated' => 'La visibilidad de las categorías ha sido actualizada.',
 
     //======================================================================
     // Widgets
@@ -81,4 +84,12 @@ return [
     'widget_chart_dataset_label' => 'Ítems',
     'widget_table_column_name' => 'Nombre',
     'widget_table_column_type' => 'Tipo',
+
+    //======================================================================
+    // Tenancy Pages
+    //======================================================================
+    'page_register_tenant_title' => 'Registrar Nueva Colección',
+    'page_edit_tenant_title' => 'Editar Perfil de la Colección',
+    'field_collection_name' => 'Nombre de la Colección',
+    'field_collection_slug' => 'URL de la Colección (Slug)',
 ];

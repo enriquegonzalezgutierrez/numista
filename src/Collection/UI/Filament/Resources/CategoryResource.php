@@ -10,12 +10,15 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
 class CategoryResource extends Resource
@@ -45,23 +48,35 @@ class CategoryResource extends Resource
                 TextInput::make('name')
                     ->label(__('panel.field_name'))
                     ->required()
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(fn($state, callable $set) => $set('slug', Str::slug($state)))
+                    ->reactive()
+                    ->afterStateUpdated(fn($state, $set) => $set('slug', Str::slug($state)))
                     ->columnSpanFull(),
 
                 TextInput::make('slug')
                     ->label(__('panel.field_slug'))
                     ->required()
-                    ->unique(Category::class, 'slug', ignoreRecord: true)
-                    ->disabled()
-                    ->dehydrated()
+                    ->unique(ignoreRecord: true)
                     ->columnSpanFull(),
 
                 Select::make('parent_id')
                     ->label(__('panel.field_parent_category'))
-                    ->relationship('parent', 'name')
                     ->searchable()
-                    ->placeholder(__('panel.placeholder_none')),
+                    ->placeholder(__('panel.placeholder_none'))
+                    ->options(function (?Category $record): array {
+                        $query = Category::query();
+
+                        if ($record) {
+                            $query->where('id', '!=', $record->id);
+
+                            $descendantIds = $record->descendants->pluck('id')->toArray();
+
+                            if (!empty($descendantIds)) {
+                                $query->whereNotIn('id', $descendantIds);
+                            }
+                        }
+
+                        return $query->pluck('name', 'id')->toArray();
+                    }),
 
                 Toggle::make('is_visible')
                     ->label(__('panel.field_is_visible')),
@@ -76,13 +91,50 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label(__('panel.field_name'))->searchable()->sortable(),
-                TextColumn::make('parent.name')->label(__('panel.field_parent_category'))->searchable()->sortable()->placeholder(__('panel.placeholder_none')),
-                IconColumn::make('is_visible')->label(__('panel.field_is_visible'))->boolean(),
-                TextColumn::make('items_count')->counts('items')->label(__('panel.field_items_count')),
+                TextColumn::make('name')
+                    ->label(__('panel.field_name'))
+                    ->searchable()
+                    ->sortable()
+                    ->description(function (Category $record): string {
+                        $record->load('ancestors');
+                        return $record->ancestors->pluck('name')->push($record->name)->implode(' > ');
+                    }),
+
+                TextColumn::make('parent.name')
+                    ->label(__('panel.field_parent_category'))
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder(__('panel.placeholder_none')),
+
+                IconColumn::make('is_visible')
+                    ->label(__('panel.field_is_visible'))
+                    ->boolean(),
+
+                TextColumn::make('items_count')
+                    ->counts('items')
+                    ->label(__('panel.field_items_count')),
             ])
             ->actions([EditAction::make(), DeleteAction::make()])
-            ->bulkActions([BulkActionGroup::make([/* ... */])]);
+            ->bulkActions([
+                BulkActionGroup::make([
+                    BulkAction::make('change_visibility')
+                        ->label(__('panel.action_bulk_change_visibility'))
+                        ->icon('heroicon-o-eye')
+                        ->requiresConfirmation()
+                        ->form([
+                            Toggle::make('is_visible')
+                                ->label(__('panel.field_visibility'))
+                                ->required(),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            $records->each->update(['is_visible' => $data['is_visible']]);
+                        })
+                        ->successNotificationTitle(__('panel.notification_visibility_updated'))
+                        ->deselectRecordsAfterCompletion(),
+
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getRelations(): array

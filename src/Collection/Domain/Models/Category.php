@@ -9,13 +9,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, HasRecursiveRelationships;
 
     protected $fillable = ['tenant_id', 'name', 'slug', 'description', 'parent_id', 'is_visible'];
-    
+
     protected $casts = ['is_visible' => 'boolean'];
 
     public function tenant(): BelongsTo

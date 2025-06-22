@@ -42,7 +42,7 @@ class ItemFactory extends Factory
      */
     public function coin(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'type' => 'coin',
             'name' => 'Moneda: ' . ucfirst(fake()->words(2, true)),
             'country_id' => Country::inRandomOrder()->first()?->id,
@@ -59,7 +59,7 @@ class ItemFactory extends Factory
      */
     public function banknote(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'type' => 'banknote',
             'name' => 'Billete: ' . ucfirst(fake()->words(2, true)),
             'country_id' => Country::inRandomOrder()->first()?->id,
@@ -74,13 +74,56 @@ class ItemFactory extends Factory
      */
     public function comic(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'type' => 'comic',
             'name' => fake()->randomElement(['The Amazing Spider-Man', 'Action Comics', 'X-Men', 'Watchmen']),
             'grade' => fake()->randomElement(['CGC 9.8', 'NM', 'VF/NM', 'F/VF']),
             'publisher' => fake()->randomElement(['Marvel', 'DC Comics', 'Image', 'Vertigo']),
             'issue_number' => fake()->numberBetween(1, 500),
             'cover_date' => fake()->date(),
+        ]);
+    }
+
+    /**
+     * State for a 'watch' type item.
+     */
+    public function watch(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'type' => 'watch',
+            'name' => 'Reloj: ' . fake()->company(),
+            'brand' => fake()->randomElement(['Rolex', 'Omega', 'Seiko', 'Casio']),
+            'model' => fake()->word() . ' ' . fake()->randomNumber(4),
+            'material' => fake()->randomElement(['Acero Inoxidable', 'Oro', 'Titanio']),
+        ]);
+    }
+
+    /**
+     * State for a 'stamp' type item.
+     */
+    public function stamp(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'type' => 'stamp',
+            'name' => 'Sello: ' . fake()->country() . ' ' . fake()->year(),
+            'country_id' => Country::inRandomOrder()->first()->id,
+            'year' => fake()->numberBetween(1840, 2020),
+            'face_value' => fake()->randomElement(['5c', '10p', '1.00€']),
+        ]);
+    }
+
+    /**
+     * State for a 'book' type item.
+     */
+    public function book(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'type' => 'book',
+            'name' => fake()->catchPhrase(),
+            'author' => fake()->name(),
+            'publisher' => fake()->company(),
+            'year' => fake()->numberBetween(1500, 2024),
+            'isbn' => fake()->isbn13(),
         ]);
     }
 }
