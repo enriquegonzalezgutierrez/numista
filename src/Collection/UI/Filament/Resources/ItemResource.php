@@ -28,6 +28,7 @@ use Numista\Collection\UI\Filament\ItemTypeManager;
 use Numista\Collection\UI\Filament\Resources\ItemResource\RelationManagers\CategoriesRelationManager;
 use Numista\Collection\UI\Filament\Resources\ItemResource\RelationManagers\ImagesRelationManager;
 use Illuminate\Support\Str;
+use Numista\Collection\UI\Filament\Resources\ItemResource\RelationManagers\CollectionsRelationManager;
 
 class ItemResource extends Resource
 {
@@ -37,10 +38,16 @@ class ItemResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?int $navigationSort = 3;
+
+    /**
+     * Defines the navigation label for this resource.
+     */
     public static function getNavigationLabel(): string
     {
         return __('panel.nav_items');
     }
+
     public static function getModelLabel(): string
     {
         return __('panel.label_item');
@@ -50,6 +57,9 @@ class ItemResource extends Resource
         return __('panel.label_items');
     }
 
+    /**
+     * Defines the resource form schema.
+     */
     public static function form(Form $form): Form
     {
         return $form
@@ -84,7 +94,7 @@ class ItemResource extends Resource
 
                         // Description field, spans the full width
                         Textarea::make('description')
-                            ->label(__('item.field_description'))
+                            ->label(__('panel.field_description'))
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
@@ -107,11 +117,19 @@ class ItemResource extends Resource
                             ->options(fn(ItemGradeManager $manager) => $manager->getGradesForSelect())
                             ->searchable(),
 
-                        TextInput::make('quantity')->label(__('item.field_quantity'))->required()->numeric()->default(1),
+                        TextInput::make('quantity')
+                            ->label(__('item.field_quantity'))
+                            ->required()
+                            ->numeric()
+                            ->default(1),
 
-                        TextInput::make('purchase_price')->label(__('item.field_purchase_price'))->numeric()->prefix('€'),
+                        TextInput::make('purchase_price')
+                            ->label(__('item.field_purchase_price'))
+                            ->numeric()
+                            ->prefix('€'),
 
-                        DatePicker::make('purchase_date')->label(__('item.field_purchase_date')),
+                        DatePicker::make('purchase_date')
+                            ->label(__('item.field_purchase_date')),
 
                         Select::make('status')
                             ->label(__('item.field_status'))
@@ -124,12 +142,15 @@ class ItemResource extends Resource
                             ->label(__('item.field_sale_price'))
                             ->numeric()
                             ->prefix('€')
-                            ->hidden(fn(Get $get): bool => $get('status') !== 'en_venta'),
+                            ->hidden(fn(Get $get): bool => $get('status') !== 'for_sale'),
                     ])
                     ->columns(2),
             ]);
     }
 
+    /**
+     * Defines the resource table schema.
+     */
     public static function table(Table $table): Table
     {
         return $table
@@ -137,7 +158,7 @@ class ItemResource extends Resource
             ->searchPlaceholder(__('panel.search_placeholder'))
             ->columns([
                 ImageColumn::make('thumbnail')
-                    ->label(__('panel.label_image_preview'))
+                    ->label(__('panel.field_image_preview'))
                     ->disk('tenants')
                     ->circular()
                     ->defaultImageUrl(url('/images/placeholder.png'))
@@ -146,13 +167,13 @@ class ItemResource extends Resource
                     }),
 
                 TextColumn::make('name')
-                    ->label(__('item.field_name'))
+                    ->label(__('item.field_type'))
                     ->searchable() // Search is enabled on this column
                     ->sortable(),
 
                 // Add the description column for searching, but keep it hidden by default
                 TextColumn::make('description')
-                    ->label(__('item.field_description'))
+                    ->label(__('panel.field_description'))
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
@@ -162,6 +183,11 @@ class ItemResource extends Resource
                     ->formatStateUsing(fn(string $state): string => __("item.type_{$state}"))
                     ->searchable()
                     ->sortable(),
+
+                TextColumn::make('collections.name')
+                    ->label(__('panel.label_collections'))
+                    ->badge()
+                    ->searchable(),
 
                 TextColumn::make('status')
                     ->label(__('item.field_status'))
@@ -189,6 +215,13 @@ class ItemResource extends Resource
                 SelectFilter::make('categories')
                     ->label(__('panel.label_categories'))
                     ->relationship('categories', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->multiple(),
+
+                SelectFilter::make('collections')
+                    ->label(__('panel.filter_collection'))
+                    ->relationship('collections', 'name')
                     ->searchable()
                     ->preload()
                     ->multiple(),
@@ -244,6 +277,7 @@ class ItemResource extends Resource
     public static function getRelations(): array
     {
         return [
+            CollectionsRelationManager::class,
             CategoriesRelationManager::class,
             ImagesRelationManager::class,
         ];

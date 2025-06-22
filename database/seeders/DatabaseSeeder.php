@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
 
             CountrySeeder::class,
             CategorySeeder::class,
+            CollectionSeeder::class,
             ItemSeeder::class,
         ]);
     }

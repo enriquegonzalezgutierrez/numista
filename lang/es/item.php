@@ -1,25 +1,19 @@
 <?php
 // lang/es/item.php
-
 return [
-    //======================================================================
-    // Section Titles (Specific to Item Form)
-    //======================================================================
-    'section_core' => 'Información Principal del Ítem',
+    // Section Titles in Item Form
+    'section_core' => 'Datos Principales del Ítem',
     'section_numismatic' => 'Datos Numismáticos',
     'section_coin' => 'Detalles de Moneda',
     'section_banknote' => 'Detalles de Billete',
     'section_comic' => 'Detalles de Cómic',
     'section_acquisition' => 'Datos de Adquisición y Venta',
-    'section_images' => 'Imágenes del Ítem',
 
-    //======================================================================
-    // Field Labels (Specific to Item)
-    //======================================================================
-    'field_name' => 'Nombre del Ítem',
+    // Field Labels specific to Items
+    'field_name' => 'Nombre o Título del Ítem',
     'field_type' => 'Tipo de Ítem',
     'field_country' => 'País de Origen',
-    'field_year' => 'Año de Emisión',
+    'field_year' => 'Año de Emisión / Creación',
     'field_denomination' => 'Valor Nominal / Denominación',
     'field_mint_mark' => 'Marca de Ceca',
     'field_composition' => 'Composición',
@@ -59,10 +53,8 @@ return [
     'field_event' => 'Evento / Competición',
     'field_movie_title' => 'Título de la Película',
     'field_character' => 'Personaje',
-    
-    //======================================================================
+
     // Item Type Options
-    //======================================================================
     'type_coin' => 'Moneda',
     'type_banknote' => 'Billete',
     'type_comic' => 'Cómic / Tebeo',
@@ -89,18 +81,14 @@ return [
     'type_craftsmanship' => 'Artesanía',
     'type_object' => 'Objeto de Colección',
 
-    //======================================================================
     // Status Options
-    //======================================================================
     'status_in_collection' => 'En mi colección',
     'status_for_sale' => 'En venta directa',
     'status_sold' => 'Vendido',
     'status_featured' => 'Destacado',
     'status_discounted' => 'En oferta / Con descuento',
 
-    //======================================================================
     // Grade Options
-    //======================================================================
     'grade_unc' => 'UNC (Sin Circular)',
     'grade_au' => 'AU (Casi Sin Circular)',
     'grade_xf' => 'XF (Excelentemente Conservado)',

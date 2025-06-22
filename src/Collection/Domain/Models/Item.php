@@ -19,14 +19,52 @@ class Item extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'tenant_id', 'name', 'slug', 'description', 'type', 'quantity', 'purchase_price',
-        'purchase_date', 'status', 'sale_price', 'country_id', 'year',
-        'denomination', 'grade', 'mint_mark', 'composition', 'weight',
-        'serial_number', 'publisher', 'series_title', 'issue_number', 'cover_date',
-        'brand', 'model', 'material', 'author', 'isbn', 'artist', 'dimensions',
-        'gemstone', 'license_plate', 'chassis_number', 'record_label', 'face_value',
-        'publisher_postcard', 'origin_location', 'photographer', 'location', 'technique',
-        'conflict', 'sport', 'team', 'player', 'event', 'movie_title', 'character',
+        'tenant_id',
+        'name',
+        'slug',
+        'description',
+        'type',
+        'quantity',
+        'purchase_price',
+        'purchase_date',
+        'status',
+        'sale_price',
+        'country_id',
+        'year',
+        'denomination',
+        'grade',
+        'mint_mark',
+        'composition',
+        'weight',
+        'serial_number',
+        'publisher',
+        'series_title',
+        'issue_number',
+        'cover_date',
+        'brand',
+        'model',
+        'material',
+        'author',
+        'isbn',
+        'artist',
+        'dimensions',
+        'gemstone',
+        'license_plate',
+        'chassis_number',
+        'record_label',
+        'face_value',
+        'publisher_postcard',
+        'origin_location',
+        'photographer',
+        'location',
+        'technique',
+        'conflict',
+        'sport',
+        'team',
+        'player',
+        'event',
+        'movie_title',
+        'character',
         'images',
     ];
 
@@ -64,6 +102,11 @@ class Item extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
+    }
+
+    public function collections(): BelongsToMany
+    {
+        return $this->belongsToMany(Collection::class);
     }
 
     /**

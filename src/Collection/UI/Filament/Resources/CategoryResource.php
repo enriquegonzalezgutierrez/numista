@@ -24,23 +24,40 @@ use Illuminate\Support\Str;
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
+
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
+
     protected static ?string $navigationIcon = 'heroicon-o-tag';
+
     protected static ?int $navigationSort = 2;
 
+    /**
+     * Defines the navigation label for this resource.
+     */
     public static function getNavigationLabel(): string
     {
         return __('panel.nav_categories');
     }
+
+    /**
+     * Defines the singular model label for this resource.
+     */
     public static function getModelLabel(): string
     {
         return __('panel.label_category');
     }
+
+    /**
+     * Defines the plural model label for this resource.
+     */
     public static function getPluralModelLabel(): string
     {
         return __('panel.label_categories');
     }
 
+    /**
+     * Defines the resource form schema.
+     */
     public static function form(Form $form): Form
     {
         return $form
@@ -87,6 +104,9 @@ class CategoryResource extends Resource
             ]);
     }
 
+    /**
+     * Defines the resource table schema.
+     */
     public static function table(Table $table): Table
     {
         return $table

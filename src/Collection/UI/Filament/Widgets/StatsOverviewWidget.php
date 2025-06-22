@@ -5,6 +5,7 @@ namespace Numista\Collection\UI\Filament\Widgets;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Numista\Collection\Domain\Models\Category;
+use Numista\Collection\Domain\Models\Collection;
 use Numista\Collection\Domain\Models\Item;
 
 class StatsOverviewWidget extends BaseWidget
@@ -20,6 +21,7 @@ class StatsOverviewWidget extends BaseWidget
         $totalValue = Item::sum('purchase_price');
         $itemsForSale = Item::where('status', 'for_sale')->count();
         $totalCategories = Category::count();
+        $totalCollections = Collection::count();
 
         return [
             Stat::make(__('panel.widget_stats_total_items'), $totalItems)
@@ -40,6 +42,11 @@ class StatsOverviewWidget extends BaseWidget
             Stat::make(__('panel.widget_stats_categories'), $totalCategories)
                 ->description(__('panel.widget_stats_categories_desc'))
                 ->descriptionIcon('heroicon-m-tag')
+                ->color('info'),
+
+            Stat::make(__('panel.widget_stats_collections'), $totalCollections)
+                ->description(__('panel.widget_stats_collections_desc'))
+                ->descriptionIcon('heroicon-m-rectangle-group')
                 ->color('info'),
         ];
     }

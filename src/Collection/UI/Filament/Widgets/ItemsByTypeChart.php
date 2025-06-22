@@ -12,7 +12,7 @@ class ItemsByTypeChart extends ChartWidget
 
     public function getHeading(): string
     {
-        return __('panel.widget_chart_dataset_label');
+        return __('panel.widget_chart_items_by_type');
     }
 
     protected function getData(): array

@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Collection as EloquentCollection;
 use Numista\Collection\Domain\Models\Category;
+use Numista\Collection\Domain\Models\Collection;
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\Tenant;
 
@@ -17,17 +18,17 @@ class ItemSeeder extends Seeder
      */
     public function run(): void
     {
-        // --- 1. Find the tenant ---
+        // 1. Find the tenant
         $tenant = Tenant::where('slug', 'coleccion-numista')->first();
         if (!$tenant) {
             $this->command->warn('Default tenant "coleccion-numista" not found. Skipping ItemSeeder.');
             return;
         }
 
-        // Clean previous items for this tenant to avoid duplicates on re-seed
-        Item::where('tenant_id', $tenant->id)->get()->each(fn ($item) => $item->delete());
+        // 2. Clean previous items for this tenant to avoid duplicates
+        Item::where('tenant_id', $tenant->id)->get()->each(fn($item) => $item->delete());
 
-        // --- 2. Define the available image paths ---
+        // 3. Define the available image paths
         $imagePaths = [
             'tenant-1/item-images/Billete-Vintage.png',
             'tenant-1/item-images/Cómic-Clásico.png',
@@ -36,7 +37,7 @@ class ItemSeeder extends Seeder
             'tenant-1/item-images/Sello-Antiguo.png',
         ];
 
-        // --- 3. Create items for each category ---
+        // 4. Create items for each category
         $this->createItemsForCategory($tenant, 'moneda-espanola', 'coin', 5);
         $this->createItemsForCategory($tenant, 'marvel', 'comic', 8);
         $this->createItemsForCategory($tenant, 'billetes', 'banknote', 6);
@@ -44,11 +45,19 @@ class ItemSeeder extends Seeder
         $this->createItemsForCategory($tenant, 'sellos', 'stamp', 10);
         $this->createItemsForCategory($tenant, 'libros-y-manuscritos', 'book', 3);
 
-        // --- 4. Attach random images to all created items ---
+        // --- 5. Get all created entities from the database ---
         $allItems = Item::where('tenant_id', $tenant->id)->get();
+        $allCollections = Collection::where('tenant_id', $tenant->id)->get();
+
+        // --- 6. Attach items to collections ---
+        if ($allCollections->isNotEmpty()) {
+            $this->attachItemsToCollections($allItems, $allCollections);
+        }
+
+        // --- 7. Attach images to all items ---
         $this->attachImagesToItems($allItems, $imagePaths);
 
-        $this->command->info('Item seeder finished. ' . $allItems->count() . ' items created with categories and images.');
+        $this->command->info('Item seeder finished. ' . $allItems->count() . ' items created with relations.');
     }
 
     /**
@@ -63,34 +72,56 @@ class ItemSeeder extends Seeder
     private function createItemsForCategory(Tenant $tenant, string $categorySlug, string $itemType, int $count): void
     {
         $category = Category::where('tenant_id', $tenant->id)->where('slug', $categorySlug)->first();
-
         if (!$category) {
             $this->command->warn("Category with slug '{$categorySlug}' not found. Skipping item creation.");
             return;
         }
 
-        // The factory automatically calls the correct state method (coin(), comic(), etc.)
         $items = Item::factory($count)->{$itemType}()->create(['tenant_id' => $tenant->id]);
+        $items->each(fn(Item $item) => $item->categories()->attach($category->id));
+    }
 
-        // Attach each created item to the category
-        $items->each(fn (Item $item) => $item->categories()->attach($category->id));
+    /**
+     * Helper function to attach random items to specific collections.
+     *
+     * @param EloquentCollection $items
+     * @param EloquentCollection $collections
+     * @return void
+     */
+    private function attachItemsToCollections(EloquentCollection $items, EloquentCollection $collections): void
+    {
+        // Attach 5 random items to the "Favoritos del Mes" collection
+        $favorites = $collections->where('slug', 'favoritos-del-mes')->first();
+        if ($favorites && $items->count() >= 5) {
+            $favorites->items()->attach(
+                $items->random(5)->pluck('id')
+            );
+        }
+
+        // Attach 3 random items to the "Tesoros Personales" collection
+        $treasures = $collections->where('slug', 'tesoros-personales')->first();
+        if ($treasures && $items->count() >= 3) {
+            $treasures->items()->attach(
+                $items->random(3)->pluck('id')
+            );
+        }
     }
 
     /**
      * Helper function to attach a random number of images to a collection of items.
      *
-     * @param Collection $items
+     * @param EloquentCollection $items
      * @param array $imagePaths
      * @return void
      */
-    private function attachImagesToItems(Collection $items, array $imagePaths): void
+    private function attachImagesToItems(EloquentCollection $items, array $imagePaths): void
     {
         if (empty($imagePaths)) {
             return;
         }
 
         $items->each(function (Item $item) use ($imagePaths) {
-            $numberOfImages = rand(1, 2); // 1 or 2 images per item
+            $numberOfImages = rand(1, 2);
 
             for ($i = 0; $i < $numberOfImages; $i++) {
                 $randomImagePath = $imagePaths[array_rand($imagePaths)];

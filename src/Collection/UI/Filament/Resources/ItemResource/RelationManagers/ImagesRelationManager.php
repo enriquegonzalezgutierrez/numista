@@ -21,18 +21,23 @@ class ImagesRelationManager extends RelationManager
 {
     protected static string $relationship = 'images';
 
+    /**
+     * Defines the title for the relation manager section on the parent resource page.
+     */
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
-        // This title is specific to the item context, so using 'item.php' is correct.
-        return __('item.section_images');
+        return __('panel.label_images');
     }
 
+    /**
+     * Defines the form schema for creating and editing an Image record.
+     */
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 FileUpload::make('path')
-                    ->label(__('panel.label_image_files')) // More specific label: "Archivo de Imagen"
+                    ->label(__('panel.field_image_file'))
                     ->required()
                     ->disk('tenants')
                     ->directory('tenant-' . Filament::getTenant()?->id . '/item-images')
@@ -41,8 +46,8 @@ class ImagesRelationManager extends RelationManager
                     ->columnSpanFull(),
 
                 Textarea::make('alt_text')
-                    ->label(__('panel.label_alt_text')) // Using the generic label from panel.php
-                    ->helperText(__('panel.helper_alt_text')) // Using the generic helper from panel.php
+                    ->label(__('panel.field_alt_text'))
+                    ->helperText(__('panel.helper_alt_text'))
                     ->columnSpanFull(),
             ]);
     }
@@ -54,25 +59,25 @@ class ImagesRelationManager extends RelationManager
             ->reorderable('order_column')
             ->columns([
                 ImageColumn::make('path')
-                    ->label(__('panel.label_image_preview')) // Using generic label from panel.php
+                    ->label(__('panel.field_image_preview'))
                     ->disk('tenants'),
 
                 TextColumn::make('alt_text')
-                    ->label(__('panel.label_alt_text')), // Using generic label from panel.php
+                    ->label(__('panel.field_alt_text')),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->label(__('panel.action_create')) // More specific: "Añadir Imagen"
+                    ->label(__('panel.action_create_image'))
                     ->modalHeading(__('panel.modal_create_image_title')),
             ])
             ->actions([
                 EditAction::make()
-                    ->label(__('panel.action_edit')), // Generic "Editar" is fine here
+                    ->label(__('panel.action_edit')),
                 DeleteAction::make()
-                    ->label(__('panel.action_delete')), // Generic "Eliminar" is fine here
+                    ->label(__('panel.action_delete')),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
