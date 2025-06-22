@@ -21,6 +21,9 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Numista\Collection\Domain\Models\Tenant;
 use Numista\Collection\UI\Filament\Pages\Tenancy\RegisterTenant;
 use Numista\Collection\UI\Filament\Pages\Tenancy\EditTenantProfile;
+use Numista\Collection\UI\Filament\Widgets\ItemsByTypeChart;
+use Numista\Collection\UI\Filament\Widgets\LatestItemsWidget;
+use Numista\Collection\UI\Filament\Widgets\StatsOverviewWidget;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -50,8 +53,11 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: base_path('src/Collection/UI/Filament/Widgets'), for: 'Numista\\Collection\\UI\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\AccountWidget::class,
+                // Widgets\FilamentInfoWidget::class,
+                StatsOverviewWidget::class,
+                ItemsByTypeChart::class,
+                LatestItemsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

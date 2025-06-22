@@ -61,4 +61,24 @@ return [
     //======================================================================
     'notification_status_updated' => 'El estado de los ítems ha sido actualizado.',
     'notification_categories_attached' => 'Las categorías han sido asignadas correctamente.',
+
+    //======================================================================
+    // Widgets
+    //======================================================================
+    'widget_stats_total_items' => 'Total de Ítems',
+    'widget_stats_total_items_desc' => 'Todos los ítems de tu colección',
+    'widget_stats_collection_value' => 'Valor de la Colección',
+    'widget_stats_collection_value_desc' => 'Suma de los precios de compra',
+    'widget_stats_items_for_sale' => 'Ítems en Venta',
+    'widget_stats_items_for_sale_desc' => 'Disponibles en la tienda',
+    'widget_stats_categories' => 'Categorías Creadas',
+    'widget_stats_categories_desc' => 'Total de categorías para organizar',
+
+    'widget_table_latest_items' => 'Últimos Ítems Añadidos',
+    'widget_table_added_at' => 'Añadido el',
+    'widget_table_view_action' => 'Ver Ítem',
+
+    'widget_chart_dataset_label' => 'Ítems',
+    'widget_table_column_name' => 'Nombre',
+    'widget_table_column_type' => 'Tipo',
 ];
