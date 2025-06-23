@@ -12,14 +12,13 @@ class CollectionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run(): void
     {
         $tenant = Tenant::where('slug', 'coleccion-numista')->first();
-        if (!$tenant) {
+        if (! $tenant) {
             $this->command->warn('Default tenant "coleccion-numista" not found. Skipping CollectionSeeder.');
+
             return;
         }
 
@@ -36,11 +35,6 @@ class CollectionSeeder extends Seeder
 
     /**
      * Helper function to create a collection consistently.
-     *
-     * @param Tenant $tenant
-     * @param string $name
-     * @param string $description
-     * @return void
      */
     private function createCollection(Tenant $tenant, string $name, string $description): void
     {

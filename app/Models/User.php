@@ -62,7 +62,7 @@ class User extends Authenticatable implements HasTenants
      * Get the tenants that the user has access to.
      * The type hint for the return value must match the interface.
      */
-    public function getTenants(Panel $panel): Collection | array
+    public function getTenants(Panel $panel): Collection|array
     {
         return $this->tenants;
     }

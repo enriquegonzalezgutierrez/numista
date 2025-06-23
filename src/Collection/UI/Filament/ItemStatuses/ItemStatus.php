@@ -1,5 +1,7 @@
 <?php
+
 // app/Filament/ItemStatuses/ItemStatus.php
+
 namespace Numista\Collection\UI\Filament\ItemStatuses;
 
 /**

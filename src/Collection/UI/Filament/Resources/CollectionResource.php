@@ -4,15 +4,15 @@ namespace Numista\Collection\UI\Filament\Resources;
 
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Numista\Collection\UI\Filament\Resources\CollectionResource\Pages;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
-use Illuminate\Support\Str;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Numista\Collection\Domain\Models\Collection;
+use Numista\Collection\UI\Filament\Resources\CollectionResource\Pages;
 
 class CollectionResource extends Resource
 {
@@ -58,7 +58,7 @@ class CollectionResource extends Resource
                 ->label(__('panel.field_collection_name'))
                 ->required()
                 ->reactive()
-                ->afterStateUpdated(fn($state, $set) => $set('slug', Str::slug($state))),
+                ->afterStateUpdated(fn ($state, $set) => $set('slug', Str::slug($state))),
 
             TextInput::make('slug')
                 ->label(__('panel.field_slug'))

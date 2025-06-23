@@ -1,4 +1,5 @@
 <?php
+
 // app/Filament/ItemTypeManager.php
 
 namespace Numista\Collection\UI\Filament;
@@ -67,11 +68,12 @@ class ItemTypeManager
      */
     public function getFormComponentsForType(?string $typeKey): array
     {
-        if (is_null($typeKey) || !isset($this->types[$typeKey]) || is_null($this->types[$typeKey])) {
+        if (is_null($typeKey) || ! isset($this->types[$typeKey]) || is_null($this->types[$typeKey])) {
             return [];
         }
 
         $typeClass = $this->types[$typeKey];
+
         return $typeClass::getFormComponents();
     }
 
@@ -90,7 +92,7 @@ class ItemTypeManager
         foreach ($typeKeys as $type) {
             // The key is the database value (e.g., 'moneda')
             // The value is the translated string (e.g., 'Moneda') from lang/es/item.php
-            $translatedTypes[$type] = __('item.type_' . $type);
+            $translatedTypes[$type] = __('item.type_'.$type);
         }
 
         // Sort the types alphabetically by their translated value

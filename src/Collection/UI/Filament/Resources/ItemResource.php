@@ -2,8 +2,6 @@
 
 namespace Numista\Collection\UI\Filament\Resources;
 
-use Numista\Collection\UI\Filament\Resources\ItemResource\Pages;
-use Numista\Collection\Domain\Models\Item;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Group;
@@ -22,13 +20,15 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\UI\Filament\ItemGradeManager;
 use Numista\Collection\UI\Filament\ItemStatusManager;
 use Numista\Collection\UI\Filament\ItemTypeManager;
+use Numista\Collection\UI\Filament\Resources\ItemResource\Pages;
 use Numista\Collection\UI\Filament\Resources\ItemResource\RelationManagers\CategoriesRelationManager;
-use Numista\Collection\UI\Filament\Resources\ItemResource\RelationManagers\ImagesRelationManager;
-use Illuminate\Support\Str;
 use Numista\Collection\UI\Filament\Resources\ItemResource\RelationManagers\CollectionsRelationManager;
+use Numista\Collection\UI\Filament\Resources\ItemResource\RelationManagers\ImagesRelationManager;
 
 class ItemResource extends Resource
 {
@@ -52,6 +52,7 @@ class ItemResource extends Resource
     {
         return __('panel.label_item');
     }
+
     public static function getPluralModelLabel(): string
     {
         return __('panel.label_items');
@@ -73,7 +74,7 @@ class ItemResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true) // Trigger update when user leaves the field
-                            ->afterStateUpdated(fn($state, callable $set) => $set('slug', Str::slug($state))), // Generate slug on the fly
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))), // Generate slug on the fly
 
                         // --- NEW: Slug Field ---
                         TextInput::make('slug')
@@ -104,7 +105,8 @@ class ItemResource extends Resource
                 Group::make()
                     ->schema(function (Get $get): array {
                         $typeKey = $get('type');
-                        $manager = new ItemTypeManager();
+                        $manager = new ItemTypeManager;
+
                         return $manager->getFormComponentsForType($typeKey);
                     })
                     ->columnSpanFull(),
@@ -114,7 +116,7 @@ class ItemResource extends Resource
                     ->schema([
                         Select::make('grade')
                             ->label(__('item.field_grade'))
-                            ->options(fn(ItemGradeManager $manager) => $manager->getGradesForSelect())
+                            ->options(fn (ItemGradeManager $manager) => $manager->getGradesForSelect())
                             ->searchable(),
 
                         TextInput::make('quantity')
@@ -133,7 +135,7 @@ class ItemResource extends Resource
 
                         Select::make('status')
                             ->label(__('item.field_status'))
-                            ->options(fn(ItemStatusManager $manager) => $manager->getStatusesForSelect())
+                            ->options(fn (ItemStatusManager $manager) => $manager->getStatusesForSelect())
                             ->default('in_collection')
                             ->required()
                             ->live(),
@@ -142,7 +144,7 @@ class ItemResource extends Resource
                             ->label(__('item.field_sale_price'))
                             ->numeric()
                             ->prefix('€')
-                            ->hidden(fn(Get $get): bool => $get('status') !== 'for_sale'),
+                            ->hidden(fn (Get $get): bool => $get('status') !== 'for_sale'),
                     ])
                     ->columns(2),
             ]);
@@ -180,7 +182,7 @@ class ItemResource extends Resource
                 TextColumn::make('type')
                     ->label(__('item.field_type'))
                     ->badge()
-                    ->formatStateUsing(fn(string $state): string => __("item.type_{$state}"))
+                    ->formatStateUsing(fn (string $state): string => __("item.type_{$state}"))
                     ->searchable()
                     ->sortable(),
 
@@ -192,7 +194,7 @@ class ItemResource extends Resource
                 TextColumn::make('status')
                     ->label(__('item.field_status'))
                     ->badge()
-                    ->formatStateUsing(fn(string $state): string => __("item.status_{$state}"))
+                    ->formatStateUsing(fn (string $state): string => __("item.status_{$state}"))
                     ->searchable(),
 
                 TextColumn::make('quantity')
@@ -204,12 +206,12 @@ class ItemResource extends Resource
                 // --- Filter by Item Type ---
                 SelectFilter::make('type')
                     ->label(__('panel.field_type'))
-                    ->options(fn(\Numista\Collection\UI\Filament\ItemTypeManager $manager) => $manager->getTypesForSelect()),
+                    ->options(fn (\Numista\Collection\UI\Filament\ItemTypeManager $manager) => $manager->getTypesForSelect()),
 
                 // --- Filter by Item Status ---
                 SelectFilter::make('status')
                     ->label(__('panel.field_status'))
-                    ->options(fn(\Numista\Collection\UI\Filament\ItemStatusManager $manager) => $manager->getStatusesForSelect()),
+                    ->options(fn (\Numista\Collection\UI\Filament\ItemStatusManager $manager) => $manager->getStatusesForSelect()),
 
                 // --- Filter by Category ---
                 SelectFilter::make('categories')
@@ -240,7 +242,7 @@ class ItemResource extends Resource
                         ->form([
                             Select::make('status')
                                 ->label(__('panel.field_new_status'))
-                                ->options(fn(ItemStatusManager $manager) => $manager->getStatusesForSelect())
+                                ->options(fn (ItemStatusManager $manager) => $manager->getStatusesForSelect())
                                 ->required(),
                         ])
                         ->action(function (Collection $records, array $data): void {

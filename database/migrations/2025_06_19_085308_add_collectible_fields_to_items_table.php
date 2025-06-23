@@ -44,13 +44,13 @@ return new class extends Migration
      * Reverse the migrations.
      */
     public function down(): void
-{
-    Schema::table('items', function (Blueprint $table) {
-        $table->dropColumn([
-            'brand', 'model', 'material', 'author', 'isbn', 'artist',
-            'dimensions', 'gemstone', 'license_plate', 'chassis_number',
-            'record_label', 'face_value'
-        ]);
-    });
-}
+    {
+        Schema::table('items', function (Blueprint $table) {
+            $table->dropColumn([
+                'brand', 'model', 'material', 'author', 'isbn', 'artist',
+                'dimensions', 'gemstone', 'license_plate', 'chassis_number',
+                'record_label', 'face_value',
+            ]);
+        });
+    }
 };

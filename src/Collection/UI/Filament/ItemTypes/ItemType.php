@@ -1,4 +1,5 @@
 <?php
+
 // app/Filament/ItemTypes/ItemType.php
 
 namespace Numista\Collection\UI\Filament\ItemTypes;

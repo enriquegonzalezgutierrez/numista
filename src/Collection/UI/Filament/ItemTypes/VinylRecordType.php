@@ -1,5 +1,7 @@
 <?php
+
 // app/Filament/ItemTypes/VinylRecordType.php
+
 namespace Numista\Collection\UI\Filament\ItemTypes;
 
 use Filament\Forms\Components\Section;
@@ -15,7 +17,7 @@ class VinylRecordType implements ItemType
                     TextInput::make('artist')->label(__('item.field_artist')),
                     TextInput::make('record_label')->label(__('item.field_record_label')),
                     TextInput::make('year')->label(__('item.field_year'))->numeric(),
-                ])->columns(3)
+                ])->columns(3),
         ];
     }
 }

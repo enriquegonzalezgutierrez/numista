@@ -1,5 +1,7 @@
 <?php
+
 // app/Filament/ItemTypes/ArtType.php
+
 namespace Numista\Collection\UI\Filament\ItemTypes;
 
 use Filament\Forms\Components\Section;
@@ -15,7 +17,7 @@ class ArtType implements ItemType
                     TextInput::make('artist')->label(__('item.field_artist')),
                     TextInput::make('dimensions')->label(__('item.field_dimensions'))->placeholder('Ej: 30x40 cm'),
                     TextInput::make('material')->label(__('item.field_material'))->placeholder('Ej: Óleo sobre lienzo'),
-                ])->columns(3)
+                ])->columns(3),
         ];
     }
 }

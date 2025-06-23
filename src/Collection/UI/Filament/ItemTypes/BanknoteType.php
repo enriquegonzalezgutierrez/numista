@@ -1,4 +1,5 @@
 <?php
+
 // app/Filament/ItemTypes/BanknoteType.php
 
 namespace Numista\Collection\UI\Filament\ItemTypes;

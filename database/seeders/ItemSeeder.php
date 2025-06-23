@@ -13,20 +13,19 @@ class ItemSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run(): void
     {
         // 1. Find the tenant
         $tenant = Tenant::where('slug', 'coleccion-numista')->first();
-        if (!$tenant) {
+        if (! $tenant) {
             $this->command->warn('Default tenant "coleccion-numista" not found. Skipping ItemSeeder.');
+
             return;
         }
 
         // 2. Clean previous items for this tenant to avoid duplicates
-        Item::where('tenant_id', $tenant->id)->get()->each(fn($item) => $item->delete());
+        Item::where('tenant_id', $tenant->id)->get()->each(fn ($item) => $item->delete());
 
         // 3. Define the available image paths
         $imagePaths = [
@@ -57,36 +56,27 @@ class ItemSeeder extends Seeder
         // --- 7. Attach images to all items ---
         $this->attachImagesToItems($allItems, $imagePaths);
 
-        $this->command->info('Item seeder finished. ' . $allItems->count() . ' items created with relations.');
+        $this->command->info('Item seeder finished. '.$allItems->count().' items created with relations.');
     }
 
     /**
      * Helper function to create items and attach them to a specific category.
-     *
-     * @param Tenant $tenant
-     * @param string $categorySlug
-     * @param string $itemType
-     * @param int $count
-     * @return void
      */
     private function createItemsForCategory(Tenant $tenant, string $categorySlug, string $itemType, int $count): void
     {
         $category = Category::where('tenant_id', $tenant->id)->where('slug', $categorySlug)->first();
-        if (!$category) {
+        if (! $category) {
             $this->command->warn("Category with slug '{$categorySlug}' not found. Skipping item creation.");
+
             return;
         }
 
         $items = Item::factory($count)->{$itemType}()->create(['tenant_id' => $tenant->id]);
-        $items->each(fn(Item $item) => $item->categories()->attach($category->id));
+        $items->each(fn (Item $item) => $item->categories()->attach($category->id));
     }
 
     /**
      * Helper function to attach random items to specific collections.
-     *
-     * @param EloquentCollection $items
-     * @param EloquentCollection $collections
-     * @return void
      */
     private function attachItemsToCollections(EloquentCollection $items, EloquentCollection $collections): void
     {
@@ -109,10 +99,6 @@ class ItemSeeder extends Seeder
 
     /**
      * Helper function to attach a random number of images to a collection of items.
-     *
-     * @param EloquentCollection $items
-     * @param array $imagePaths
-     * @return void
      */
     private function attachImagesToItems(EloquentCollection $items, array $imagePaths): void
     {
@@ -128,7 +114,7 @@ class ItemSeeder extends Seeder
 
                 $item->images()->create([
                     'path' => $randomImagePath,
-                    'alt_text' => 'Imagen de prueba para ' . $item->name,
+                    'alt_text' => 'Imagen de prueba para '.$item->name,
                     'order_column' => $i + 1,
                 ]);
             }

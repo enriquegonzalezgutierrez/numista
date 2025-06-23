@@ -4,23 +4,21 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Support\Str;
+use Illuminate\Database\Seeder;
 use Numista\Collection\Domain\Models\Category;
 use Numista\Collection\Domain\Models\Tenant;
-use Illuminate\Database\Seeder;
 
 class CategorySeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run(): void
     {
         $tenant = Tenant::where('slug', 'coleccion-numista')->first();
-        if (!$tenant) {
+        if (! $tenant) {
             $this->command->warn('Default tenant "coleccion-numista" not found. Skipping CategorySeeder.');
+
             return;
         }
 
@@ -87,11 +85,6 @@ class CategorySeeder extends Seeder
 
     /**
      * Helper function to create a category consistently.
-     *
-     * @param Tenant $tenant
-     * @param string $name
-     * @param int|null $parentId
-     * @return Category
      */
     private function createCategory(Tenant $tenant, string $name, ?int $parentId = null): Category
     {

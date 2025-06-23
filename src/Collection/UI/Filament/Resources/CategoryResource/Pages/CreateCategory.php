@@ -2,9 +2,8 @@
 
 namespace Numista\Collection\UI\Filament\Resources\CategoryResource\Pages;
 
-use Numista\Collection\UI\Filament\Resources\CategoryResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Numista\Collection\UI\Filament\Resources\CategoryResource;
 
 class CreateCategory extends CreateRecord
 {

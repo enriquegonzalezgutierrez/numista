@@ -40,7 +40,7 @@ class ImagesRelationManager extends RelationManager
                     ->label(__('panel.field_image_file'))
                     ->required()
                     ->disk('tenants')
-                    ->directory('tenant-' . Filament::getTenant()?->id . '/item-images')
+                    ->directory('tenant-'.Filament::getTenant()?->id.'/item-images')
                     ->image()
                     ->imageEditor()
                     ->columnSpanFull(),

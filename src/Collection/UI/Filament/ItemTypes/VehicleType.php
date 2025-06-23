@@ -17,7 +17,7 @@ class VehicleType implements ItemType
                     TextInput::make('year')->label(__('item.field_year'))->numeric(),
                     TextInput::make('license_plate')->label(__('item.field_license_plate')),
                     TextInput::make('chassis_number')->label(__('item.field_chassis_number')),
-                ])->columns(2)
+                ])->columns(2),
         ];
     }
 }

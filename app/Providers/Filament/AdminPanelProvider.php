@@ -17,10 +17,9 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-
 use Numista\Collection\Domain\Models\Tenant;
-use Numista\Collection\UI\Filament\Pages\Tenancy\RegisterTenant;
 use Numista\Collection\UI\Filament\Pages\Tenancy\EditTenantProfile;
+use Numista\Collection\UI\Filament\Pages\Tenancy\RegisterTenant;
 use Numista\Collection\UI\Filament\Widgets\ItemsByTypeChart;
 use Numista\Collection\UI\Filament\Widgets\LatestItemsWidget;
 use Numista\Collection\UI\Filament\Widgets\StatsOverviewWidget;

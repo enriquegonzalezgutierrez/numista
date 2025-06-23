@@ -45,7 +45,7 @@ return new class extends Migration
             $table->dropColumn([
                 'publisher_postcard', 'origin_location', 'photographer', 'location',
                 'technique', 'conflict', 'sport', 'team', 'player', 'event',
-                'movie_title', 'character'
+                'movie_title', 'character',
             ]);
         });
     }
