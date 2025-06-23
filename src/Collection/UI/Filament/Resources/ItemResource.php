@@ -169,7 +169,7 @@ class ItemResource extends Resource
                     }),
 
                 TextColumn::make('name')
-                    ->label(__('item.field_type'))
+                    ->label(__('item.field_name'))
                     ->searchable() // Search is enabled on this column
                     ->sortable(),
 

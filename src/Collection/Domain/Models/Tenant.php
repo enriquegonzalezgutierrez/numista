@@ -31,6 +31,11 @@ class Tenant extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
     /**
      * Get the items for the tenant.
      */

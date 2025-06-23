@@ -6,11 +6,9 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -18,11 +16,9 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Numista\Collection\Domain\Models\Tenant;
+use Numista\Collection\UI\Filament\Pages\Dashboard;
 use Numista\Collection\UI\Filament\Pages\Tenancy\EditTenantProfile;
 use Numista\Collection\UI\Filament\Pages\Tenancy\RegisterTenant;
-use Numista\Collection\UI\Filament\Widgets\ItemsByTypeChart;
-use Numista\Collection\UI\Filament\Widgets\LatestItemsWidget;
-use Numista\Collection\UI\Filament\Widgets\StatsOverviewWidget;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -48,15 +44,11 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: base_path('src/Collection/UI/Filament/Resources'), for: 'Numista\\Collection\\UI\\Filament\\Resources')
             ->discoverPages(in: base_path('src/Collection/UI/Filament/Pages'), for: 'Numista\\Collection\\UI\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: base_path('src/Collection/UI/Filament/Widgets'), for: 'Numista\\Collection\\UI\\Filament\\Widgets')
             ->widgets([
-                // Widgets\AccountWidget::class,
-                // Widgets\FilamentInfoWidget::class,
-                StatsOverviewWidget::class,
-                ItemsByTypeChart::class,
-                LatestItemsWidget::class,
+                // 
             ])
             ->middleware([
                 EncryptCookies::class,
