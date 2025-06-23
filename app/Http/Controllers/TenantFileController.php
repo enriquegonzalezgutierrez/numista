@@ -1,5 +1,7 @@
 <?php
+
 // app/Http/Controllers/TenantFileController.php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +18,7 @@ class TenantFileController extends Controller
 
         $disk = Storage::disk('tenants');
 
-        if (!$disk->exists($path)) {
+        if (! $disk->exists($path)) {
             abort(404);
         }
 

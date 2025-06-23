@@ -1,4 +1,5 @@
 <?php
+
 // src/Collection/UI/Filament/ItemGradeManager.php
 
 namespace Numista\Collection\UI\Filament;
@@ -35,8 +36,9 @@ class ItemGradeManager
         $gradeKeys = array_keys($this->grades);
         $translatedGrades = [];
         foreach ($gradeKeys as $gradeKey) {
-            $translatedGrades[$gradeKey] = __('item.grade_' . $gradeKey);
+            $translatedGrades[$gradeKey] = __('item.grade_'.$gradeKey);
         }
+
         return $translatedGrades;
     }
 }

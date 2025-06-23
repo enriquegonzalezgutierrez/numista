@@ -7,7 +7,6 @@ use Numista\Collection\Domain\Models\Tenant;
 
 class TenantFactory extends Factory
 {
-
     /**
      * The name of the factory's corresponding model.
      *

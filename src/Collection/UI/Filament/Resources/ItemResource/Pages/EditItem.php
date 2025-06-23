@@ -2,9 +2,9 @@
 
 namespace Numista\Collection\UI\Filament\Resources\ItemResource\Pages;
 
-use Numista\Collection\UI\Filament\Resources\ItemResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Numista\Collection\UI\Filament\Resources\ItemResource;
 
 class EditItem extends EditRecord
 {

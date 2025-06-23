@@ -15,7 +15,7 @@ class BookType implements ItemType
                     TextInput::make('author')->label(__('item.field_author')),
                     TextInput::make('publisher')->label(__('item.field_publisher')),
                     TextInput::make('isbn')->label(__('item.field_isbn')),
-                ])->columns(3)
+                ])->columns(3),
         ];
     }
 }

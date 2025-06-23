@@ -15,7 +15,7 @@ class WatchType implements ItemType
                     TextInput::make('brand')->label(__('item.field_brand')),
                     TextInput::make('model')->label(__('item.field_model')),
                     TextInput::make('material')->label(__('item.field_material')),
-                ])->columns(3)
+                ])->columns(3),
         ];
     }
 }

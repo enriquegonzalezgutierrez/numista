@@ -107,6 +107,15 @@ test-unit: ## Run only Unit tests
 test-coverage: ## Run tests and generate a code coverage report
 	@make artisan a="test --coverage"
 
+lint: ## Check for code style issues using Pint
+	@echo "--- Checking code style ---"
+	@docker-compose exec app ./vendor/bin/pint --test
+
+fix: ## Automatically fix code style issues using Pint
+	@echo "--- Fixing code style issues ---"
+	@docker-compose exec app ./vendor/bin/pint
+	@echo "--- ✅ Code style fixed! ---"
+
 # ==============================================================================
 # Helper Commands
 # ==============================================================================
@@ -126,4 +135,4 @@ help: ## Show this help message
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 # Mark targets as not being actual files
-.PHONY: up down stop restart logs setup cache-clear fix-permissions artisan migrate migrate-fresh key-generate composer composer-install npm test test-feature test-unit test-coverage bash db-shell help
+.PHONY: up down stop restart logs setup cache-clear clear-all fix-permissions artisan migrate migrate-fresh key-generate composer composer-install npm test test-feature test-unit test-coverage lint fix bash db-shell help

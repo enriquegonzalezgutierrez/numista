@@ -16,7 +16,7 @@ class StampType implements ItemType
                     Select::make('country_id')->label(__('item.field_country'))->relationship('country', 'name')->searchable()->preload(),
                     TextInput::make('year')->label(__('item.field_year'))->numeric(),
                     TextInput::make('face_value')->label(__('item.field_face_value')),
-                ])->columns(3)
+                ])->columns(3),
         ];
     }
 }

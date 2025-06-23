@@ -2,7 +2,8 @@
 
 namespace Numista\Collection\UI\Filament\ItemTypes;
 
-use Filament\Forms\Components\{Section, TextInput};
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 
 class RadioType implements ItemType
 {
@@ -13,7 +14,7 @@ class RadioType implements ItemType
                 TextInput::make('brand')->label(__('item.field_brand')),
                 TextInput::make('model')->label(__('item.field_model')),
                 TextInput::make('year')->label(__('item.field_year'))->numeric(),
-            ])->columns(3)
+            ])->columns(3),
         ];
     }
 }

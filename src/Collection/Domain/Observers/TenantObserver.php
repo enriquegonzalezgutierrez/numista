@@ -32,13 +32,14 @@ class TenantObserver
             $query->where('id', '!=', $exceptId);
         }
         while ($query->exists()) {
-            $slug = $baseSlug . '-' . $counter;
+            $slug = $baseSlug.'-'.$counter;
             $counter++;
             $query = Tenant::where('slug', $slug);
             if ($exceptId) {
                 $query->where('id', '!=', $exceptId);
             }
         }
+
         return $slug;
     }
 }

@@ -22,8 +22,8 @@ class ItemsByTypeChart extends ChartWidget
             ->groupBy('type')
             ->pluck('count', 'type')
             ->all();
-        
-        $manager = new ItemTypeManager();
+
+        $manager = new ItemTypeManager;
         $allPossibleTypes = $manager->getTypesForSelect();
 
         $translatedLabels = [];
@@ -38,7 +38,7 @@ class ItemsByTypeChart extends ChartWidget
                     'data' => array_values($data),
                     'backgroundColor' => [
                         '#14b8a6', '#f59e0b', '#3b82f6', '#ef4444',
-                        '#8b5cf6', '#ec4899', '#64748b', '#22c55e'
+                        '#8b5cf6', '#ec4899', '#64748b', '#22c55e',
                     ],
                 ],
             ],

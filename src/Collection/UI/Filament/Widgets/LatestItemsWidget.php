@@ -11,7 +11,8 @@ use Numista\Collection\UI\Filament\Resources\ItemResource;
 class LatestItemsWidget extends BaseWidget
 {
     protected static ?int $sort = 3;
-    protected int | string | array $columnSpan = 'full';
+
+    protected int|string|array $columnSpan = 'full';
 
     public function table(Table $table): Table
     {
@@ -29,7 +30,7 @@ class LatestItemsWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('type')
                     ->label(__('panel.widget_table_column_type'))
                     ->badge()
-                    ->formatStateUsing(fn($state) => __("item.type_{$state}")),
+                    ->formatStateUsing(fn ($state) => __("item.type_{$state}")),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('panel.widget_table_added_at'))
@@ -38,7 +39,7 @@ class LatestItemsWidget extends BaseWidget
             ->actions([
                 Tables\Actions\Action::make('view')
                     ->label(__('panel.widget_table_view_action'))
-                    ->url(fn(Item $record): string => ItemResource::getUrl('edit', ['record' => $record])),
+                    ->url(fn (Item $record): string => ItemResource::getUrl('edit', ['record' => $record])),
             ]);
     }
 }

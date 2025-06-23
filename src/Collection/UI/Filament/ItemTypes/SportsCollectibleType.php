@@ -2,7 +2,8 @@
 
 namespace Numista\Collection\UI\Filament\ItemTypes;
 
-use Filament\Forms\Components\{Section, TextInput};
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 
 class SportsCollectibleType implements ItemType
 {
@@ -14,7 +15,7 @@ class SportsCollectibleType implements ItemType
                 TextInput::make('team')->label(__('item.field_team')),
                 TextInput::make('player')->label(__('item.field_player')),
                 TextInput::make('event')->label(__('item.field_event')),
-            ])->columns(2)
+            ])->columns(2),
         ];
     }
 }

@@ -2,8 +2,6 @@
 
 namespace Numista\Collection\UI\Filament\Resources;
 
-use Numista\Collection\Domain\Models\Category;
-use Numista\Collection\UI\Filament\Resources\CategoryResource\Pages;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -20,6 +18,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
+use Numista\Collection\Domain\Models\Category;
+use Numista\Collection\UI\Filament\Resources\CategoryResource\Pages;
 
 class CategoryResource extends Resource
 {
@@ -66,7 +66,7 @@ class CategoryResource extends Resource
                     ->label(__('panel.field_name'))
                     ->required()
                     ->reactive()
-                    ->afterStateUpdated(fn($state, $set) => $set('slug', Str::slug($state)))
+                    ->afterStateUpdated(fn ($state, $set) => $set('slug', Str::slug($state)))
                     ->columnSpanFull(),
 
                 TextInput::make('slug')
@@ -87,7 +87,7 @@ class CategoryResource extends Resource
 
                             $descendantIds = $record->descendants->pluck('id')->toArray();
 
-                            if (!empty($descendantIds)) {
+                            if (! empty($descendantIds)) {
                                 $query->whereNotIn('id', $descendantIds);
                             }
                         }
@@ -117,6 +117,7 @@ class CategoryResource extends Resource
                     ->sortable()
                     ->description(function (Category $record): string {
                         $record->load('ancestors');
+
                         return $record->ancestors->pluck('name')->push($record->name)->implode(' > ');
                     }),
 

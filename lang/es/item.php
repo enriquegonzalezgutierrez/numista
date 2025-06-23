@@ -1,4 +1,5 @@
 <?php
+
 // lang/es/item.php
 return [
     // Section Titles in Item Form

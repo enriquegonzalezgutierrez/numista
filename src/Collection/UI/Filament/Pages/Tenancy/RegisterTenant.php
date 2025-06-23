@@ -2,11 +2,11 @@
 
 namespace Numista\Collection\UI\Filament\Pages\Tenancy;
 
-use Numista\Collection\Domain\Models\Tenant;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant as BaseRegisterTenant;
 use Illuminate\Support\Str;
+use Numista\Collection\Domain\Models\Tenant;
 
 class RegisterTenant extends BaseRegisterTenant
 {
@@ -23,7 +23,7 @@ class RegisterTenant extends BaseRegisterTenant
                     ->label(__('panel.field_collection_name'))
                     ->required()
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn($state, callable $set) => $set('slug', Str::slug($state))),
+                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
 
                 TextInput::make('slug')
                     ->label(__('panel.field_collection_slug'))

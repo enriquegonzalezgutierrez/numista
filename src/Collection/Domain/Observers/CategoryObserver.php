@@ -11,9 +11,6 @@ class CategoryObserver
 {
     /**
      * Handle the Category "creating" event.
-     *
-     * @param  \Numista\Collection\Domain\Models\Category  $category
-     * @return void
      */
     public function creating(Category $category): void
     {
@@ -24,9 +21,6 @@ class CategoryObserver
 
     /**
      * Handle the Category "updating" event.
-     *
-     * @param  \Numista\Collection\Domain\Models\Category  $category
-     * @return void
      */
     public function updating(Category $category): void
     {
@@ -37,10 +31,6 @@ class CategoryObserver
 
     /**
      * Creates a unique slug for the category.
-     *
-     * @param string $name
-     * @param int|null $exceptId
-     * @return string
      */
     private function createUniqueSlug(string $name, ?int $exceptId = null): string
     {
@@ -54,7 +44,7 @@ class CategoryObserver
         }
 
         while ($query->exists()) {
-            $slug = $baseSlug . '-' . $counter;
+            $slug = $baseSlug.'-'.$counter;
             $counter++;
             // Reset the query for the next loop iteration
             $query = Category::where('slug', $slug);

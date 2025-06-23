@@ -13,7 +13,6 @@ class CollectionObserver
      * Handle the Collection "creating" event.
      *
      * @param  \Numista\Collection\Domain\Models\Collection  $$collection
-     * @return void
      */
     public function creating(Collection $collection): void
     {
@@ -24,9 +23,6 @@ class CollectionObserver
 
     /**
      * Handle the Collection "updating" event.
-     *
-     * @param  \Numista\Collection\Domain\Models\Collection  $collection
-     * @return void
      */
     public function updating(Collection $collection): void
     {
@@ -37,10 +33,6 @@ class CollectionObserver
 
     /**
      * Creates a unique slug for the collection.
-     *
-     * @param string $name
-     * @param int|null $exceptId
-     * @return string
      */
     private function createUniqueSlug(string $name, ?int $exceptId = null): string
     {
@@ -54,7 +46,7 @@ class CollectionObserver
         }
 
         while ($query->exists()) {
-            $slug = $baseSlug . '-' . $counter;
+            $slug = $baseSlug.'-'.$counter;
             $counter++;
             // Reset the query for the next loop iteration
             $query = Collection::where('slug', $slug);

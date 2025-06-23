@@ -29,7 +29,7 @@ class StatsOverviewWidget extends BaseWidget
                 ->descriptionIcon('heroicon-m-rectangle-stack')
                 ->color('success'),
 
-            Stat::make(__('panel.widget_stats_collection_value'), number_format($totalValue, 2) . ' €')
+            Stat::make(__('panel.widget_stats_collection_value'), number_format($totalValue, 2).' €')
                 ->description(__('panel.widget_stats_collection_value_desc'))
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('primary'),

@@ -1,4 +1,5 @@
 <?php
+
 // lang/es/panel.php
 return [
     // Navigation & Resource Labels

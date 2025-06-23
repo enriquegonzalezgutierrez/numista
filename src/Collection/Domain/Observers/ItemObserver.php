@@ -35,7 +35,7 @@ class ItemObserver
         }
 
         while ($query->exists()) {
-            $slug = $baseSlug . '-' . $counter;
+            $slug = $baseSlug.'-'.$counter;
             $counter++;
             // Reset the query for the next loop iteration
             $query = Item::where('slug', $slug);

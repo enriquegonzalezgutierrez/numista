@@ -1,4 +1,5 @@
 <?php
+
 // app/Filament/ItemStatusManager.php
 
 namespace Numista\Collection\UI\Filament;
@@ -36,7 +37,7 @@ class ItemStatusManager
 
         $translatedStatuses = [];
         foreach ($statusKeys as $statusKey) {
-            $translatedStatuses[$statusKey] = __('item.status_' . $statusKey);
+            $translatedStatuses[$statusKey] = __('item.status_'.$statusKey);
         }
 
         return $translatedStatuses;
@@ -45,16 +46,16 @@ class ItemStatusManager
     /**
      * Get the translated label for a single status key.
      *
-     * @param string $statusKey The key of the status (e.g., 'for_sale').
+     * @param  string  $statusKey  The key of the status (e.g., 'for_sale').
      * @return string The translated status label.
      */
     public function getTranslatedStatus(string $statusKey): string
     {
         // Check if the key exists to avoid errors with old data
-        if (!array_key_exists($statusKey, $this->statuses)) {
+        if (! array_key_exists($statusKey, $this->statuses)) {
             return ucfirst($statusKey); // Fallback to a readable version of the key
         }
 
-        return __('item.status_' . $statusKey);
+        return __('item.status_'.$statusKey);
     }
 }
