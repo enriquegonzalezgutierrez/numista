@@ -1,44 +1,76 @@
-name: Laravel CI
+name: Laravel CI/CD
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main", "development" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 jobs:
-  laravel-tests:
-    name: Run Laravel Tests
+  # --- JOB 1: LINTING (Static Analysis) ---
+  lint:
+    name: Check Code Style (Pint)
     runs-on: ubuntu-latest
-
     steps:
-    # 1. Checkout the code from the repository
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    # 2. Set up PHP with extensions
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-        extensions: pdo, pdo_pgsql, pdo_sqlite, zip, intl, gd
-        
-    # 3. Copy the .env file for testing
-    - name: Copy .env file
-      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
 
-    # 4. Install Composer dependencies
-    - name: Install Composer dependencies
-      run: composer install --no-progress --prefer-dist --optimize-autoloader
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-    # 5. Generate application key
-    - name: Generate app key
-      run: php artisan key:generate
+      - name: Run Laravel Pint
+        run: ./vendor/bin/pint --test
 
-    # 6. Run database migrations (on the in-memory SQLite DB)
-    - name: Run migrations
-      run: php artisan migrate
+  # --- JOB 2: TESTING (Unit & Feature Tests) ---
+  tests:
+    name: Run PHPUnit/Pest Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    # 7. Run Pest tests
-    - name: Execute tests (Pest)
-      run: php artisan test
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_pgsql, pdo_sqlite, zip, intl, gd
+          
+      - name: Copy .env file
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Generate app key
+        run: php artisan key:generate
+
+      - name: Run migrations
+        run: php artisan migrate --env=testing # Use the testing environment defined in phpunit.xml
+
+      - name: Execute tests (Pest)
+        run: php artisan test
+
+  # --- JOB 3: BUILD FRONTEND ASSETS ---
+  build:
+    name: Build Frontend Assets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Use a recent LTS version
+
+      - name: Install NPM dependencies
+        run: npm install
+
+      - name: Build assets
+        run: npm run build
