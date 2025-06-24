@@ -11,7 +11,7 @@ return [
     'section_acquisition' => 'Datos de Adquisición y Venta',
 
     // Field Labels specific to Items
-    'field_name' => 'Nombre o Título del Ítem',
+    'field_name' => 'Nombre',
     'field_type' => 'Tipo de Ítem',
     'field_country' => 'País de Origen',
     'field_year' => 'Año de Emisión / Creación',
@@ -26,7 +26,7 @@ return [
     'field_cover_date' => 'Fecha de Portada',
     'field_grade' => 'Grado de Conservación',
     'field_quantity' => 'Cantidad',
-    'field_purchase_price' => 'Precio de Compra',
+    'field_unit_price' => 'Precio Unitario',
     'field_purchase_date' => 'Fecha de Compra',
     'field_status' => 'Estado Actual',
     'field_sale_price' => 'Precio de Venta',
@@ -88,6 +88,11 @@ return [
     'status_sold' => 'Vendido',
     'status_featured' => 'Destacado',
     'status_discounted' => 'En oferta / Con descuento',
+    'status_pending' => 'Pendiente',
+    'status_paid' => 'Pagado',
+    'status_shipped' => 'Enviado',
+    'status_completed' => 'Completado',
+    'status_cancelled' => 'Cancelado',
 
     // Grade Options
     'grade_unc' => 'UNC (Sin Circular)',

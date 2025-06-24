@@ -15,6 +15,11 @@ return [
     'nav_images' => 'Imágenes',
     'label_image' => 'Imagen',
     'label_images' => 'Imágenes',
+    'nav_group_shop' => 'Tienda',
+    'nav_orders' => 'Pedidos',
+    'label_order' => 'Pedido',
+    'label_orders' => 'Pedidos',
+    'label_order_items' => 'Artículos del Pedido',
 
     // General Field & Column Labels
     'field_name' => 'Nombre',
@@ -31,6 +36,11 @@ return [
     'field_visibility' => 'Visibilidad',
     'field_collection_name' => 'Nombre de la Colección',
     'field_tenant_name' => 'Nombre de la Colección (Tenant)',
+    'field_order_number' => 'Nº de Pedido',
+    'field_customer' => 'Cliente',
+    'field_total_amount' => 'Importe Total',
+    'field_order_date' => 'Fecha del Pedido',
+    'field_last_update' => 'Última Actualización',
 
     // General UI Text
     'placeholder_none' => 'Ninguna',
@@ -78,6 +88,8 @@ return [
     'widget_table_column_name' => 'Nombre',
     'widget_table_column_type' => 'Tipo',
     'widget_stats_collections' => 'Colecciones Creadas',
+    'widget_table_valuable_items' => 'Ítems más Valiosos en Venta',
+    'widget_table_column_sale_price' => 'Precio de Venta',
 
     // Descriptions for Stats Widget (Add these new keys)
     'widget_stats_total_items_desc' => 'Número total de ítems en el inventario',

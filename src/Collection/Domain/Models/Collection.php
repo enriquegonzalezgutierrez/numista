@@ -2,6 +2,7 @@
 
 namespace Numista\Collection\Domain\Models;
 
+use Database\Factories\CollectionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,5 +22,15 @@ class Collection extends Model
     public function items(): BelongsToMany
     {
         return $this->belongsToMany(Item::class);
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory(): CollectionFactory
+    {
+        return CollectionFactory::new();
     }
 }

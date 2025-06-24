@@ -132,4 +132,18 @@ class ItemFactory extends Factory
             'isbn' => fake()->isbn13(),
         ]);
     }
+
+    /**
+     * Indicate that the item is for sale and has a sale price.
+     */
+    public function forSale(): static
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'status' => 'for_sale',
+                // Generate a sale price that is higher than the purchase price
+                'sale_price' => $attributes['purchase_price'] * fake()->randomFloat(2, 1.2, 2.5),
+            ];
+        });
+    }
 }
