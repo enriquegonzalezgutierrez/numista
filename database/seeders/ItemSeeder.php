@@ -25,7 +25,7 @@ class ItemSeeder extends Seeder
         }
 
         // 2. Clean previous items for this tenant to avoid duplicates
-        Item::where('tenant_id', $tenant->id)->get()->each(fn($item) => $item->delete());
+        Item::where('tenant_id', $tenant->id)->get()->each(fn ($item) => $item->delete());
 
         // 3. Define the available image paths
         $imagePaths = [
@@ -55,7 +55,7 @@ class ItemSeeder extends Seeder
         // --- 7. Attach images to all items ---
         $this->attachImagesToItems($allItems, $imagePaths);
 
-        $this->command->info('Item seeder finished. ' . $allItems->count() . ' items created with relations.');
+        $this->command->info('Item seeder finished. '.$allItems->count().' items created with relations.');
     }
 
     /**
@@ -64,7 +64,7 @@ class ItemSeeder extends Seeder
     private function createItemsForCategory(Tenant $tenant, string $categorySlug, string $itemType, int $count, bool $isForSale = false): void
     {
         $category = Category::where('tenant_id', $tenant->id)->where('slug', $categorySlug)->first();
-        if (!$category) { /* ... */
+        if (! $category) { /* ... */
             return;
         }
 
@@ -82,12 +82,12 @@ class ItemSeeder extends Seeder
         if ($isForSale) {
             foreach ($items as $item) {
                 $item->update([
-                    'sale_price' => $item->purchase_price * fake()->randomFloat(2, 1.2, 2.5)
+                    'sale_price' => $item->purchase_price * fake()->randomFloat(2, 1.2, 2.5),
                 ]);
             }
         }
 
-        $items->each(fn(Item $item) => $item->categories()->attach($category->id));
+        $items->each(fn (Item $item) => $item->categories()->attach($category->id));
     }
 
     /**
@@ -129,7 +129,7 @@ class ItemSeeder extends Seeder
 
                 $item->images()->create([
                     'path' => $randomImagePath,
-                    'alt_text' => 'Imagen de prueba para ' . $item->name,
+                    'alt_text' => 'Imagen de prueba para '.$item->name,
                     'order_column' => $i + 1,
                 ]);
             }

@@ -4,24 +4,23 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\Order;
 use Numista\Collection\Domain\Models\Tenant;
-use App\Models\User;
 
 class OrderSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run(): void
     {
         $tenant = Tenant::where('slug', 'coleccion-numista')->first();
-        if (!$tenant) {
+        if (! $tenant) {
             $this->command->warn('Cannot run OrderSeeder. Missing tenant.');
+
             return;
         }
 
@@ -37,6 +36,7 @@ class OrderSeeder extends Seeder
 
         if ($itemsForSale->count() < 3) {
             $this->command->warn('Not enough items for sale to create meaningful orders. Skipping OrderSeeder.');
+
             return;
         }
 

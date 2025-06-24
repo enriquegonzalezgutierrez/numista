@@ -16,7 +16,7 @@ class OrderFactory extends Factory
         return [
             'tenant_id' => Tenant::factory(),
             'user_id' => User::factory(), // Creates a new customer for each order
-            'order_number' => 'ORD-' . strtoupper(uniqid()),
+            'order_number' => 'ORD-'.strtoupper(uniqid()),
             'total_amount' => fake()->randomFloat(2, 20, 500),
             'status' => fake()->randomElement(['pending', 'paid', 'shipped', 'completed', 'cancelled']),
             'shipping_address' => fake()->address(),

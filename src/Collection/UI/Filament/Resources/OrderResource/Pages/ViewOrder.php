@@ -17,11 +17,8 @@ class ViewOrder extends ViewRecord
     /**
      * Get the record for the page.
      * This overrides the default method to include eager loading.
-     *
-     * @param int|string $key
-     * @return Model
      */
-    protected function resolveRecord(int | string $key): Model
+    protected function resolveRecord(int|string $key): Model
     {
         // Get the Order model directly and eager load the customer.
         // This is the most direct and robust way.
@@ -30,18 +27,16 @@ class ViewOrder extends ViewRecord
 
     /**
      * Get the translated title for the page.
-     *
-     * @return string|Htmlable
      */
-    public function getTitle(): string | Htmlable
+    public function getTitle(): string|Htmlable
     {
-        return __('panel.label_order') . ' #' . $this->record->order_number;
+        return __('panel.label_order').' #'.$this->record->order_number;
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            // 
+            //
         ];
     }
 }

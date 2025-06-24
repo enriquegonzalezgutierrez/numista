@@ -15,19 +15,16 @@ class ValuableItemsWidget extends BaseWidget
     /**
      * The sort order for the widget.
      * We want this to appear after the chart, but before the latest items.
-     * @var int|null
      */
     protected static ?int $sort = 2;
 
     /**
      * Make the widget span the full width of the dashboard.
-     * @var int|string|array
      */
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     /**
      * Get the translated heading for the widget.
-     * @return string
      */
     public function getHeading(): string
     {
@@ -36,8 +33,6 @@ class ValuableItemsWidget extends BaseWidget
 
     /**
      * Defines the table structure for the widget.
-     * @param Table $table
-     * @return Table
      */
     public function table(Table $table): Table
     {
@@ -64,7 +59,7 @@ class ValuableItemsWidget extends BaseWidget
             ->actions([
                 Tables\Actions\Action::make('view')
                     ->label(__('panel.widget_table_view_action'))
-                    ->url(fn(Item $record): string => ItemResource::getUrl('edit', ['record' => $record])),
+                    ->url(fn (Item $record): string => ItemResource::getUrl('edit', ['record' => $record])),
             ]);
     }
 }

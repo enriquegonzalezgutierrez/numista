@@ -23,7 +23,7 @@ class ItemTypeManagerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->manager = new ItemTypeManager();
+        $this->manager = new ItemTypeManager;
     }
 
     #[Test]

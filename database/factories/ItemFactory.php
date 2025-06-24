@@ -48,9 +48,9 @@ class ItemFactory extends Factory
      */
     public function coin(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'type' => 'coin',
-            'name' => 'Moneda: ' . ucfirst(fake()->words(2, true)),
+            'name' => 'Moneda: '.ucfirst(fake()->words(2, true)),
             'country_id' => Country::inRandomOrder()->first()?->id,
             'year' => fake()->numberBetween(1800, 2023),
             'denomination' => fake()->randomElement(['1 Dólar', '50 Pesetas', '100 Pesos', '2 Euros']),
@@ -65,9 +65,9 @@ class ItemFactory extends Factory
      */
     public function banknote(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'type' => 'banknote',
-            'name' => 'Billete: ' . ucfirst(fake()->words(2, true)),
+            'name' => 'Billete: '.ucfirst(fake()->words(2, true)),
             'country_id' => Country::inRandomOrder()->first()?->id,
             'year' => fake()->numberBetween(1900, 2020),
             'denomination' => fake()->randomElement(['100 Pesetas', '5 Dólares', '20 Euros', '50 Reales']),
@@ -80,7 +80,7 @@ class ItemFactory extends Factory
      */
     public function comic(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'type' => 'comic',
             'name' => fake()->randomElement(['The Amazing Spider-Man', 'Action Comics', 'X-Men', 'Watchmen']),
             'grade' => fake()->randomElement(['CGC 9.8', 'NM', 'VF/NM', 'F/VF']),
@@ -95,11 +95,11 @@ class ItemFactory extends Factory
      */
     public function watch(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'type' => 'watch',
-            'name' => 'Reloj: ' . fake()->company(),
+            'name' => 'Reloj: '.fake()->company(),
             'brand' => fake()->randomElement(['Rolex', 'Omega', 'Seiko', 'Casio']),
-            'model' => fake()->word() . ' ' . fake()->randomNumber(4),
+            'model' => fake()->word().' '.fake()->randomNumber(4),
             'material' => fake()->randomElement(['Acero Inoxidable', 'Oro', 'Titanio']),
         ]);
     }
@@ -109,9 +109,9 @@ class ItemFactory extends Factory
      */
     public function stamp(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'type' => 'stamp',
-            'name' => 'Sello: ' . fake()->country() . ' ' . fake()->year(),
+            'name' => 'Sello: '.fake()->country().' '.fake()->year(),
             'country_id' => Country::inRandomOrder()->first()->id,
             'year' => fake()->numberBetween(1840, 2020),
             'face_value' => fake()->randomElement(['5c', '10p', '1.00€']),
@@ -123,7 +123,7 @@ class ItemFactory extends Factory
      */
     public function book(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'type' => 'book',
             'name' => fake()->catchPhrase(),
             'author' => fake()->name(),

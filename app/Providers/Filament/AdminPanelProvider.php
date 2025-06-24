@@ -48,7 +48,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: base_path('src/Collection/UI/Filament/Widgets'), for: 'Numista\\Collection\\UI\\Filament\\Widgets')
             ->widgets([
-                // 
+                //
             ])
             ->middleware([
                 EncryptCookies::class,
