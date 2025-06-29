@@ -4,6 +4,7 @@
 
 namespace Numista\Collection\Domain\Observers;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Numista\Collection\Domain\Models\Item;
 
@@ -21,6 +22,22 @@ class ItemObserver
         if ($item->isDirty('name')) {
             $item->slug = $this->createUniqueSlug($item->name, $item->id);
         }
+    }
+
+    public function saved(Item $item): void
+    {
+        $this->clearTenantWidgetsCache($item->tenant_id);
+    }
+
+    public function deleted(Item $item): void
+    {
+        $this->clearTenantWidgetsCache($item->tenant_id);
+    }
+
+    protected function clearTenantWidgetsCache(int $tenantId): void
+    {
+        Cache::forget("widgets:stats_overview:tenant_{$tenantId}");
+        // Note: Add keys for other cached widgets here in the future
     }
 
     private function createUniqueSlug(string $name, ?int $exceptId = null): string

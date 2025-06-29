@@ -2,8 +2,10 @@
 
 namespace Numista\Collection\UI\Filament\Widgets;
 
+use Filament\Facades\Filament;
 use Filament\Widgets\ChartWidget;
 use Numista\Collection\Domain\Models\Item;
+use Numista\Collection\Domain\Models\Tenant;
 use Numista\Collection\UI\Filament\ItemTypeManager;
 
 class ItemsByTypeChart extends ChartWidget
@@ -17,7 +19,11 @@ class ItemsByTypeChart extends ChartWidget
 
     protected function getData(): array
     {
+        /** @var Tenant $currentTenant */
+        $currentTenant = Filament::getTenant();
+
         $data = Item::query()
+            ->where('tenant_id', $currentTenant->id)
             ->selectRaw('type, count(*) as count')
             ->groupBy('type')
             ->pluck('count', 'type')
@@ -37,8 +43,14 @@ class ItemsByTypeChart extends ChartWidget
                     'label' => __('panel.label_items'),
                     'data' => array_values($data),
                     'backgroundColor' => [
-                        '#14b8a6', '#f59e0b', '#3b82f6', '#ef4444',
-                        '#8b5cf6', '#ec4899', '#64748b', '#22c55e',
+                        '#14b8a6',
+                        '#f59e0b',
+                        '#3b82f6',
+                        '#ef4444',
+                        '#8b5cf6',
+                        '#ec4899',
+                        '#64748b',
+                        '#22c55e',
                     ],
                 ],
             ],
