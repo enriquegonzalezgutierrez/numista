@@ -4,6 +4,7 @@
 
 namespace Numista\Collection\Domain\Observers;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Numista\Collection\Domain\Models\Collection;
 
@@ -29,6 +30,21 @@ class CollectionObserver
         if ($collection->isDirty('name')) {
             $collection->slug = $this->createUniqueSlug($collection->name, $collection->id);
         }
+    }
+
+    public function saved(Collection $collection): void
+    {
+        $this->clearTenantWidgetsCache($collection->tenant_id);
+    }
+
+    public function deleted(Collection $collection): void
+    {
+        $this->clearTenantWidgetsCache($collection->tenant_id);
+    }
+
+    protected function clearTenantWidgetsCache(int $tenantId): void
+    {
+        Cache::forget("widgets:stats_overview:tenant_{$tenantId}");
     }
 
     /**

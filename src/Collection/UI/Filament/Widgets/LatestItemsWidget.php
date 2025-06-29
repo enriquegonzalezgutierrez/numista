@@ -2,10 +2,12 @@
 
 namespace Numista\Collection\UI\Filament\Widgets;
 
+use Filament\Facades\Filament;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Numista\Collection\Domain\Models\Item;
+use Numista\Collection\Domain\Models\Tenant;
 use Numista\Collection\UI\Filament\Resources\ItemResource;
 
 class LatestItemsWidget extends BaseWidget
@@ -16,13 +18,19 @@ class LatestItemsWidget extends BaseWidget
 
     public function table(Table $table): Table
     {
+        /** @var Tenant $currentTenant */
+        $currentTenant = Filament::getTenant();
+
         return $table
             ->heading(__('panel.widget_table_latest_items'))
             ->query(
-                // Use the ItemResource's query to include eager loading
-                ItemResource::getEloquentQuery()->latest()->limit(5)
+                Item::query() // Use a direct query
+                    ->with('images') // Eager load images like the resource does
+                    ->where('tenant_id', $currentTenant->id)
+                    ->latest()
+                    ->limit(5)
             )
-            ->paginated(false) // This is the fix to show only the 5 items
+            ->paginated(false)
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('panel.widget_table_column_name')),
