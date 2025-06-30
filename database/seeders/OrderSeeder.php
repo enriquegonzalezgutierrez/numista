@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Numista\Collection\Domain\Models\Customer;
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\Order;
 use Numista\Collection\Domain\Models\Tenant;
@@ -24,42 +25,44 @@ class OrderSeeder extends Seeder
             return;
         }
 
-        // --- Create a pool of customers ---
-        $customers = User::factory(5)->create(); // Create 5 random customers
-        $this->command->info('Created 5 sample customers.');
+        $this->command->info('Creating a large volume of customers and orders...');
 
-        // --- Get items available for sale from this tenant ---
+        // Create a pool of 200 customers
+        $customers = User::factory(200)
+            ->customer()
+            ->has(Customer::factory())
+            ->create();
+        $this->command->info('Created 200 sample customers.');
+
         $itemsForSale = Item::where('tenant_id', $tenant->id)
             ->where('status', 'for_sale')
             ->whereNotNull('sale_price')
             ->get();
 
-        if ($itemsForSale->count() < 3) {
+        if ($itemsForSale->count() < 10) { // Need more items for variety
             $this->command->warn('Not enough items for sale to create meaningful orders. Skipping OrderSeeder.');
 
             return;
         }
 
-        // --- Create 8 orders, assigning them to random customers ---
-        for ($i = 0; $i < 8; $i++) {
-            $customer = $customers->random();
-            $orderItems = $itemsForSale->random(rand(1, 3))->unique('id'); // Ensure unique items per order
+        // Create 400 orders
+        for ($i = 0; $i < 400; $i++) {
+            $customerUser = $customers->random();
+            $orderItems = $itemsForSale->random(rand(1, 4))->unique('id');
 
             if ($orderItems->isEmpty()) {
                 continue;
             }
 
-            // Create the order first
             $order = Order::factory()->create([
                 'tenant_id' => $tenant->id,
-                'user_id' => $customer->id,
-                'total_amount' => 0, // We will calculate this after adding items
+                'user_id' => $customerUser->id,
+                'total_amount' => 0,
             ]);
 
-            // Create order items
             $totalAmount = 0;
             foreach ($orderItems as $item) {
-                $quantity = 1; // For simplicity, each item is bought once
+                $quantity = rand(1, 2);
                 $price = $item->sale_price;
                 $totalAmount += $price * $quantity;
 
@@ -70,10 +73,9 @@ class OrderSeeder extends Seeder
                 ]);
             }
 
-            // Update the order with the correct total amount
             $order->update(['total_amount' => $totalAmount]);
         }
 
-        $this->command->info('Order seeder finished. Created 8 sample orders.');
+        $this->command->info('Order seeder finished. Created 400 sample orders.');
     }
 }

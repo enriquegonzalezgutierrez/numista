@@ -3,6 +3,7 @@
 namespace Numista\Collection\Domain\Models;
 
 use Database\Factories\ItemFactory;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -125,5 +126,28 @@ class Item extends Model
     protected static function newFactory(): ItemFactory
     {
         return ItemFactory::new();
+    }
+
+    /**
+     * Scope a query to apply filters from the request.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFilter(Builder $query, array $filters): Builder
+    {
+        // Search filter for item name
+        $query->when($filters['search'] ?? null, function ($query, $search) {
+            $query->where('name', 'like', '%'.$search.'%');
+        });
+
+        // Category filter
+        $query->when($filters['categories'] ?? null, function ($query, $categories) {
+            $query->whereHas('categories', function ($q) use ($categories) {
+                $q->whereIn('id', $categories);
+            });
+        });
+
+        return $query;
     }
 }

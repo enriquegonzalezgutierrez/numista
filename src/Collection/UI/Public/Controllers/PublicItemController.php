@@ -4,21 +4,40 @@ namespace Numista\Collection\UI\Public\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
+use Numista\Collection\Domain\Models\Category;
 use Numista\Collection\Domain\Models\Item;
 
 class PublicItemController extends Controller
 {
-    public function index(): View
+    /**
+     * Display a paginated list of all items that are for sale,
+     * applying any filters from the request.
+     */
+    public function index(Request $request): View
     {
+        // Get all filters from the request
+        $filters = $request->only(['search', 'categories']);
+
         $items = Item::query()
             ->where('status', 'for_sale')
             ->with(['images', 'tenant'])
+            ->filter($filters) // Apply our new scope
             ->latest('created_at')
             ->paginate(12);
 
-        return view('public.items.index', compact('items'));
+        // Get categories that have at least one item for sale
+        $categories = Category::query()
+            ->whereHas('items', fn ($q) => $q->where('status', 'for_sale'))
+            ->orderBy('name')
+            ->get();
+
+        return view('public.items.index', compact('items', 'categories'));
     }
 
+    /**
+     * Display the detail page for a specific item.
+     */
     public function show(Item $item): View
     {
         if ($item->status !== 'for_sale') {

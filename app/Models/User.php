@@ -10,9 +10,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Numista\Collection\Domain\Models\Customer;
 use Numista\Collection\Domain\Models\Order;
 use Numista\Collection\Domain\Models\Tenant;
 
@@ -30,6 +32,7 @@ class User extends Authenticatable implements HasTenants
         'name',
         'email',
         'password',
+        'is_admin',
     ];
 
     /**
@@ -40,6 +43,7 @@ class User extends Authenticatable implements HasTenants
     protected $hidden = [
         'password',
         'remember_token',
+        'is_admin' => 'boolean',
     ];
 
     /**
@@ -81,5 +85,13 @@ class User extends Authenticatable implements HasTenants
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * The customer profile associated with the user.
+     */
+    public function customer(): HasOne
+    {
+        return $this->hasOne(Customer::class);
     }
 }
