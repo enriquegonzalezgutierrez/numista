@@ -134,6 +134,21 @@ class ItemFactory extends Factory
     }
 
     /**
+     * State for an 'art' type item.
+     */
+    public function art(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => 'art',
+            'name' => 'Obra: '.fake()->words(3, true),
+            'artist' => fake()->name(),
+            'year' => fake()->numberBetween(1600, 2020),
+            'dimensions' => fake()->numberBetween(20, 150).'x'.fake()->numberBetween(20, 150).' cm',
+            'material' => fake()->randomElement(['Óleo sobre lienzo', 'Acuarela', 'Escultura en bronce', 'Grabado']),
+        ]);
+    }
+
+    /**
      * Indicate that the item is for sale and has a sale price.
      */
     public function forSale(): static
