@@ -24,4 +24,15 @@ return [
     'clear_filters_link' => 'Limpiar filtros',
     'filter_show_button' => 'Mostrar Filtros',
     'results_count' => 'Mostrando :count resultado|Mostrando :count resultados',
+
+    // --- Contact Modal ---
+    'contact_modal_title' => 'Contactar sobre: :itemName',
+    'contact_modal_name' => 'Tu Nombre',
+    'contact_modal_email' => 'Tu Email',
+    'contact_modal_message' => 'Mensaje',
+    'contact_modal_message_placeholder' => 'Estoy interesado en este artículo...',
+    'contact_modal_cancel' => 'Cancelar',
+    'contact_modal_send' => 'Enviar Mensaje',
+    'contact_modal_success' => '¡Tu mensaje ha sido enviado con éxito!',
+    'contact_modal_error_seller' => 'No se pudo encontrar la información del vendedor.',
 ];
