@@ -18,7 +18,7 @@ return [
     'field_purchase_date' => 'Fecha de Compra',
     'field_status' => 'Estado Actual',
     'field_sale_price' => 'Precio de Venta',
-    
+
     // Attribute Fields (These now map to the 'attributes' table names)
     'field_year' => 'Año',
     'field_country' => 'País',
@@ -40,7 +40,6 @@ return [
     'field_dimensions' => 'Dimensiones',
     // (You can add more here as you create more attributes in the seeder)
     'field_face_value' => 'Valor Facial',
-
 
     // --- Item Type Options ---
     'type_art' => 'Obra de Arte',

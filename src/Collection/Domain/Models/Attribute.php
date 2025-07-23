@@ -1,4 +1,5 @@
 <?php
+
 // src/Collection/Domain/Models/Attribute.php
 
 namespace Numista\Collection\Domain\Models;

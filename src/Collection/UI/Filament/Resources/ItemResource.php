@@ -1,4 +1,5 @@
 <?php
+
 // src/Collection/UI/Filament/Resources/ItemResource.php
 
 namespace Numista\Collection\UI\Filament\Resources;
@@ -13,14 +14,10 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Numista\Collection\Domain\Models\Attribute;
 use Numista\Collection\Domain\Models\Item;
@@ -32,8 +29,11 @@ use Numista\Collection\UI\Filament\Resources\ItemResource\RelationManagers;
 class ItemResource extends Resource
 {
     protected static ?string $model = Item::class;
+
     protected static ?string $tenantOwnershipRelationshipName = 'tenant';
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     protected static ?int $navigationSort = 3;
 
     public static function getNavigationLabel(): string
@@ -86,7 +86,7 @@ class ItemResource extends Resource
                                 if (empty($itemType)) {
                                     return [
                                         Forms\Components\Placeholder::make('no_attributes')
-                                            ->label('Select an item type to see its attributes.')
+                                            ->label('Select an item type to see its attributes.'),
                                     ];
                                 }
 
@@ -113,12 +113,14 @@ class ItemResource extends Resource
                                                 if (strtolower($attribute->name) === 'grade') {
                                                     return array_map(fn ($value) => __("item.grade_{$value}"), $options);
                                                 }
+
                                                 return $options;
                                             }),
                                         default => TextInput::make("attributes.{$attribute->id}.value"),
                                     };
 
-                                    $translationKey = 'item.attribute_' . strtolower(str_replace(' ', '_', $attribute->name));
+                                    $translationKey = 'item.attribute_'.strtolower(str_replace(' ', '_', $attribute->name));
+
                                     return $field->label(__($translationKey));
                                 })->all();
                             })->columns(3),

@@ -2,9 +2,9 @@
 
 namespace Numista\Collection\UI\Filament\Resources\AttributeResource\Pages;
 
-use Numista\Collection\UI\Filament\Resources\AttributeResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Numista\Collection\UI\Filament\Resources\AttributeResource;
 
 class ListAttributes extends ListRecords
 {

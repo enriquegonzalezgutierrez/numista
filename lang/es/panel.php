@@ -107,7 +107,7 @@ return [
     'field_is_filterable' => 'Es filtrable',
     'helper_is_filterable' => 'Permitir filtrar por este atributo en el marketplace público.',
     'action_create_attribute' => 'Crear Atributo',
-    
+
     // --- Attribute Values Relation Manager ---
     'label_predefined_options' => 'Opciones Predefinidas',
     'field_value' => 'Valor',

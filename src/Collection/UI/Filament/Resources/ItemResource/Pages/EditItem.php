@@ -1,4 +1,5 @@
 <?php
+
 // src/Collection/UI/Filament/Resources/ItemResource/Pages/EditItem.php
 
 namespace Numista\Collection\UI\Filament\Resources\ItemResource\Pages;
@@ -30,6 +31,7 @@ class EditItem extends EditRecord
                 'value' => $pivot->value,
                 'attribute_value_id' => $pivot->attribute_value_id,
             ];
+
             return [$attribute->id => $payload];
         })->toArray();
 
@@ -71,7 +73,7 @@ class EditItem extends EditRecord
                 ];
             }
         }
-        
+
         $item->attributes()->sync($syncData);
     }
 }

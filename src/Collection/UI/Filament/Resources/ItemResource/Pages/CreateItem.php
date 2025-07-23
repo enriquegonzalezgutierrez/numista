@@ -1,4 +1,5 @@
 <?php
+
 // src/Collection/UI/Filament/Resources/ItemResource/Pages/CreateItem.php
 
 namespace Numista\Collection\UI\Filament\Resources\ItemResource\Pages;
@@ -47,7 +48,7 @@ class CreateItem extends CreateRecord
                 ];
             }
         }
-        
+
         $item->attributes()->sync($syncData);
     }
 }

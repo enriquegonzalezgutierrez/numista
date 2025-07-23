@@ -1,4 +1,5 @@
 <?php
+
 // database/seeders/AttributeValueSeeder.php
 
 namespace Database\Seeders;

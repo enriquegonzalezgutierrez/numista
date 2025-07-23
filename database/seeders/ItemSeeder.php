@@ -25,6 +25,7 @@ class ItemSeeder extends Seeder
         $tenant = Tenant::where('slug', 'coleccion-numista')->first();
         if (! $tenant) {
             $this->command->warn('Default tenant "coleccion-numista" not found. Skipping ItemSeeder.');
+
             return;
         }
 
@@ -39,6 +40,7 @@ class ItemSeeder extends Seeder
         $imagePaths = $this->createPlaceholderImages($tenant->id);
         if (empty($imagePaths)) {
             $this->command->error('No placeholder images could be created. Aborting seeder.');
+
             return;
         }
         $this->command->info('Created '.count($imagePaths).' placeholder images.');
@@ -67,8 +69,9 @@ class ItemSeeder extends Seeder
     private function createItemsForCategory(Tenant $tenant, string $categorySlug, string $itemType, int $count, bool $isForSale = false): void
     {
         $category = Category::where('slug', $categorySlug)->first();
-        if (!$category) {
+        if (! $category) {
             $this->command->warn("Category '{$categorySlug}' not found. Skipping item creation.");
+
             return;
         }
 
