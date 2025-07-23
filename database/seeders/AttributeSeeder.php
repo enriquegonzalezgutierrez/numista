@@ -31,7 +31,7 @@ class AttributeSeeder extends Seeder
         // --- COMMON ATTRIBUTES ---
         $this->createAttribute('Year', 'number', ['art', 'banknote', 'book', 'camera', 'coin', 'movie_collectible', 'photo', 'postcard', 'radio', 'stamp', 'toy', 'vehicle', 'vinyl_record', 'watch']);
         $this->createAttribute('Country', 'text', ['art', 'banknote', 'coin', 'military', 'stamp']);
-        $this->createAttribute('Grade', 'text', ['banknote', 'coin', 'comic', 'stamp']);
+        $this->createAttribute('Grade', 'select', ['coin', 'banknote', 'comic']);
         $this->createAttribute('Brand', 'text', ['camera', 'pen', 'radio', 'toy', 'vehicle', 'watch']);
         $this->createAttribute('Model', 'text', ['camera', 'pen', 'vehicle', 'watch']);
         $this->createAttribute('Material', 'text', ['antique', 'art', 'craftsmanship', 'jewelry', 'medal', 'military', 'pen', 'toy', 'vintage_item', 'watch']);

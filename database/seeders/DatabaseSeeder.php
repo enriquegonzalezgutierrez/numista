@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             DevelopmentSeeder::class, // Creates the main tenant and admin user
             CountrySeeder::class,     // Creates reference countries
             AttributeSeeder::class,   // <-- THIS IS THE NEW ADDITION
+            AttributeValueSeeder::class,
 
             // --- Content Seeders ---
             CategorySeeder::class,    // Creates the category tree

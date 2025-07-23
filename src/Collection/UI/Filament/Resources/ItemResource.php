@@ -1,5 +1,4 @@
 <?php
-
 // src/Collection/UI/Filament/Resources/ItemResource.php
 
 namespace Numista\Collection\UI\Filament\Resources;
@@ -64,15 +63,18 @@ class ItemResource extends Resource
                                     ->label(__('item.field_name'))
                                     ->required()->maxLength(255)->live(onBlur: true)
                                     ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+
                                 TextInput::make('slug')
                                     ->label(__('panel.field_slug'))
                                     ->required()->unique(Item::class, 'slug', ignoreRecord: true)
                                     ->disabled()->dehydrated(),
+
                                 Select::make('type')
                                     ->label(__('item.field_type'))
                                     ->options(fn (ItemTypeManager $manager): array => $manager->getTypesForSelect())
                                     ->required()->live()
                                     ->afterStateUpdated(fn (Set $set) => $set('attributes', [])),
+
                                 Textarea::make('description')
                                     ->label(__('panel.field_description'))
                                     ->columnSpanFull(),
@@ -87,27 +89,36 @@ class ItemResource extends Resource
                                             ->label('Select an item type to see its attributes.')
                                     ];
                                 }
-                                
+
                                 $attributes = Attribute::query()
                                     ->whereIn('id', function ($query) use ($itemType) {
                                         $query->select('attribute_id')
                                             ->from('attribute_item_type')
                                             ->where('item_type', $itemType);
                                     })
-                                    ->orderBy('name')->get();
+                                    ->orderBy('name')
+                                    ->get();
 
-                                if ($attributes->isEmpty()) { return []; }
+                                if ($attributes->isEmpty()) {
+                                    return [];
+                                }
 
                                 return $attributes->map(function (Attribute $attribute) {
                                     $field = match ($attribute->type) {
-                                        'number' => TextInput::make('attributes.' . $attribute->id)->numeric(),
-                                        'date' => DatePicker::make('attributes.' . $attribute->id),
-                                        'select' => Select::make('attributes.' . $attribute->id)->options($attribute->values()->pluck('value', 'id')),
-                                        default => TextInput::make('attributes.' . $attribute->id),
+                                        'number' => TextInput::make("attributes.{$attribute->id}.value")->numeric(),
+                                        'date' => DatePicker::make("attributes.{$attribute->id}.value"),
+                                        'select' => Select::make("attributes.{$attribute->id}.attribute_value_id")
+                                            ->options(function () use ($attribute) {
+                                                $options = $attribute->values()->pluck('value', 'id')->toArray();
+                                                if (strtolower($attribute->name) === 'grade') {
+                                                    return array_map(fn ($value) => __("item.grade_{$value}"), $options);
+                                                }
+                                                return $options;
+                                            }),
+                                        default => TextInput::make("attributes.{$attribute->id}.value"),
                                     };
-                                    // "Mint Mark" -> "mint_mark" -> "item.attribute_mint_mark"
-                                    $translationKey = 'item.attribute_' . strtolower(str_replace(' ', '_', $attribute->name));
 
+                                    $translationKey = 'item.attribute_' . strtolower(str_replace(' ', '_', $attribute->name));
                                     return $field->label(__($translationKey));
                                 })->all();
                             })->columns(3),
@@ -128,10 +139,7 @@ class ItemResource extends Resource
                     ->columnSpan(['lg' => 1]),
             ])->columns(3);
     }
-    
-    // The table() method, getRelations(), getPages(), etc. are the same as before.
-    // I am including them for completeness.
-    
+
     public static function table(Table $table): Table
     {
         return $table
@@ -139,7 +147,6 @@ class ItemResource extends Resource
             ->columns([
                 ImageColumn::make('images.path')->label(__('panel.field_image_preview'))->disk('tenants')->circular()->stacked()->limit(1)->defaultImageUrl(url('/images/placeholder.svg')),
                 TextColumn::make('name')->label(__('item.field_name'))->searchable()->sortable(),
-                TextColumn::make('description')->label(__('panel.field_description'))->searchable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('type')->label(__('item.field_type'))->badge()->formatStateUsing(fn (string $state): string => __("item.type_{$state}"))->searchable()->sortable(),
                 TextColumn::make('collections.name')->label(__('panel.label_collections'))->badge()->searchable(),
                 TextColumn::make('status')->label(__('item.field_status'))->badge()->formatStateUsing(fn (string $state): string => __("item.status_{$state}"))->searchable(),

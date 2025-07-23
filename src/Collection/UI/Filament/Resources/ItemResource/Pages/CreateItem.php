@@ -1,4 +1,5 @@
 <?php
+// src/Collection/UI/Filament/Resources/ItemResource/Pages/CreateItem.php
 
 namespace Numista\Collection\UI\Filament\Resources\ItemResource\Pages;
 
@@ -26,12 +27,27 @@ class CreateItem extends CreateRecord
     protected function syncAttributes(Item $item, array $attributesData): void
     {
         $syncData = [];
-        foreach ($attributesData as $attributeId => $value) {
-            // Only sync attributes that have a non-empty value
+        foreach ($attributesData as $attributeId => $data) {
+            $value = null;
+            $attributeValueId = null;
+
+            if (isset($data['attribute_value_id'])) { // Is a 'select' type
+                $attributeValueId = $data['attribute_value_id'];
+                if ($attributeValueId) {
+                    $value = \Numista\Collection\Domain\Models\AttributeValue::find($attributeValueId)?->value;
+                }
+            } elseif (isset($data['value'])) { // Is a text/date/number type
+                $value = $data['value'];
+            }
+
             if ($value !== null && $value !== '') {
-                $syncData[$attributeId] = ['value' => $value];
+                $syncData[$attributeId] = [
+                    'value' => $value,
+                    'attribute_value_id' => $attributeValueId,
+                ];
             }
         }
+        
         $item->attributes()->sync($syncData);
     }
 }

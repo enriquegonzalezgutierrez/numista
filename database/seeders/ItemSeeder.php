@@ -156,7 +156,20 @@ class ItemSeeder extends Seeder
         $attribute = $this->attributes->get($attributeKey);
 
         if ($attribute) {
-            $item->attributes()->attach($attribute->id, ['value' => $value]);
+            $pivotData = ['value' => $value];
+
+            // --- THIS IS THE NEW LOGIC ---
+            // If the attribute is a 'select', find the corresponding AttributeValue ID
+            if ($attribute->type === 'select') {
+                $attributeValue = $attribute->values()->where('value', $value)->first();
+                if ($attributeValue) {
+                    // Store the ID of the selected option
+                    $pivotData['attribute_value_id'] = $attributeValue->id;
+                }
+            }
+            // --- END OF NEW LOGIC ---
+
+            $item->attributes()->attach($attribute->id, $pivotData);
         }
     }
 

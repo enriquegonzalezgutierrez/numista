@@ -1,4 +1,5 @@
 <?php
+// src/Collection/UI/Filament/Resources/ItemResource/Pages/EditItem.php
 
 namespace Numista\Collection\UI\Filament\Resources\ItemResource\Pages;
 
@@ -18,20 +19,23 @@ class EditItem extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
-    
-    // This method loads the attribute data into the form
+
     protected function fillForm(): void
     {
         $data = $this->getRecord()->toArray();
 
         $data['attributes'] = $this->getRecord()->attributes->mapWithKeys(function ($attribute) {
-            return [$attribute->id => $attribute->pivot->value];
+            $pivot = $attribute->pivot;
+            $payload = [
+                'value' => $pivot->value,
+                'attribute_value_id' => $pivot->attribute_value_id,
+            ];
+            return [$attribute->id => $payload];
         })->toArray();
-        
+
         $this->form->fill($data);
     }
 
-    // This method saves the core data and the attribute data
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         /** @var Item $record */
@@ -47,11 +51,27 @@ class EditItem extends EditRecord
     protected function syncAttributes(Item $item, array $attributesData): void
     {
         $syncData = [];
-        foreach ($attributesData as $attributeId => $value) {
+        foreach ($attributesData as $attributeId => $data) {
+            $value = null;
+            $attributeValueId = null;
+
+            if (isset($data['attribute_value_id'])) { // Is a 'select' type
+                $attributeValueId = $data['attribute_value_id'];
+                if ($attributeValueId) {
+                    $value = \Numista\Collection\Domain\Models\AttributeValue::find($attributeValueId)?->value;
+                }
+            } elseif (isset($data['value'])) { // Is a text/date/number type
+                $value = $data['value'];
+            }
+
             if ($value !== null && $value !== '') {
-                $syncData[$attributeId] = ['value' => $value];
+                $syncData[$attributeId] = [
+                    'value' => $value,
+                    'attribute_value_id' => $attributeValueId,
+                ];
             }
         }
+        
         $item->attributes()->sync($syncData);
     }
 }
