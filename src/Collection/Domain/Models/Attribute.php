@@ -1,4 +1,5 @@
 <?php
+
 // src/Collection/Domain/Models/Attribute.php
 
 namespace Numista\Collection\Domain\Models;
@@ -33,7 +34,7 @@ class Attribute extends Model
     {
         return $this->hasMany(AttributeValue::class);
     }
-    
+
     /**
      * Create a new factory instance for the model.
      * This overrides Laravel's default convention to correctly locate the factory.

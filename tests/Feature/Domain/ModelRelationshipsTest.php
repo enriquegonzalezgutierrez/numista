@@ -1,4 +1,5 @@
 <?php
+
 // tests/Feature/Domain/ModelRelationshipsTest.php
 
 namespace Tests\Feature\Domain;
@@ -64,7 +65,7 @@ class ModelRelationshipsTest extends TestCase
 
         $this->assertCount(2, $item->fresh()->collections);
     }
-    
+
     #[Test]
     public function an_item_can_have_attributes_with_values(): void
     {

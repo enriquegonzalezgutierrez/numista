@@ -1,4 +1,5 @@
 <?php
+
 // database/factories/AttributeFactory.php
 
 namespace Database\Factories;

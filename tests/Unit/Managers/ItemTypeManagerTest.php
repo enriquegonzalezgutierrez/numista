@@ -1,4 +1,5 @@
 <?php
+
 // tests/Unit/Managers/ItemTypeManagerTest.php
 
 namespace Tests\Unit\Managers;
@@ -25,7 +26,7 @@ class ItemTypeManagerTest extends TestCase
         $this->assertIsArray($options);
         $this->assertArrayHasKey('coin', $options);
         $this->assertEquals('Moneda', $options['coin']);
-        
+
         // Check if it's sorted alphabetically by translated value
         $sortedOptions = $options;
         asort($sortedOptions);
