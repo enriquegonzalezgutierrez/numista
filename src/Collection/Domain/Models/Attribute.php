@@ -1,9 +1,9 @@
 <?php
-
 // src/Collection/Domain/Models/Attribute.php
 
 namespace Numista\Collection\Domain\Models;
 
+use Database\Factories\AttributeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,5 +32,14 @@ class Attribute extends Model
     public function values(): HasMany
     {
         return $this->hasMany(AttributeValue::class);
+    }
+    
+    /**
+     * Create a new factory instance for the model.
+     * This overrides Laravel's default convention to correctly locate the factory.
+     */
+    protected static function newFactory(): AttributeFactory
+    {
+        return AttributeFactory::new();
     }
 }

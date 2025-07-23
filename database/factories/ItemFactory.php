@@ -1,5 +1,4 @@
 <?php
-
 // database/factories/ItemFactory.php
 
 namespace Database\Factories;
@@ -14,113 +13,93 @@ use Numista\Collection\Domain\Models\Tenant;
  */
 class ItemFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
     protected $model = Item::class;
 
     /**
      * Define the model's default state.
-     *
-     * @return array<string, mixed>
+     * Contains only the fields that exist in the 'items' table.
      */
     public function definition(): array
     {
-        // We now rely on the globally configured Faker instance, which is
-        // set to 'es_ES' in the DatabaseSeeder before this factory is called.
         return [
             'tenant_id' => Tenant::factory(),
             'name' => ucfirst(fake()->words(3, true)),
             'description' => fake()->paragraph(2),
-            'type' => 'coin',
+            'type' => 'object', // A generic default
             'quantity' => fake()->numberBetween(1, 5),
             'purchase_price' => fake()->randomFloat(2, 5, 100),
             'purchase_date' => fake()->date(),
-            'status' => fake()->randomElement(['in_collection', 'for_sale', 'sold', 'featured', 'discounted']),
-            'grade' => fake()->randomElement(['unc', 'au', 'xf', 'vf', 'f', 'g']),
+            'status' => fake()->randomElement(['in_collection', 'for_sale', 'sold']),
         ];
     }
 
-    /**
-     * State for a 'coin' type item.
-     */
+    // --- STATES FOR SEEDER DATA GENERATION ---
+    // These states add extra attributes to the factory's in-memory model instance.
+    // They are NOT persisted to the 'items' table directly.
+    // The ItemSeeder reads these attributes to populate the EAV structure.
+
     public function coin(): static
     {
         return $this->state(fn (array $attributes) => [
             'type' => 'coin',
-            'name' => 'Moneda: '.ucfirst(fake()->words(2, true)),
+            'name' => 'Coin: ' . ucfirst(fake()->words(2, true)),
             'country_id' => Country::inRandomOrder()->first()?->id,
             'year' => fake()->numberBetween(1800, 2023),
-            'denomination' => fake()->randomElement(['1 Dólar', '50 Pesetas', '100 Pesos', '2 Euros']),
+            'denomination' => fake()->randomElement(['1 Dollar', '50 Pesetas', '100 Pesos', '2 Euros']),
             'mint_mark' => fake()->randomElement(['S', 'D', 'P', 'O', 'M']),
-            'composition' => fake()->randomElement(['90% Plata', 'Cobre-Níquel', 'Bronce', 'Oro']),
+            'composition' => fake()->randomElement(['90% Silver', 'Copper-Nickel', 'Bronze', 'Gold']),
             'weight' => fake()->randomFloat(4, 2.5, 31.1035),
+            'grade' => fake()->randomElement(['unc', 'au', 'xf', 'vf', 'f', 'g']),
         ]);
     }
 
-    /**
-     * State for a 'banknote' type item.
-     */
     public function banknote(): static
     {
         return $this->state(fn (array $attributes) => [
             'type' => 'banknote',
-            'name' => 'Billete: '.ucfirst(fake()->words(2, true)),
+            'name' => 'Banknote: ' . ucfirst(fake()->words(2, true)),
             'country_id' => Country::inRandomOrder()->first()?->id,
             'year' => fake()->numberBetween(1900, 2020),
-            'denomination' => fake()->randomElement(['100 Pesetas', '5 Dólares', '20 Euros', '50 Reales']),
+            'denomination' => fake()->randomElement(['100 Pesetas', '5 Dollars', '20 Euros']),
             'serial_number' => fake()->bothify('??########?'),
+            'grade' => fake()->randomElement(['unc', 'au', 'xf', 'vf']),
         ]);
     }
 
-    /**
-     * State for a 'comic' type item.
-     */
     public function comic(): static
     {
         return $this->state(fn (array $attributes) => [
             'type' => 'comic',
-            'name' => fake()->randomElement(['The Amazing Spider-Man', 'Action Comics', 'X-Men', 'Watchmen']),
-            'grade' => fake()->randomElement(['CGC 9.8', 'NM', 'VF/NM', 'F/VF']),
-            'publisher' => fake()->randomElement(['Marvel', 'DC Comics', 'Image', 'Vertigo']),
+            'name' => fake()->randomElement(['The Amazing Spider-Man', 'Action Comics', 'X-Men']),
+            'grade' => fake()->randomElement(['CGC 9.8', 'NM', 'VF/NM']),
+            'publisher' => fake()->randomElement(['Marvel', 'DC Comics', 'Image']),
             'issue_number' => fake()->numberBetween(1, 500),
             'cover_date' => fake()->date(),
         ]);
     }
 
-    /**
-     * State for a 'watch' type item.
-     */
     public function watch(): static
     {
         return $this->state(fn (array $attributes) => [
             'type' => 'watch',
-            'name' => 'Reloj: '.fake()->company(),
+            'name' => 'Watch: ' . fake()->company(),
             'brand' => fake()->randomElement(['Rolex', 'Omega', 'Seiko', 'Casio']),
-            'model' => fake()->word().' '.fake()->randomNumber(4),
-            'material' => fake()->randomElement(['Acero Inoxidable', 'Oro', 'Titanio']),
+            'model' => fake()->word() . ' ' . fake()->randomNumber(4),
+            'material' => fake()->randomElement(['Stainless Steel', 'Gold', 'Titanium']),
         ]);
     }
 
-    /**
-     * State for a 'stamp' type item.
-     */
     public function stamp(): static
     {
         return $this->state(fn (array $attributes) => [
             'type' => 'stamp',
-            'name' => 'Sello: '.fake()->country().' '.fake()->year(),
+            'name' => 'Stamp: ' . fake()->country() . ' ' . fake()->year(),
             'country_id' => Country::inRandomOrder()->first()->id,
             'year' => fake()->numberBetween(1840, 2020),
             'face_value' => fake()->randomElement(['5c', '10p', '1.00€']),
         ]);
     }
 
-    /**
-     * State for a 'book' type item.
-     */
     public function book(): static
     {
         return $this->state(fn (array $attributes) => [
@@ -133,32 +112,15 @@ class ItemFactory extends Factory
         ]);
     }
 
-    /**
-     * State for an 'art' type item.
-     */
     public function art(): static
     {
         return $this->state(fn (array $attributes) => [
             'type' => 'art',
-            'name' => 'Obra: '.fake()->words(3, true),
+            'name' => 'Artwork: ' . fake()->words(3, true),
             'artist' => fake()->name(),
             'year' => fake()->numberBetween(1600, 2020),
-            'dimensions' => fake()->numberBetween(20, 150).'x'.fake()->numberBetween(20, 150).' cm',
-            'material' => fake()->randomElement(['Óleo sobre lienzo', 'Acuarela', 'Escultura en bronce', 'Grabado']),
+            'dimensions' => fake()->numberBetween(20, 150) . 'x' . fake()->numberBetween(20, 150) . ' cm',
+            'material' => fake()->randomElement(['Oil on canvas', 'Watercolor', 'Bronze sculpture']),
         ]);
-    }
-
-    /**
-     * Indicate that the item is for sale and has a sale price.
-     */
-    public function forSale(): static
-    {
-        return $this->state(function (array $attributes) {
-            return [
-                'status' => 'for_sale',
-                // Generate a sale price that is higher than the purchase price
-                'sale_price' => $attributes['purchase_price'] * fake()->randomFloat(2, 1.2, 2.5),
-            ];
-        });
     }
 }
