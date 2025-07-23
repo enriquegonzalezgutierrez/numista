@@ -1,3 +1,5 @@
+# .github/workflows/laravel.yml
+
 name: Laravel CI/CD
 
 on:
@@ -21,6 +23,15 @@ jobs:
           php-version: '8.2'
           tools: composer:v2
 
+      # --- CACHE COMPOSER ---
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
       - name: Install Composer dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
@@ -42,6 +53,15 @@ jobs:
           php-version: '8.2'
           extensions: pdo, pdo_pgsql, pdo_sqlite, zip, intl, gd
           
+      # --- CACHE COMPOSER ---
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+            
       - name: Copy .env file
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
@@ -51,11 +71,11 @@ jobs:
       - name: Generate app key
         run: php artisan key:generate
 
-      - name: Run migrations
-        run: php artisan migrate --env=testing # Use the testing environment defined in phpunit.xml
-
       - name: Execute tests (Pest)
         run: php artisan test
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ':memory:'
 
   # --- JOB 3: BUILD FRONTEND ASSETS ---
   build:
@@ -69,7 +89,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Use a recent LTS version
+          node-version: '20'
+
+      # --- CACHE NPM ---
+      - name: Cache Node dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install NPM dependencies
         run: npm install

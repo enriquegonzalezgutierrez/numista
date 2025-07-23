@@ -28,6 +28,7 @@ class DevelopmentSeeder extends Seeder
             [
                 'name' => 'Usuario Administrador',
                 'password' => Hash::make('admin'), // We need to hash the password manually here
+                'is_admin' => true, // Explicitly set this user as an administrator
             ]
         );
 
