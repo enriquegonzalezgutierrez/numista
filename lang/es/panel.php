@@ -112,4 +112,18 @@ return [
     'label_predefined_options' => 'Opciones Predefinidas',
     'field_value' => 'Valor',
     'action_create_option' => 'Añadir Opción',
+
+    // --- Attribute Names (for public & admin) ---
+    'attribute_name_year' => 'Año',
+    'attribute_name_country' => 'País',
+    'attribute_name_grade' => 'Grado',
+    'attribute_name_brand' => 'Marca',
+    'attribute_name_model' => 'Modelo',
+    'attribute_name_material' => 'Material',
+    'attribute_name_artist' => 'Artista',
+    'attribute_name_dimensions' => 'Dimensiones',
+    'attribute_name_composition' => 'Composición',
+    'attribute_name_weight' => 'Peso',
+    'attribute_name_denomination' => 'Denominación',
+    'attribute_name_mint_mark' => 'Marca de Ceca',
 ];

@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/UI/Public/Controllers/PublicItemController.php
+
 namespace Numista\Collection\UI\Public\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -16,17 +18,15 @@ class PublicItemController extends Controller
      */
     public function index(Request $request): View
     {
-        // Get all filters from the request
         $filters = $request->only(['search', 'categories']);
 
         $items = Item::query()
             ->where('status', 'for_sale')
-            ->with(['images', 'tenant'])
-            ->filter($filters) // Apply our new scope
+            ->with(['images', 'tenant', 'attributes']) // <-- Eager load attributes
+            ->filter($filters)
             ->latest('created_at')
             ->paginate(12);
 
-        // Get categories that have at least one item for sale
         $categories = Category::query()
             ->whereHas('items', fn ($q) => $q->where('status', 'for_sale'))
             ->orderBy('name')
@@ -44,7 +44,8 @@ class PublicItemController extends Controller
             abort(404);
         }
 
-        $item->load(['images', 'tenant', 'categories']);
+        // Eager load all necessary relationships for the detail view
+        $item->load(['images', 'tenant', 'categories', 'attributes.values']);
 
         return view('public.items.show', compact('item'));
     }
