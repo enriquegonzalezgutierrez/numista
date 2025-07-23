@@ -22,12 +22,12 @@ jobs:
         with:
           php-version: '8.2'
           tools: composer:v2
+        id: setup-php # ID for referencing outputs
 
-      # --- CACHE COMPOSER ---
       - name: Cache Composer dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.composer/cache
+          path: ${{ steps.setup-php.outputs.composer-cache-directory }} # Correct dynamic path
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
@@ -52,18 +52,18 @@ jobs:
         with:
           php-version: '8.2'
           extensions: pdo, pdo_pgsql, pdo_sqlite, zip, intl, gd
+        id: setup-php # ID for referencing outputs
           
-      # --- CACHE COMPOSER ---
+      - name: Copy .env file
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
       - name: Cache Composer dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.composer/cache
+          path: ${{ steps.setup-php.outputs.composer-cache-directory }} # Correct dynamic path
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
-            
-      - name: Copy .env file
-        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
       - name: Install Composer dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
@@ -91,7 +91,6 @@ jobs:
         with:
           node-version: '20'
 
-      # --- CACHE NPM ---
       - name: Cache Node dependencies
         uses: actions/cache@v4
         with:
