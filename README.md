@@ -4,10 +4,10 @@ This is a web application for managing numismatic and other collectible collecti
 
 - **Backend**: Laravel 12 (dev)
 - **Frontend**: Livewire 3 & Blade
-- **Admin Panel**: Filament 3, featuring dynamic forms, relation managers, advanced filters, and bulk actions.
+- **Admin Panel**: Filament 3, featuring a dynamic, attribute-based form system.
 - **Database**: PostgreSQL 16
 - **PHP**: 8.2
-- **Testing**: Pest (PHPUnit)
+- **Testing**: Pest (PHPUnit) with automated CI via GitHub Actions.
 - **Environment**: Docker
 
 ---
@@ -41,7 +41,6 @@ echo "UID=$(id -u)" > .env
 ```
 *On Windows, you may need to create the `.env` file manually and set `UID=1000`.*
 
-
 ### 3. Build and Run the Application
 
 The whole setup process is automated with `make`.
@@ -50,74 +49,59 @@ The whole setup process is automated with `make`.
 # 1. Build and start all services in detached mode
 make up
 
-# 2. Run the automated setup script
+# 2. Run the automated setup script (installs dependencies, migrates & seeds DB)
 make setup
 ```
 
 The application will be available at **[http://localhost:8080](http://localhost:8080)**.
 
-- **Default User:** `admin@numista.es`
-- **Password:** `admin`
-- **Test Images:** The database seeder assigns random images to the generated items. For these images to display correctly, you need to place your own sample images in `storage/app/tenants/tenant-1/item-images/`. The seeder expects files like `Moneda-Antigua.png`, `Cómic-Clásico.png`, etc.
+-   **Admin User:** `admin@numista.es`
+-   **Password:** `admin`
 
 ---
 
-## ✅ Running Tests
+## ✅ Running Tests & CI
 
-The project uses Pest for testing. The test environment is configured to use an in-memory SQLite database to ensure tests are fast and do not interfere with your development data.
+The project uses Pest for testing and includes a GitHub Actions workflow for Continuous Integration.
 
-- `make test`: Run the entire test suite.
-- `make test-feature`: Run only the Feature tests.
-- `make test-unit`: Run only the Unit tests.
-- `make test-coverage`: Run tests and generate a code coverage report in the terminal.
+-   `make test`: Run the entire test suite (Unit & Feature).
+-   `make fix`: Automatically fix code style issues using Pint.
+
+The CI pipeline automatically runs `pint --test` and `php artisan test` on every push to the `main` and `development` branches.
 
 ---
 
 ## 🛠️ Useful Make Commands
 
-- `make up`: Build and start all containers.
-- `make setup`: **Run this after `make up` on a fresh install.** Installs dependencies, generates key, and runs migrations with seeders.
-- `make test`: Run all automated tests.
-- `make down`: Stop and remove all containers, networks, and volumes.
-- `make stop`: Stop containers without removing them.
-- `make logs`: View real-time logs for all services.
-- `make bash`: Get a shell (`sh`) inside the `app` container.
-- `make artisan a="<command>"`: Run any `php artisan` command (e.g., `make artisan a="migrate:status"`).
-- `make composer a="<command>"`: Run any `composer` command (e.g., `make composer update`).
-- `make npm a="<command>"`: Run any `npm` command (e.g., `make npm a="install"`).
-- `make db-shell`: Connect to the PostgreSQL database shell.
-- `make clear-all`: Clear all Laravel application caches.
-- `make fix-permissions`: Fix file permissions for `storage` and `bootstrap/cache`.
+-   `make up`: Build and start all containers.
+-   `make setup`: **Run this after `make up` on a fresh install.**
+-   `make down`: Stop and remove all containers, networks, and volumes.
+-   `make artisan a="<command>"`: Run any `php artisan` command (e.g., `make artisan a="list"`).
+-   `make composer a="<command>"`: Run any `composer` command.
+-   `make db-shell`: Connect to the PostgreSQL database shell.
+-   `make clear-all`: Clear all Laravel application caches.
+-   `make fix-permissions`: Fix file permissions for `storage` and `bootstrap/cache`.
+-   `make help`: Show all available commands.
 
 ---
 
 ## 🏛️ Project Architecture
 
-The project follows a Domain-Driven Design (DDD) inspired structure and is tested to ensure code quality and stability.
+The project follows a Domain-Driven Design (DDD) inspired structure.
 
-### Automated Testing
+### Extensible Attribute System
 
-- **Strategy:** We focus on a combination of Unit and Feature tests to cover our core business logic.
-- **Unit Tests:** Located in `tests/Unit`, they verify individual classes in isolation (e.g., Managers).
-- **Feature Tests:** Located in `tests/Feature`, they test the integration of different parts of the application, including model relationships and observer logic, by interacting with an in-memory test database.
+The application's core feature is a flexible **Entity-Attribute-Value (EAV)** model for managing collectible items.
+
+-   **Items (`items` table):** Store only common data (name, description, price, etc.).
+-   **Item Types (`type` column):** A fixed list of types (e.g., 'coin', 'stamp', 'comic') defined in `ItemTypeManager.php`.
+-   **Attributes (`attributes` table):** A tenant can define custom attributes for their collection (e.g., "Year", "Publisher", "Composition"). This is managed via the **Settings > Attributes** section in the admin panel.
+-   **Dynamic Forms:** The "Create/Edit Item" form in Filament is fully dynamic. When a user selects an "Item Type", the form automatically displays the attributes that have been linked to that type via the `AttributeSeeder`.
+
+This architecture allows tenants to customize the data they collect for each type of item without requiring any changes to the database schema or application code by the developer.
 
 ### Image Management
 
-- **Storage:** Images are stored in a private, tenant-specific directory (`storage/app/tenants/tenant-{id}`).
-- **Database:** An `Image` model with a polymorphic relationship allows images to be attached to any other model (currently `Item`). This relationship is managed via the `images` table.
-- **Access:** A dedicated route (`/tenant-files/{path}`) and controller (`TenantFileController`) are used to serve the private files securely.
-- **Background Processing:** Image uploads are processed asynchronously using Laravel Queues and a Supervisor-managed worker for a better user experience.
-- **UI:** The `ImagesRelationManager` on the `ItemResource` edit page handles the full image CRUD lifecycle.
-
-### Extensible Systems: Item `Type`, `Status`, and `Grade`
-
-The application uses a manager-based, extensible pattern for key item attributes. This follows SOLID principles, especially Open/Closed. To add a new option (e.g., a new "Type"):
-
-1.  **Translation:** Add the new key and its Spanish translation to the appropriate language file (e.g., `lang/es/item.php`).
-2.  **Handler Class (Optional):** If the new option requires special logic or fields, create a new handler class in the corresponding directory (e.g., `src/Collection/UI/Filament/ItemTypes/`).
-3.  **Manager Registration:** Add the new key and its handler class (or `null`) to the `types` array in the corresponding manager (e.g., `ItemTypeManager.php`).
-
-### Category Management
-
-- **Category Management:** Categories are managed via the `CategoryResource`. This resource allows creating, editing, and deleting categories, including setting up parent-child relationships for a hierarchical structure.
-- **Assigning to Items:** From an item's edit page, categories can be attached or detached using the "Categorías" Relation Manager.
+-   **Storage:** Images are stored in a private, tenant-specific directory (`storage/app/tenants/tenant-{id}`).
+-   **Database:** An `Image` model with a polymorphic relationship allows images to be attached to `Items`.
+-   **Access:** A dedicated controller (`TenantFileController`) serves private files securely, while a `PublicImageController` serves images for items that are for sale.

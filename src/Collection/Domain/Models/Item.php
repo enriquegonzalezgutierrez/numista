@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/Domain/Models/Item.php
+
 namespace Numista\Collection\Domain\Models;
 
 use Database\Factories\ItemFactory;
@@ -17,6 +19,7 @@ class Item extends Model
 
     /**
      * The attributes that are mass assignable.
+     * These are the core, generic fields that all items share.
      *
      * @var array<int, string>
      */
@@ -31,47 +34,15 @@ class Item extends Model
         'purchase_date',
         'status',
         'sale_price',
-        'country_id',
-        'year',
-        'denomination',
-        'grade',
-        'mint_mark',
-        'composition',
-        'weight',
-        'serial_number',
-        'publisher',
-        'series_title',
-        'issue_number',
-        'cover_date',
-        'brand',
-        'model',
-        'material',
-        'author',
-        'isbn',
-        'artist',
-        'dimensions',
-        'gemstone',
-        'license_plate',
-        'chassis_number',
-        'record_label',
-        'face_value',
-        'publisher_postcard',
-        'origin_location',
-        'photographer',
-        'location',
-        'technique',
-        'conflict',
-        'sport',
-        'team',
-        'player',
-        'event',
-        'movie_title',
-        'character',
-        'images',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
-        //
+        'purchase_date' => 'date',
     ];
 
     /**
@@ -83,14 +54,6 @@ class Item extends Model
     }
 
     /**
-     * Get the country of the item.
-     */
-    public function country(): BelongsTo
-    {
-        return $this->belongsTo(Country::class);
-    }
-
-    /**
      * Get all of the item's images.
      */
     public function images(): MorphMany
@@ -99,21 +62,38 @@ class Item extends Model
     }
 
     /**
-     * Get all of the item's categories.
+     * The categories that belong to the item.
      */
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
     }
 
+    /**
+     * The collections that belong to the item.
+     */
     public function collections(): BelongsToMany
     {
         return $this->belongsToMany(Collection::class);
     }
 
+    /**
+     * The order line items associated with this item.
+     */
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * The attributes associated with the item.
+     * This is the new, flexible relationship for EAV.
+     */
+    public function attributes(): BelongsToMany
+    {
+        return $this->belongsToMany(Attribute::class, 'item_attribute_value')
+            ->withPivot('value', 'attribute_value_id') // Makes the 'value' from the pivot table accessible
+            ->withTimestamps();
     }
 
     /**
@@ -132,6 +112,7 @@ class Item extends Model
      * Scope a query to apply filters from the request.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  array<string, mixed>  $filters
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeFilter(Builder $query, array $filters): Builder

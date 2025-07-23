@@ -65,7 +65,7 @@ fix-permissions: ## Fix storage and bootstrap/cache permissions
 # Artisan Commands (use 'a' variable for arguments)
 # ==============================================================================
 artisan: ## Run any artisan command. Ex: make artisan a="list"
-	@docker-compose exec app php artisan $(a)
+	@docker-compose exec -u laravel app php artisan $(a)
 
 migrate: ## Run database migrations
 	@make artisan a="migrate"
