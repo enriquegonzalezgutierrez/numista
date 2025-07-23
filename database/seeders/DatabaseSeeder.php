@@ -1,5 +1,7 @@
 <?php
 
+// database/seeders/DatabaseSeeder.php
+
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -12,16 +14,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // The order is important here.
+        // We need to create tenants, users, countries, and attributes
+        // BEFORE we try to create items that depend on them.
         $this->call([
-            DevelopmentSeeder::class,
+            // --- Core & Setup Seeders ---
+            DevelopmentSeeder::class, // Creates the main tenant and admin user
+            CountrySeeder::class,     // Creates reference countries
+            AttributeSeeder::class,   // <-- THIS IS THE NEW ADDITION
+            AttributeValueSeeder::class,
 
-            CountrySeeder::class,
-            CategorySeeder::class,
-            CollectionSeeder::class,
-            ItemSeeder::class,
-            OrderSeeder::class,
+            // --- Content Seeders ---
+            CategorySeeder::class,    // Creates the category tree
+            CollectionSeeder::class,  // Creates some collections
+            ItemSeeder::class,        // Creates items and links them to attributes & categories
+            OrderSeeder::class,       // Creates customers and orders with items
         ]);
     }
 }

@@ -97,4 +97,19 @@ return [
     'widget_stats_items_for_sale_desc' => 'Ítems marcados actualmente para la venta',
     'widget_stats_categories_desc' => 'Total de categorías para organizar ítems',
     'widget_stats_collections_desc' => 'Agrupaciones temáticas de ítems',
+
+    // --- Attribute Resource ---
+    'nav_group_settings' => 'Configuración',
+    'nav_attributes' => 'Atributos',
+    'label_attribute' => 'Atributo',
+    'label_attributes' => 'Atributos',
+    'field_type' => 'Tipo',
+    'field_is_filterable' => 'Es filtrable',
+    'helper_is_filterable' => 'Permitir filtrar por este atributo en el marketplace público.',
+    'action_create_attribute' => 'Crear Atributo',
+
+    // --- Attribute Values Relation Manager ---
+    'label_predefined_options' => 'Opciones Predefinidas',
+    'field_value' => 'Valor',
+    'action_create_option' => 'Añadir Opción',
 ];
