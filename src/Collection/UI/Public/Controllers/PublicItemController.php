@@ -1,4 +1,5 @@
 <?php
+
 // src/Collection/UI/Public/Controllers/PublicItemController.php
 
 namespace Numista\Collection\UI\Public\Controllers;
@@ -20,7 +21,7 @@ class PublicItemController extends Controller
     {
         // --- NEW LOGIC: Clean up the filters ---
         $filters = collect($request->all())->filter()->all();
-        
+
         // Specifically handle the 'attributes' array to remove empty values within it
         if (isset($filters['attributes'])) {
             $filters['attributes'] = array_filter($filters['attributes']);
@@ -28,7 +29,7 @@ class PublicItemController extends Controller
                 unset($filters['attributes']);
             }
         }
-        
+
         $items = Item::query()
             ->where('status', 'for_sale')
             ->with(['images', 'tenant', 'attributes'])
@@ -41,7 +42,7 @@ class PublicItemController extends Controller
             ->whereHas('items', fn ($q) => $q->where('status', 'for_sale'))
             ->orderBy('name')
             ->get();
-            
+
         $filterableAttributes = Attribute::query()
             ->where('is_filterable', true)
             ->with('values')

@@ -1,4 +1,5 @@
 <?php
+
 // lang/es/panel.php
 return [
     // --- Navigation & Resource Labels ---
@@ -83,7 +84,7 @@ return [
     'attribute_name_technique' => 'Técnica',
     'attribute_name_weight' => 'Peso',
     'attribute_name_year' => 'Año',
-    
+
     // --- General UI Text ---
     'placeholder_none' => 'Ninguna',
     'helper_alt_text' => 'Describe la imagen para accesibilidad y SEO.',

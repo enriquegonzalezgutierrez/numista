@@ -1,4 +1,5 @@
 <?php
+
 // app/View/Components/Public/Items/ItemCard.php
 
 namespace App\View\Components\Public\Items;
@@ -15,8 +16,7 @@ class ItemCard extends Component
      */
     public function __construct(
         public Item $item // Define the 'item' property
-    ) {
-    }
+    ) {}
 
     /**
      * Get the view / contents that represent the component.

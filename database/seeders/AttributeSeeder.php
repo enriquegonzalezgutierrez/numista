@@ -1,4 +1,5 @@
 <?php
+
 // database/seeders/AttributeSeeder.php
 
 namespace Database\Seeders;
@@ -17,6 +18,7 @@ class AttributeSeeder extends Seeder
         $this->tenant = Tenant::where('slug', 'coleccion-numista')->first();
         if (! $this->tenant) {
             $this->command->warn('Default tenant "coleccion-numista" not found. Skipping AttributeSeeder.');
+
             return;
         }
 
@@ -65,7 +67,7 @@ class AttributeSeeder extends Seeder
         if (! $this->tenant) {
             return;
         }
-        
+
         $attribute = Attribute::create([
             'tenant_id' => $this->tenant->id,
             'name' => $name,

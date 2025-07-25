@@ -1,4 +1,5 @@
 <?php
+
 // lang/es/item.php
 
 return [
@@ -55,7 +56,7 @@ return [
     'status_shipped' => 'Enviado',
     'status_completed' => 'Completado',
     'status_cancelled' => 'Cancelado',
-    
+
     // --- Option Definitions for Selectable Attributes ---
     'options' => [
         'grade' => [ // This key should match the attribute name in lowercase: 'grado' -> 'grade'

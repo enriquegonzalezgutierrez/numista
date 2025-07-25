@@ -119,12 +119,14 @@ class Item extends Model
     {
         // Search filter for item name
         $query->when($filters['search'] ?? null, function ($query, $search) {
-            $query->where('name', 'like', '%' . $search . '%');
+            $query->where('name', 'like', '%'.$search.'%');
         });
 
         // Category filter
         $query->when($filters['categories'] ?? null, function ($query, $categories) {
-            if (!is_array($categories)) return;
+            if (! is_array($categories)) {
+                return;
+            }
             $query->whereHas('categories', function ($q) use ($categories) {
                 $q->whereIn('category_id', $categories);
             });
@@ -138,7 +140,7 @@ class Item extends Model
                 }
 
                 $attribute = Attribute::find($attributeId);
-                if (!$attribute) {
+                if (! $attribute) {
                     continue;
                 }
 
@@ -150,7 +152,7 @@ class Item extends Model
                         $q->where('attribute_value_id', $value);
                     } else {
                         // If it's text/number/date, we filter by the text value
-                        $q->where('value', 'like', '%' . $value . '%');
+                        $q->where('value', 'like', '%'.$value.'%');
                     }
                 });
             }
