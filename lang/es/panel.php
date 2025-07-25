@@ -139,4 +139,13 @@ return [
     'widget_stats_items_for_sale_desc' => 'Ítems marcados actualmente para la venta',
     'widget_stats_categories_desc' => 'Total de categorías para organizar ítems',
     'widget_stats_collections_desc' => 'Agrupaciones temáticas de ítems',
+
+    'My Orders' => 'Mis Pedidos',
+    'Order Number' => 'Nº de Pedido',
+    'Date' => 'Fecha',
+    'Total' => 'Total',
+    'Status' => 'Estado',
+    'Items' => 'Artículos',
+    "You haven't placed any orders yet." => 'Aún no has realizado ningún pedido.',
+    'Browse Marketplace' => 'Explorar el Marketplace',
 ];

@@ -1,5 +1,4 @@
 <?php
-
 // lang/es/public.php
 
 return [
@@ -20,9 +19,10 @@ return [
     'filter_categories_title' => 'Categorías',
     'filter_apply_button' => 'Aplicar Filtros',
     'filter_clear_button' => 'Limpiar',
+    'filter_all_option' => 'Todos',
+    'filter_show_button' => 'Mostrar Filtros',
     'no_items_found_filtered' => 'No se encontraron ítems con esos filtros.',
     'clear_filters_link' => 'Limpiar filtros',
-    'filter_show_button' => 'Mostrar Filtros',
     'results_count' => 'Mostrando :count resultado|Mostrando :count resultados',
 
     // --- Contact Modal ---
@@ -35,6 +35,4 @@ return [
     'contact_modal_send' => 'Enviar Mensaje',
     'contact_modal_success' => '¡Tu mensaje ha sido enviado con éxito!',
     'contact_modal_error_seller' => 'No se pudo encontrar la información del vendedor.',
-
-    'filter_all_option' => 'Todos',
 ];

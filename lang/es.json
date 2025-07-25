@@ -1,0 +1,22 @@
+{
+    "Login": "Acceso",
+    "Register": "Registro",
+    "Log Out": "Cerrar Sesión",
+    "My Account": "Mi Cuenta",
+    "Dashboard": "Panel de Control",
+    "My Orders": "Mis Pedidos",
+    "Order Number": "Nº de Pedido",
+    "Date": "Fecha",
+    "Total": "Total",
+    "Status": "Estado",
+    "Items": "Artículos",
+    "You haven't placed any orders yet.": "Aún no has realizado ningún pedido.",
+    "Browse Marketplace": "Explorar el Marketplace",
+    "Whoops! Something went wrong.": "¡Ups! Algo salió mal.",
+    "Name": "Nombre",
+    "Email": "Email",
+    "Password": "Contraseña",
+    "Confirm Password": "Confirmar Contraseña",
+    "Not a member?": "¿No eres miembro?",
+    "Already registered?": "¿Ya estás registrado?"
+}
