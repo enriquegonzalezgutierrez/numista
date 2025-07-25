@@ -1,4 +1,5 @@
 <?php
+
 // lang/es/public.php
 
 return [

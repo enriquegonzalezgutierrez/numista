@@ -1,8 +1,9 @@
 <?php
+
 // routes/web.php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TenantFileController;
+use Illuminate\Support\Facades\Route;
 use Numista\Collection\UI\Public\Controllers\Auth\AuthenticatedSessionController;
 use Numista\Collection\UI\Public\Controllers\Auth\RegisteredUserController;
 use Numista\Collection\UI\Public\Controllers\ContactSellerController;

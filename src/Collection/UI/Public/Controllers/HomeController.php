@@ -1,4 +1,5 @@
 <?php
+
 // src/Collection/UI/Public/Controllers/HomeController.php
 
 namespace Numista\Collection\UI\Public\Controllers;
@@ -20,8 +21,6 @@ class HomeController extends Controller
 
     /**
      * Show the application dashboard.
-     *
-     * @return \Illuminate\View\View
      */
     public function index(): View
     {
