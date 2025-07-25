@@ -1,34 +1,68 @@
-@props(['categories', 'isMobile' => false])
+@props(['categories', 'filterableAttributes', 'isMobile' => false])
 
-{{-- This form is now just for structure, the real submission is handled by Alpine --}}
-<form x-ref="filterForm{{ $isMobile ? 'Mobile' : 'Desktop' }}" action="{{ route('public.items.index') }}" method="GET">
-    {{-- Search Field --}}
-    <div>
-        <label for="search-{{ $isMobile ? 'mobile' : 'desktop' }}" class="block text-sm font-medium text-slate-700 dark:text-slate-200">{{ __('public.filter_search_label') }}</label>
-        <div class="relative mt-1">
-            <input type="text" name="search" id="search-{{ $isMobile ? 'mobile' : 'desktop' }}" value="{{ request('search') }}"
-                   class="block w-full rounded-md border-slate-300 py-2 pl-3 pr-10 shadow-sm focus:border-teal-500 focus:ring-teal-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white sm:text-sm" 
-                   placeholder="{{ __('public.filter_search_placeholder') }}">
-            <button type="submit" class="absolute inset-y-0 right-0 flex items-center pr-3">
-                <svg class="h-5 w-5 text-slate-400 hover:text-slate-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" /></svg>
-            </button>
-        </div>
+<div>
+    <!-- Search Filter -->
+    <div class="mb-6">
+        <label for="search-{{ $isMobile ? 'mobile' : 'desktop' }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('public.filter_search_label') }}</label>
+        <input 
+            type="text" 
+            name="search" 
+            id="search-{{ $isMobile ? 'mobile' : 'desktop' }}" 
+            value="{{ request('search') }}" 
+            placeholder="{{ __('public.filter_search_placeholder') }}" 
+            class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        >
     </div>
 
-    {{-- Category Filter --}}
+    <!-- Category Filter -->
     @if($categories->isNotEmpty())
-    <div class="border-t border-slate-200 dark:border-slate-700 pt-4 mt-6">
-        <h3 class="text-base font-medium text-slate-900 dark:text-white">{{ __('public.filter_categories_title') }}</h3>
-        <div class="mt-4 space-y-4">
+    <div class="mb-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">{{ __('public.filter_categories_title') }}</h3>
+        <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
             @foreach($categories as $category)
                 <div class="flex items-center">
-                    <input id="category-{{ $category->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}" name="categories[]" value="{{ $category->id }}" type="checkbox"
-                           @if(in_array($category->id, request('categories', []))) checked @endif
-                           class="h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500">
-                    <label for="category-{{ $category->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}" class="ml-3 text-sm text-slate-600 dark:text-slate-300">{{ $category->name }}</label>
+                    <input id="category-{{ $category->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}" name="categories[]" value="{{ $category->id }}" type="checkbox" @checked(in_array($category->id, request('categories', []))) class="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500">
+                    <label for="category-{{ $category->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}" class="ml-3 text-sm text-gray-600 dark:text-gray-400">{{ $category->name }}</label>
                 </div>
             @endforeach
         </div>
     </div>
     @endif
-</form>
+
+    <!-- Dynamic Attribute Filters -->
+    @if($filterableAttributes->isNotEmpty())
+        @foreach($filterableAttributes as $attribute)
+            <div class="mb-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+                @php
+                    // Creates a translation key from the attribute name in the DB.
+                    // Example: "Mint Mark" -> "panel.attribute_name_mint_mark"
+                    $labelKey = 'panel.attribute_name_' . strtolower(str_replace(' ', '_', $attribute->name));
+                @endphp
+                <label for="attribute-{{ $attribute->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}" class="text-lg font-medium text-gray-900 dark:text-white mb-2 block">
+                    {{-- If translation exists, use it. Otherwise, fallback to the DB name. --}}
+                    {{ trans()->has($labelKey) ? __($labelKey) : $attribute->name }}
+                </label>
+                
+                @if($attribute->type === 'select' && $attribute->values->isNotEmpty())
+                    <select name="attributes[{{ $attribute->id }}]" id="attribute-{{ $attribute->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}" class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="">{{ __('public.filter_all_option') }}</option>
+                        @foreach($attribute->values as $option)
+                            @php
+                                // Creates a translation key for the option.
+                                // Example: Attribute "Grade", Option "unc" -> "item.options.grade.unc"
+                                $attributeKey = strtolower(str_replace(' ', '_', $attribute->name));
+                                $translationKey = "item.options.{$attributeKey}.{$option->value}";
+                            @endphp
+                            <option value="{{ $option->id }}" @selected(request('attributes.'.$attribute->id) == $option->id)>
+                                {{-- If translation exists, use it. Otherwise, fallback to the raw value. --}}
+                                {{ trans()->has($translationKey) ? __($translationKey) : $option->value }}
+                            </option>
+                        @endforeach
+                    </select>
+                @else
+                    <input type="text" name="attributes[{{ $attribute->id }}]" id="attribute-{{ $attribute->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}" value="{{ request('attributes.'.$attribute->id) }}" class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                @endif
+            </div>
+        @endforeach
+    @endif
+</div>

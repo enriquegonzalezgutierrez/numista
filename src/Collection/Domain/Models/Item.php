@@ -119,14 +119,41 @@ class Item extends Model
     {
         // Search filter for item name
         $query->when($filters['search'] ?? null, function ($query, $search) {
-            $query->where('name', 'like', '%'.$search.'%');
+            $query->where('name', 'like', '%' . $search . '%');
         });
 
         // Category filter
         $query->when($filters['categories'] ?? null, function ($query, $categories) {
+            if (!is_array($categories)) return;
             $query->whereHas('categories', function ($q) use ($categories) {
-                $q->whereIn('id', $categories);
+                $q->whereIn('category_id', $categories);
             });
+        });
+
+        // Dynamic Attribute Filter (Now handles both text and select)
+        $query->when($filters['attributes'] ?? null, function ($query, $attributes) {
+            foreach ($attributes as $attributeId => $value) {
+                if (empty($value)) {
+                    continue;
+                }
+
+                $attribute = Attribute::find($attributeId);
+                if (!$attribute) {
+                    continue;
+                }
+
+                $query->whereHas('attributes', function ($q) use ($attribute, $value) {
+                    $q->where('attribute_id', $attribute->id);
+
+                    if ($attribute->type === 'select') {
+                        // If it's a select, we filter by the attribute_value_id
+                        $q->where('attribute_value_id', $value);
+                    } else {
+                        // If it's text/number/date, we filter by the text value
+                        $q->where('value', 'like', '%' . $value . '%');
+                    }
+                });
+            }
         });
 
         return $query;

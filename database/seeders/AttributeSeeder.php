@@ -1,5 +1,4 @@
 <?php
-
 // database/seeders/AttributeSeeder.php
 
 namespace Database\Seeders;
@@ -18,16 +17,14 @@ class AttributeSeeder extends Seeder
         $this->tenant = Tenant::where('slug', 'coleccion-numista')->first();
         if (! $this->tenant) {
             $this->command->warn('Default tenant "coleccion-numista" not found. Skipping AttributeSeeder.');
-
             return;
         }
 
         Attribute::where('tenant_id', $this->tenant->id)->delete();
-        // The pivot table is automatically truncated due to cascade on delete.
 
         $this->command->info('Defining item attributes and their types...');
 
-        // --- COMMON ATTRIBUTES ---
+        // --- English names are used as keys for translation ---
         $this->createAttribute('Year', 'number', ['art', 'banknote', 'book', 'camera', 'coin', 'movie_collectible', 'photo', 'postcard', 'radio', 'stamp', 'toy', 'vehicle', 'vinyl_record', 'watch']);
         $this->createAttribute('Country', 'text', ['art', 'banknote', 'coin', 'military', 'stamp']);
         $this->createAttribute('Grade', 'select', ['coin', 'banknote', 'comic']);
@@ -36,33 +33,23 @@ class AttributeSeeder extends Seeder
         $this->createAttribute('Material', 'text', ['antique', 'art', 'craftsmanship', 'jewelry', 'medal', 'military', 'pen', 'toy', 'vintage_item', 'watch']);
         $this->createAttribute('Artist', 'text', ['art', 'craftsmanship', 'vinyl_record']);
         $this->createAttribute('Publisher', 'text', ['book', 'comic', 'postcard']);
-
-        // --- COIN & BANKNOTE ---
         $this->createAttribute('Denomination', 'text', ['coin', 'banknote']);
         $this->createAttribute('Mint Mark', 'text', ['coin']);
         $this->createAttribute('Composition', 'text', ['coin', 'medal']);
         $this->createAttribute('Weight', 'number', ['coin', 'jewelry', 'medal']);
         $this->createAttribute('Serial Number', 'text', ['banknote']);
-
-        // --- PAPER & MEDIA ---
         $this->createAttribute('Issue Number', 'text', ['comic']);
         $this->createAttribute('Cover Date', 'date', ['comic']);
         $this->createAttribute('Author', 'text', ['book']);
         $this->createAttribute('ISBN', 'text', ['book']);
         $this->createAttribute('Record Label', 'text', ['vinyl_record']);
         $this->createAttribute('Face Value', 'text', ['stamp']);
-
-        // --- ART & PHOTOGRAPHY ---
         $this->createAttribute('Dimensions', 'text', ['art', 'photo']);
         $this->createAttribute('Photographer', 'text', ['photo']);
         $this->createAttribute('Location', 'text', ['photo', 'postcard']);
         $this->createAttribute('Technique', 'text', ['art', 'photo', 'craftsmanship']);
-
-        // --- VEHICLE ---
         $this->createAttribute('License Plate', 'text', ['vehicle']);
         $this->createAttribute('Chassis Number', 'text', ['vehicle']);
-
-        // --- SPECIALIZED COLLECTIBLES ---
         $this->createAttribute('Gemstone', 'text', ['jewelry']);
         $this->createAttribute('Conflict', 'text', ['military']);
         $this->createAttribute('Sport', 'text', ['sports']);
@@ -78,13 +65,12 @@ class AttributeSeeder extends Seeder
         if (! $this->tenant) {
             return;
         }
-
-        /** @var Attribute $attribute */
+        
         $attribute = Attribute::create([
             'tenant_id' => $this->tenant->id,
             'name' => $name,
             'type' => $type,
-            'is_filterable' => in_array($name, ['Year', 'Country', 'Grade', 'Brand', 'Material', 'Artist', 'Publisher']), // Example filterable attributes
+            'is_filterable' => in_array($name, ['Year', 'Country', 'Grade', 'Brand', 'Material', 'Artist', 'Publisher']),
         ]);
 
         $pivots = collect($itemTypes)->map(fn ($itemType) => [

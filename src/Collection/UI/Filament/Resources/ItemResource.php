@@ -110,8 +110,8 @@ class ItemResource extends Resource
                                         'select' => Select::make("attributes.{$attribute->id}.attribute_value_id")
                                             ->options(function () use ($attribute) {
                                                 $options = $attribute->values()->pluck('value', 'id')->toArray();
-                                                if (strtolower($attribute->name) === 'grade') {
-                                                    return array_map(fn ($value) => __("item.grade_{$value}"), $options);
+                                                if (strtolower($attribute->name) === 'grade' || strtolower($attribute->name) === 'grado') {
+                                                    return array_map(fn ($value) => __("item.options.grade.{$value}"), $options);
                                                 }
 
                                                 return $options;

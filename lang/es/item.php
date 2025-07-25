@@ -1,15 +1,12 @@
 <?php
-
 // lang/es/item.php
 
 return [
-    // Section Titles in Item Form
+    // --- Section Titles in Item Form ---
     'section_core' => 'Datos Principales del Ítem',
     'section_acquisition' => 'Datos de Adquisición y Venta',
-    // We no longer need specific section titles like 'section_numismatic', etc.
 
-    // --- Field Labels ---
-    // Core Item Fields (These remain)
+    // --- Core Item Fields (used in Filament forms and tables) ---
     'field_name' => 'Nombre',
     'field_type' => 'Tipo de Ítem',
     'field_description' => 'Descripción',
@@ -18,28 +15,7 @@ return [
     'field_purchase_date' => 'Fecha de Compra',
     'field_status' => 'Estado Actual',
     'field_sale_price' => 'Precio de Venta',
-
-    // Attribute Fields (These now map to the 'attributes' table names)
-    'field_year' => 'Año',
-    'field_country' => 'País',
-    'field_grade' => 'Grado de Conservación',
-    'field_brand' => 'Marca / Fabricante',
-    'field_model' => 'Modelo',
-    'field_material' => 'Material',
-    'field_denomination' => 'Denominación',
-    'field_mint_mark' => 'Marca de Ceca',
-    'field_composition' => 'Composición',
-    'field_weight' => 'Peso (gramos)',
-    'field_serial_number' => 'Número de Serie',
-    'field_publisher' => 'Editorial',
-    'field_issue_number' => 'Número de Ejemplar',
-    'field_cover_date' => 'Fecha de Portada',
-    'field_author' => 'Autor',
-    'field_isbn' => 'ISBN',
-    'field_artist' => 'Artista',
-    'field_dimensions' => 'Dimensiones',
-    // (You can add more here as you create more attributes in the seeder)
-    'field_face_value' => 'Valor Facial',
+    'field_unit_price' => 'Precio Unitario',
 
     // --- Item Type Options ---
     'type_art' => 'Obra de Arte',
@@ -79,47 +55,16 @@ return [
     'status_shipped' => 'Enviado',
     'status_completed' => 'Completado',
     'status_cancelled' => 'Cancelado',
-
-    // --- Grade Options ---
-    'grade_unc' => 'UNC (Sin Circular)',
-    'grade_au' => 'AU (Casi Sin Circular)',
-    'grade_xf' => 'XF (Excelentemente Conservado)',
-    'grade_vf' => 'VF (Muy Bien Conservado)',
-    'grade_f' => 'F (Bien Conservado)',
-    'grade_g' => 'G (Regular)',
-
-    // --- Attribute Names ---
-    'attribute_year' => 'Año',
-    'attribute_country' => 'País',
-    'attribute_grade' => 'Grado',
-    'attribute_brand' => 'Marca',
-    'attribute_model' => 'Modelo',
-    'attribute_material' => 'Material',
-    'attribute_denomination' => 'Denominación',
-    'attribute_mint_mark' => 'Marca de Ceca',
-    'attribute_composition' => 'Composición',
-    'attribute_weight' => 'Peso',
-    'attribute_serial_number' => 'Número de Serie',
-    'attribute_publisher' => 'Editorial',
-    'attribute_issue_number' => 'Número de Ejemplar',
-    'attribute_cover_date' => 'Fecha de Portada',
-    'attribute_author' => 'Autor',
-    'attribute_isbn' => 'ISBN',
-    'attribute_artist' => 'Artista',
-    'attribute_dimensions' => 'Dimensiones',
-    'attribute_face_value' => 'Valor Facial',
-    'attribute_gemstone' => 'Gema',
-    'attribute_license_plate' => 'Matrícula',
-    'attribute_chassis_number' => 'Número de Bastidor',
-    'attribute_record_label' => 'Sello Discográfico',
-    'attribute_photographer' => 'Fotógrafo',
-    'attribute_location' => 'Ubicación',
-    'attribute_technique' => 'Técnica',
-    'attribute_conflict' => 'Conflicto',
-    'attribute_sport' => 'Deporte',
-    'attribute_team' => 'Equipo',
-    'attribute_player' => 'Jugador',
-    'attribute_event' => 'Evento',
-    'attribute_movie_title' => 'Título de Película',
-    'attribute_character' => 'Personaje',
+    
+    // --- Option Definitions for Selectable Attributes ---
+    'options' => [
+        'grade' => [ // This key should match the attribute name in lowercase: 'grado' -> 'grade'
+            'unc' => 'UNC (Sin Circular)',
+            'au' => 'AU (Casi Sin Circular)',
+            'xf' => 'XF (Excelentemente Conservado)',
+            'vf' => 'VF (Muy Bien Conservado)',
+            'f' => 'F (Bien Conservado)',
+            'g' => 'G (Regular)',
+        ],
+    ],
 ];

@@ -35,4 +35,6 @@ return [
     'contact_modal_send' => 'Enviar Mensaje',
     'contact_modal_success' => '¡Tu mensaje ha sido enviado con éxito!',
     'contact_modal_error_seller' => 'No se pudo encontrar la información del vendedor.',
+
+    'filter_all_option' => 'Todos',
 ];
