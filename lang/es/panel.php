@@ -148,4 +148,10 @@ return [
     'Items' => 'Artículos',
     "You haven't placed any orders yet." => 'Aún no has realizado ningún pedido.',
     'Browse Marketplace' => 'Explorar el Marketplace',
+
+    // --- Tenant Registration & Profile Pages ---
+    'page_register_tenant_title' => 'Registrar Nueva Colección',
+    'page_edit_tenant_title' => 'Editar Perfil de la Colección',
+    'field_collection_name' => 'Nombre de la Colección',
+    'field_collection_slug' => 'Slug (URL)',
 ];

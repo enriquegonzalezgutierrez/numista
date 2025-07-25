@@ -32,7 +32,25 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('home'));
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // --- NEW LOGIC: Redirect based on user role ---
+        if ($user->is_admin) {
+            // If the user is an admin, redirect to their Filament panel.
+            // We will try to redirect to their first available tenant.
+            $firstTenant = $user->tenants()->first();
+
+            if ($firstTenant) {
+                return redirect()->intended(route('filament.admin.pages.dashboard', ['tenant' => $firstTenant]));
+            } else {
+                // If the admin has no tenants, redirect to the tenant creation page.
+                return redirect()->route('filament.admin.tenant-registration');
+            }
+        }
+
+        // If the user is a regular customer, redirect to the marketplace.
+        return redirect()->intended(route('public.items.index'));
     }
 
     public function destroy(Request $request): RedirectResponse
