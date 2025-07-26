@@ -41,5 +41,14 @@
     "Add to Cart": "Añadir al Carrito",
     "Order summary": "Resumen del Pedido",
     "or": "o",
-    "item": "producto|productos"
+    "item": "producto|productos",
+    "Checkout": "Finalizar Compra",
+    "Shipping Information": "Información de Envío",
+    "Shipping Address": "Dirección de Envío",
+    "Order Summary": "Resumen del Pedido",
+    "Place Order": "Realizar Pedido",
+    "Thank You!": "¡Gracias!",
+    "Your order has been placed successfully.": "Tu pedido se ha realizado correctamente.",
+    "Your order number is:": "Tu número de pedido es:",
+    "View Your Orders": "Ver Tus Pedidos"
 }

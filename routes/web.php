@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Numista\Collection\UI\Public\Controllers\Auth\AuthenticatedSessionController;
 use Numista\Collection\UI\Public\Controllers\Auth\RegisteredUserController;
 use Numista\Collection\UI\Public\Controllers\CartController;
+use Numista\Collection\UI\Public\Controllers\CheckoutController;
 use Numista\Collection\UI\Public\Controllers\ContactSellerController;
 use Numista\Collection\UI\Public\Controllers\HomeController;
 use Numista\Collection\UI\Public\Controllers\OrderController;
@@ -34,6 +35,9 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('checkout', [CheckoutController::class, 'create'])->name('checkout.create');
+    Route::post('checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
 });
 
 // --- Cart & Checkout Routes ---

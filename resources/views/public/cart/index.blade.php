@@ -53,7 +53,7 @@
                 </div>
             </dl>
             <div class="mt-6">
-                <a href="#" class="w-full flex items-center justify-center rounded-md border border-transparent bg-teal-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-teal-700">{{ __('Proceed to Checkout') }}</a>
+                <a href="{{ route('checkout.create') }}" class="w-full flex items-center justify-center rounded-md border border-transparent bg-teal-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-teal-700">{{ __('Proceed to Checkout') }}</a>
             </div>
             <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
                 <p>
