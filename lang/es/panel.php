@@ -154,4 +154,10 @@ return [
     'page_edit_tenant_title' => 'Editar Perfil de la Colección',
     'field_collection_name' => 'Nombre de la Colección',
     'field_collection_slug' => 'Slug (URL)',
+
+    // --- Actions, Buttons & Modals ---
+    'action_update_status' => 'Actualizar Estado',
+    'modal_change_order_status_heading' => 'Cambiar Estado del Pedido',
+    'notification_order_status_updated_title' => 'Estado del Pedido Actualizado',
+    'notification_order_status_updated_body' => 'El estado del pedido ha sido actualizado correctamente.',
 ];

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Numista\Collection\UI\Public\Controllers\Auth\AuthenticatedSessionController;
 use Numista\Collection\UI\Public\Controllers\Auth\RegisteredUserController;
 use Numista\Collection\UI\Public\Controllers\ContactSellerController;
+use Numista\Collection\UI\Public\Controllers\HomeController;
 use Numista\Collection\UI\Public\Controllers\PublicImageController;
 use Numista\Collection\UI\Public\Controllers\PublicItemController;
 
@@ -29,4 +30,5 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 });
