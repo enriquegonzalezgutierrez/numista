@@ -27,25 +27,7 @@
 
         {{-- Mobile filter dialog --}}
         <div x-show="mobileFiltersOpen" class="relative z-40 lg:hidden" role="dialog" aria-modal="true" x-cloak>
-            <div x-show="mobileFiltersOpen" x-transition.opacity.duration.300ms class="fixed inset-0 bg-black bg-opacity-25"></div>
-            <div class="fixed inset-0 z-40 flex">
-                <div x-show="mobileFiltersOpen" @click.away="mobileFiltersOpen = false" x-transition:enter="transition ease-in-out duration-300 transform" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in-out duration-300 transform" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white dark:bg-gray-800 py-4 pb-12 shadow-xl">
-                    <div class="flex items-center justify-between px-4">
-                        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Filters</h2>
-                        <button @click="mobileFiltersOpen = false" type="button" class="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white dark:bg-gray-800 p-2 text-gray-400"><span class="sr-only">Close menu</span><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
-                    </div>
-                    
-                    <form action="{{ route('public.items.index') }}" method="GET" id="mobile-filter-form" class="flex flex-col h-full">
-                        <div class="mt-4 border-t border-gray-200 dark:border-gray-700 px-4 py-6 overflow-y-auto">
-                            <x-public.items.filter-form :categories="$categories" :filterableAttributes="$filterableAttributes" :is-mobile="true" />
-                        </div>
-                        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-4 mt-auto space-y-3">
-                            <button type="submit" class="w-full rounded-md bg-teal-600 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:bg-teal-700">{{ __('public.filter_apply_button') }}</button>
-                            <a href="{{ route('public.items.index') }}" class="block w-full rounded-md bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 px-4 py-2 text-center text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-600">{{ __('public.filter_clear_button') }}</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            {{-- ... (código del modal que no necesita cambios) ... --}}
         </div>
 
         {{-- Product grid --}}

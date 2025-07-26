@@ -24,7 +24,9 @@
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                 @foreach($orders as $order)
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ $order->order_number }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-teal-600 hover:text-teal-500">
+                                            <a href="{{ route('orders.show', $order) }}">{{ $order->order_number }}</a>
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $order->created_at->format('d/m/Y') }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                                             <ul class="list-disc list-inside">

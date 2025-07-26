@@ -6,8 +6,10 @@ use App\Http\Controllers\TenantFileController;
 use Illuminate\Support\Facades\Route;
 use Numista\Collection\UI\Public\Controllers\Auth\AuthenticatedSessionController;
 use Numista\Collection\UI\Public\Controllers\Auth\RegisteredUserController;
+use Numista\Collection\UI\Public\Controllers\CartController;
 use Numista\Collection\UI\Public\Controllers\ContactSellerController;
 use Numista\Collection\UI\Public\Controllers\HomeController;
+use Numista\Collection\UI\Public\Controllers\OrderController;
 use Numista\Collection\UI\Public\Controllers\PublicImageController;
 use Numista\Collection\UI\Public\Controllers\PublicItemController;
 
@@ -31,4 +33,13 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+});
+
+// --- Cart & Checkout Routes ---
+Route::prefix('cart')->name('cart.')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('index');
+    Route::post('/add/{item}', [CartController::class, 'add'])->name('add');
+    Route::patch('/update/{item}', [CartController::class, 'update'])->name('update');
+    Route::delete('/remove/{item}', [CartController::class, 'remove'])->name('remove');
 });

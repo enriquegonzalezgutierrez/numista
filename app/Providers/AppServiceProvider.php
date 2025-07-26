@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 use Numista\Collection\Domain\Models\Category;
 use Numista\Collection\Domain\Models\Collection;
@@ -31,5 +32,7 @@ class AppServiceProvider extends ServiceProvider
         Category::observe(CategoryObserver::class);
         Tenant::observe(TenantObserver::class);
         Collection::observe(CollectionObserver::class);
+        // Set Carbon's locale globally
+        Carbon::setLocale(config('app.locale'));
     }
 }
