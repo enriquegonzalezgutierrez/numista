@@ -132,7 +132,7 @@ class Item extends Model
             });
         });
 
-        // Dynamic Attribute Filter (Now handles both text and select)
+        // Dynamic Attribute Filter (Corrected Logic)
         $query->when($filters['attributes'] ?? null, function ($query, $attributes) {
             foreach ($attributes as $attributeId => $value) {
                 if (empty($value)) {
@@ -148,10 +148,9 @@ class Item extends Model
                     $q->where('attribute_id', $attribute->id);
 
                     if ($attribute->type === 'select') {
-                        // If it's a select, we filter by the attribute_value_id
+                        // Correctly filters by the numeric ID of the option
                         $q->where('attribute_value_id', $value);
                     } else {
-                        // If it's text/number/date, we filter by the text value
                         $q->where('value', 'like', '%'.$value.'%');
                     }
                 });

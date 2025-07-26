@@ -16,6 +16,9 @@ use Numista\Collection\Domain\Models\Tenant;
 
 class ItemSeeder extends Seeder
 {
+    /**
+     * @var \Illuminate\Support\Collection<string, \Numista\Collection\Domain\Models\Attribute>
+     */
     private EloquentCollection $attributes;
 
     public function run(): void
@@ -27,6 +30,7 @@ class ItemSeeder extends Seeder
             return;
         }
 
+        // Pre-load all attributes and key them by their lowercase, snake_case name for easy lookup.
         $this->attributes = Attribute::where('tenant_id', $tenant->id)->get()->keyBy(fn ($attr) => strtolower(str_replace(' ', '_', $attr->name)));
 
         // Clean previous items and images for the tenant
@@ -67,7 +71,6 @@ class ItemSeeder extends Seeder
 
         for ($i = 0; $i < $count; $i++) {
             $itemData = Item::factory()->{$itemType}()->make(['tenant_id' => $tenant->id]);
-
             $item = Item::create([
                 'tenant_id' => $tenant->id,
                 'name' => $itemData->name,
@@ -79,84 +82,79 @@ class ItemSeeder extends Seeder
                 'status' => $isForSale ? 'for_sale' : 'in_collection',
                 'sale_price' => $isForSale ? $itemData->purchase_price * fake()->randomFloat(2, 1.2, 2.5) : null,
             ]);
-
             $item->categories()->attach($category->id);
             $this->attachAllAttributes($item, $itemData, $itemType);
-
-            // --- THE FIX: Create multiple image records for each item ---
             if ($imagePath) {
-                // 1. Create the main image record
-                $item->images()->create([
-                    'path' => $imagePath,
-                    'alt_text' => 'Main image for '.$item->name,
-                    'order_column' => 1,
-                ]);
-
-                // 2. Create a few additional, secondary image records
-                $secondaryImageCount = rand(2, 4); // Create between 2 and 4 secondary images
+                $item->images()->create(['path' => $imagePath, 'alt_text' => 'Main image for '.$item->name, 'order_column' => 1]);
+                $secondaryImageCount = rand(2, 4);
                 for ($j = 2; $j <= $secondaryImageCount + 1; $j++) {
-                    $item->images()->create([
-                        'path' => $imagePath, // Using the same image path
-                        'alt_text' => "Secondary image {$j} for ".$item->name,
-                        'order_column' => $j,
-                    ]);
+                    $item->images()->create(['path' => $imagePath, 'alt_text' => "Secondary image {$j} for ".$item->name, 'order_column' => $j]);
                 }
             }
         }
     }
 
-    // ... (El resto de los métodos: attachAllAttributes, attachAttribute, attachItemsToCollections, copyPlaceholderImage)
-    // se quedan exactamente igual que en la versión anterior.
     private function attachAllAttributes(Item $item, Item $itemData, string $itemType): void
     {
-        $this->attachAttribute($item, 'Grado', $itemData->grade ?? null);
-        $this->attachAttribute($item, 'Año', $itemData->year ?? null);
-        $this->attachAttribute($item, 'País', $itemData->country?->name ?? null);
+        $this->attachAttribute($item, 'Grade', $itemData->grade ?? null);
+        $this->attachAttribute($item, 'Year', $itemData->year ?? null);
+        $this->attachAttribute($item, 'Country', $itemData->country?->name ?? null);
         switch ($itemType) {
             case 'coin':
-                $this->attachAttribute($item, 'Denominación', $itemData->denomination);
-                $this->attachAttribute($item, 'Marca de Ceca', $itemData->mint_mark);
-                $this->attachAttribute($item, 'Composición', $itemData->composition);
-                $this->attachAttribute($item, 'Peso', $itemData->weight);
+                $this->attachAttribute($item, 'Denomination', $itemData->denomination);
+                $this->attachAttribute($item, 'Mint Mark', $itemData->mint_mark);
+                $this->attachAttribute($item, 'Composition', $itemData->composition);
+                $this->attachAttribute($item, 'Weight', $itemData->weight);
                 break;
             case 'banknote':
-                $this->attachAttribute($item, 'Denominación', $itemData->denomination);
-                $this->attachAttribute($item, 'Número de Serie', $itemData->serial_number);
+                $this->attachAttribute($item, 'Denomination', $itemData->denomination);
+                $this->attachAttribute($item, 'Serial Number', $itemData->serial_number);
                 break;
             case 'comic':
-                $this->attachAttribute($item, 'Editorial', $itemData->publisher);
-                $this->attachAttribute($item, 'Número de Ejemplar', $itemData->issue_number);
-                $this->attachAttribute($item, 'Fecha de Portada', $itemData->cover_date);
+                $this->attachAttribute($item, 'Publisher', $itemData->publisher);
+                $this->attachAttribute($item, 'Issue Number', $itemData->issue_number);
+                $this->attachAttribute($item, 'Cover Date', $itemData->cover_date);
                 break;
             case 'watch':
-                $this->attachAttribute($item, 'Marca', $itemData->brand);
-                $this->attachAttribute($item, 'Modelo', $itemData->model);
+                $this->attachAttribute($item, 'Brand', $itemData->brand);
+                $this->attachAttribute($item, 'Model', $itemData->model);
                 $this->attachAttribute($item, 'Material', $itemData->material);
                 break;
             case 'stamp':
-                $this->attachAttribute($item, 'Valor Facial', $itemData->face_value);
+                $this->attachAttribute($item, 'Face Value', $itemData->face_value);
                 break;
             case 'book':
-                $this->attachAttribute($item, 'Autor', $itemData->author);
-                $this->attachAttribute($item, 'Editorial', $itemData->publisher);
+                $this->attachAttribute($item, 'Author', $itemData->author);
+                $this->attachAttribute($item, 'Publisher', $itemData->publisher);
                 $this->attachAttribute($item, 'ISBN', $itemData->isbn);
                 break;
             case 'art':
-                $this->attachAttribute($item, 'Artista', $itemData->artist);
-                $this->attachAttribute($item, 'Dimensiones', $itemData->dimensions);
+                $this->attachAttribute($item, 'Artist', $itemData->artist);
+                $this->attachAttribute($item, 'Dimensions', $itemData->dimensions);
                 $this->attachAttribute($item, 'Material', $itemData->material);
                 break;
         }
     }
 
-    private function attachAttribute(Item $item, string $attributeKey, mixed $value): void
+    private function attachAttribute(Item $item, string $attributeName, mixed $value): void
     {
-        if (empty($value)) {
+        if ($value === null || $value === '') {
             return;
         }
-        $attribute = $this->attributes->get(strtolower(str_replace(' ', '_', $attributeKey)));
+
+        // THE FIX: Convert the English name to the snake_case key to find it in the collection.
+        $attributeKey = strtolower(str_replace(' ', '_', $attributeName));
+        $attribute = $this->attributes->get($attributeKey);
+
         if ($attribute) {
-            $item->attributes()->attach($attribute->id, ['value' => $value]);
+            $pivotData = ['value' => $value];
+            if ($attribute->type === 'select') {
+                $attributeValue = $attribute->values()->where('value', $value)->first();
+                if ($attributeValue) {
+                    $pivotData['attribute_value_id'] = $attributeValue->id;
+                }
+            }
+            $item->attributes()->attach($attribute->id, $pivotData);
         }
     }
 

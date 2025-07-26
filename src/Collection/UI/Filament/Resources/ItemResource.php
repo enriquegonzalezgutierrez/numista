@@ -104,24 +104,24 @@ class ItemResource extends Resource
                                 }
 
                                 return $attributes->map(function (Attribute $attribute) {
-                                    $field = match ($attribute->type) {
-                                        'number' => TextInput::make("attributes.{$attribute->id}.value")->numeric(),
-                                        'date' => DatePicker::make("attributes.{$attribute->id}.value"),
-                                        'select' => Select::make("attributes.{$attribute->id}.attribute_value_id")
-                                            ->options(function () use ($attribute) {
-                                                $options = $attribute->values()->pluck('value', 'id')->toArray();
-                                                if (strtolower($attribute->name) === 'grade' || strtolower($attribute->name) === 'grado') {
-                                                    return array_map(fn ($value) => __("item.options.grade.{$value}"), $options);
-                                                }
+                                    if ($attribute->type === 'select') {
+                                        $options = $attribute->values->pluck('value', 'id');
+                                        if (strtolower($attribute->name) === 'grade') {
+                                            $options = $options->mapWithKeys(fn ($value, $id) => [$id => __("item.options.grade.{$value}")]);
+                                        }
+                                        $field = Select::make("attributes.{$attribute->id}.attribute_value_id")->options($options);
+                                    } else {
+                                        $field = match ($attribute->type) {
+                                            'number' => TextInput::make("attributes.{$attribute->id}.value")->numeric(),
+                                            'date' => DatePicker::make("attributes.{$attribute->id}.value"),
+                                            default => TextInput::make("attributes.{$attribute->id}.value"),
+                                        };
+                                    }
 
-                                                return $options;
-                                            }),
-                                        default => TextInput::make("attributes.{$attribute->id}.value"),
-                                    };
+                                    // THE FIX: Use the correct translation key from 'panel.php'
+                                    $key = 'panel.attribute_name_'.strtolower(str_replace(' ', '_', $attribute->name));
 
-                                    $translationKey = 'item.attribute_'.strtolower(str_replace(' ', '_', $attribute->name));
-
-                                    return $field->label(__($translationKey));
+                                    return $field->label(trans()->has($key) ? __($key) : $attribute->name);
                                 })->all();
                             })->columns(3),
                     ])
