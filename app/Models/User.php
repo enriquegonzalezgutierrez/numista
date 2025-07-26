@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,7 +19,7 @@ use Numista\Collection\Domain\Models\Customer;
 use Numista\Collection\Domain\Models\Order;
 use Numista\Collection\Domain\Models\Tenant;
 
-class User extends Authenticatable implements HasTenants
+class User extends Authenticatable implements FilamentUser, HasTenants
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -43,7 +44,6 @@ class User extends Authenticatable implements HasTenants
     protected $hidden = [
         'password',
         'remember_token',
-        'is_admin' => 'boolean',
     ];
 
     /**
@@ -56,7 +56,18 @@ class User extends Authenticatable implements HasTenants
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean', // <-- It's better to have the cast here
         ];
+    }
+
+    /**
+     * Determine if the user can access the Filament panel.
+     * This is required by the FilamentUser interface.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Only allow access if the user has the 'is_admin' flag set to true.
+        return $this->is_admin;
     }
 
     public function tenants(): BelongsToMany
@@ -64,19 +75,11 @@ class User extends Authenticatable implements HasTenants
         return $this->belongsToMany(Tenant::class);
     }
 
-    /**
-     * Get the tenants that the user has access to.
-     * The type hint for the return value must match the interface.
-     */
     public function getTenants(Panel $panel): Collection|array
     {
         return $this->tenants;
     }
 
-    /**
-     * Check if the user can access the given tenant.
-     * The type hint for $tenant must be 'Model' to match the interface.
-     */
     public function canAccessTenant(Model $tenant): bool
     {
         return $this->tenants->contains($tenant);
@@ -87,9 +90,6 @@ class User extends Authenticatable implements HasTenants
         return $this->hasMany(Order::class);
     }
 
-    /**
-     * The customer profile associated with the user.
-     */
     public function customer(): HasOne
     {
         return $this->hasOne(Customer::class);

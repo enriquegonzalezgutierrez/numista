@@ -24,6 +24,7 @@ RUN apk add --no-cache \
     freetype-dev \
     postgresql-dev \
     icu-dev \
+    icu-data-full \
     nodejs \
     npm
 

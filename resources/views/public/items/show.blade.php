@@ -98,9 +98,13 @@
                         @endif
                     </div>
                     <div class="mt-10">
-                        <button @click="isModalOpen = true" type="button" class="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-600 px-8 py-3 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:bg-teal-500 dark:hover:bg-teal-600 dark:focus:ring-offset-gray-800">
-                            {{ __('public.contact_seller') }}
-                        </button>
+                        <form action="{{ route('cart.add', $item) }}" method="POST">
+                            @csrf
+                            {{-- You could add a quantity selector here in the future --}}
+                            <button type="submit" class="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-600 px-8 py-3 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
+                                {{ __('Add to Cart') }}
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

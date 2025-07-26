@@ -7,6 +7,7 @@ namespace Numista\Collection\UI\Public\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Numista\Collection\Domain\Models\Attribute;
 use Numista\Collection\Domain\Models\Category;
 use Numista\Collection\Domain\Models\Item;
 
@@ -18,21 +19,37 @@ class PublicItemController extends Controller
      */
     public function index(Request $request): View
     {
-        $filters = $request->only(['search', 'categories']);
+        // --- NEW LOGIC: Clean up the filters ---
+        $filters = collect($request->all())->filter()->all();
+
+        // Specifically handle the 'attributes' array to remove empty values within it
+        if (isset($filters['attributes'])) {
+            $filters['attributes'] = array_filter($filters['attributes']);
+            if (empty($filters['attributes'])) {
+                unset($filters['attributes']);
+            }
+        }
 
         $items = Item::query()
             ->where('status', 'for_sale')
-            ->with(['images', 'tenant', 'attributes']) // <-- Eager load attributes
+            ->with(['images', 'tenant', 'attributes'])
             ->filter($filters)
             ->latest('created_at')
-            ->paginate(12);
+            ->paginate(12)
+            ->withQueryString(); // <-- withQueryString() is cleaner than appends()
 
         $categories = Category::query()
             ->whereHas('items', fn ($q) => $q->where('status', 'for_sale'))
             ->orderBy('name')
             ->get();
 
-        return view('public.items.index', compact('items', 'categories'));
+        $filterableAttributes = Attribute::query()
+            ->where('is_filterable', true)
+            ->with('values')
+            ->orderBy('name')
+            ->get();
+
+        return view('public.items.index', compact('items', 'categories', 'filterableAttributes'));
     }
 
     /**
@@ -44,7 +61,6 @@ class PublicItemController extends Controller
             abort(404);
         }
 
-        // Eager load all necessary relationships for the detail view
         $item->load(['images', 'tenant', 'categories', 'attributes.values']);
 
         return view('public.items.show', compact('item'));
