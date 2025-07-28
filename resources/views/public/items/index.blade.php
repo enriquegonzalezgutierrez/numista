@@ -10,7 +10,6 @@
         <p class="mt-4 text-base text-gray-500 dark:text-gray-400">{{ __('public.marketplace_subtitle') }}</p>
     </div>
 
-    {{-- THE FIX: The x-data directive now wraps the entire interactive section --}}
     <div class="pt-12" x-data="{ mobileFiltersOpen: false }">
         <div class="lg:grid lg:grid-cols-4 lg:gap-x-8">
             
@@ -29,7 +28,6 @@
             </aside>
 
             {{-- Mobile filter dialog --}}
-            {{-- This dialog's visibility is controlled by 'mobileFiltersOpen' --}}
             <div x-show="mobileFiltersOpen" class="relative z-40 lg:hidden" role="dialog" aria-modal="true" x-cloak>
                 <div x-show="mobileFiltersOpen" x-transition.opacity.duration.300ms class="fixed inset-0 bg-black bg-opacity-25"></div>
                 <div class="fixed inset-0 z-40 flex">
@@ -58,13 +56,13 @@
                     <div class="flex items-center justify-between mb-4">
                         <p class="text-sm text-gray-500 dark:text-gray-400">{{ trans_choice('public.results_count', $items->total(), ['count' => $items->total()]) }}</p>
                         <div class="lg:hidden">
-                            {{-- This button controls 'mobileFiltersOpen' --}}
                             <button @click="mobileFiltersOpen = true" class="inline-flex items-center rounded-md bg-white dark:bg-slate-700 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-600 hover:bg-slate-50">{{ __('public.filter_show_button') }}<svg class="ml-2 h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 01.628.74v2.288a2.25 2.25 0 01-.659 1.59l-4.682 4.683a2.25 2.25 0 00-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 018 18.25v-5.757a2.25 2.25 0 00-.659-1.59L2.659 6.22A2.25 2.25 0 012 4.629V2.34a.75.75 0 01.628-.74z" clip-rule="evenodd" /></svg></button>
                         </div>
                     </div>
                     
                     @if($items->isNotEmpty())
-                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {{-- Modern, responsive grid. It automatically adjusts the number of columns based on available space. --}}
+                        <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
                             @foreach($items as $item)
                                 <x-public.items.item-card :item="$item" />
                             @endforeach

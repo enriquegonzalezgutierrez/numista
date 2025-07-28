@@ -6,15 +6,14 @@
 
 <div x-data="{
         isModalOpen: false,
-        successMessage: '{{ session('success') }}',
-        errorMessage: '{{ session('error') }}',
-        mainImageUrl: '{{ $item->images->first() ? route('public.images.show', ['image' => $item->images->first()->id]) : '/images/placeholder.svg' }}'
+        mainImageUrl: '{{ $item->images->first() ? route('public.images.show', ['image' => $item->images->first()->id]) : '/images/placeholder.svg' }}',
+        isLightboxOpen: false,
+        activeTab: 'description'
     }">
-    
+
     <div class="bg-white dark:bg-gray-800">
         <div class="pt-6">
-            {{-- Breadcrumb and main product info --}}
-            {{-- This part remains the same as your correct version --}}
+            {{-- Breadcrumb --}}
             <nav aria-label="Breadcrumb" class="mx-auto flex max-w-7xl items-center space-x-2 px-4 sm:px-6 lg:px-8">
                 <ol role="list" class="flex items-center space-x-2">
                     <li>
@@ -29,16 +28,23 @@
                 </ol>
             </nav>
 
-            <div class="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">
-                <div class="lg:col-span-2 lg:pr-8">
+            {{-- Main Product Grid --}}
+            <div class="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">
+                
+                {{-- Image gallery --}}
+                <div class="lg:col-span-1">
                     <div class="aspect-[4/3] w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
-                        <img :src="mainImageUrl" alt="{{ $item->name }}" class="h-full w-full object-cover object-center">
+                        <button @click="isLightboxOpen = true" class="w-full h-full">
+                            <img :src="mainImageUrl" alt="{{ $item->name }}" class="h-full w-full object-cover object-center cursor-zoom-in">
+                        </button>
                     </div>
                     @if($item->images->count() > 1)
                         <div class="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
                             <div class="grid grid-cols-4 gap-6">
                                 @foreach($item->images as $image)
-                                    <button @click="mainImageUrl = '{{ route('public.images.show', ['image' => $image->id]) }}'" class="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white dark:bg-gray-800 text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4 dark:focus:ring-offset-gray-800">
+                                    <button @click="mainImageUrl = '{{ route('public.images.show', ['image' => $image->id]) }}'" 
+                                            :class="{ 'ring-2 ring-offset-2 ring-teal-500': mainImageUrl === '{{ route('public.images.show', ['image' => $image->id]) }}' }"
+                                            class="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white dark:bg-gray-800 text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-offset-gray-800">
                                         <span class="absolute inset-0 overflow-hidden rounded-md">
                                             <img src="{{ route('public.images.show', ['image' => $image->id]) }}" alt="" class="h-full w-full object-cover object-center">
                                         </span>
@@ -49,125 +55,77 @@
                     @endif
                 </div>
 
-                <div class="mt-4 lg:col-span-1 lg:mt-0">
+                {{-- Product info --}}
+                <div class="mt-10 lg:col-span-1 lg:mt-0">
                     <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">{{ $item->name }}</h1>
                     <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ __('public.from_collection') }} <strong>{{ $item->tenant->name }}</strong></p>
+                    
                     <div class="mt-4">
                         <p class="text-3xl tracking-tight text-gray-900 dark:text-white">{{ number_format($item->sale_price, 2, ',', '.') }} €</p>
                     </div>
-                    <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-10">
-                        <h3 class="text-base font-medium text-gray-900 dark:text-white">{{ __('public.description') }}</h3>
-                        <div class="prose prose-sm mt-4 text-gray-600 dark:text-gray-300">
-                            <p>{{ $item->description }}</p>
-                        </div>
-                        @if($item->attributes->isNotEmpty())
-                        <div class="mt-10">
-                            <h3 class="text-base font-medium text-gray-900 dark:text-white">{{ __('public.item_details') }}</h3>
-                            <div class="mt-4">
-                                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                                    @foreach($item->attributes->sortBy('name') as $attribute)
-                                        <div>
-                                            <dt class="font-medium text-gray-500 dark:text-gray-400">
-                                                @php($key = 'panel.attribute_name_' . strtolower(str_replace(' ', '_', $attribute->name)))
-                                                {{ trans()->has($key) ? __($key) : $attribute->name }}
-                                            </dt>
-                                            <dd class="text-gray-900 dark:text-white mt-1">
-                                                @if($attribute->type === 'select' && strtolower($attribute->name) === 'grade')
-                                                    {{ __("item.grade_{$attribute->pivot->value}") ?? $attribute->pivot->value }}
-                                                @else
-                                                    {{ $attribute->pivot->value }}
-                                                @endif
-                                            </dd>
-                                        </div>
-                                    @endforeach
-                                </dl>
-                            </div>
-                        </div>
-                        @endif
-                        @if($item->categories->isNotEmpty())
-                        <div class="mt-10">
-                            <h3 class="text-base font-medium text-gray-900 dark:text-white">{{ __('public.categories') }}</h3>
-                            <div class="mt-4 flex flex-wrap gap-2">
-                                @foreach($item->categories as $category)
-                                    <span class="inline-flex items-center rounded-md bg-gray-100 dark:bg-gray-700 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-200 dark:ring-gray-600">
-                                        {{ $category->name }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        </div>
-                        @endif
-                    </div>
-                    <div class="mt-10">
+
+                    {{-- Desktop "Add to Cart" button --}}
+                    <div class="mt-10 hidden lg:block">
                         <form action="{{ route('cart.add', $item) }}" method="POST">
                             @csrf
-                            {{-- You could add a quantity selector here in the future --}}
                             <button type="submit" class="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-600 px-8 py-3 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
                                 {{ __('Add to Cart') }}
                             </button>
                         </form>
                     </div>
+                    
+                    {{-- Tabs for Desktop --}}
+                    <div class="mt-10 hidden lg:block">
+                        <div class="border-b border-gray-200 dark:border-gray-700">
+                            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                <button @click="activeTab = 'description'" :class="{ 'border-teal-500 text-teal-600': activeTab === 'description', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab !== 'description' }" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">{{ __('public.description') }}</button>
+                                @if($item->attributes->isNotEmpty())
+                                <button @click="activeTab = 'details'" :class="{ 'border-teal-500 text-teal-600': activeTab === 'details', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab !== 'details' }" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">{{ __('public.item_details') }}</button>
+                                @endif
+                                @if($item->categories->isNotEmpty())
+                                <button @click="activeTab = 'categories'" :class="{ 'border-teal-500 text-teal-600': activeTab === 'categories', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab !== 'categories' }" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">{{ __('public.categories') }}</button>
+                                @endif
+                            </nav>
+                        </div>
+                        <div class="py-6">
+                            @include('public.items.partials.item-info-panels')
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Accordion for Mobile --}}
+                <div class="mt-10 divide-y divide-gray-200 dark:divide-gray-700 border-t border-gray-200 dark:border-gray-700 lg:hidden">
+                     @include('public.items.partials.item-info-accordion')
                 </div>
             </div>
+
         </div>
     </div>
 
-    <!-- Notifications -->
-    <div x-show="successMessage" x-transition x-init="setTimeout(() => successMessage = '', 5000)" class="fixed bottom-5 right-5 z-20 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg" style="display: none;">
-        <p x-text="successMessage"></p>
-    </div>
-    <div x-show="errorMessage" x-transition x-init="setTimeout(() => errorMessage = '', 5000)" class="fixed bottom-5 right-5 z-20 bg-red-500 text-white py-2 px-4 rounded-lg shadow-lg" style="display: none;">
-        <p x-text="errorMessage"></p>
+    {{-- Sticky Add to Cart bar for mobile --}}
+    <div class="fixed bottom-0 left-0 right-0 lg:hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 p-4">
+        <form action="{{ route('cart.add', $item) }}" method="POST">
+            @csrf
+            <button type="submit" class="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-600 px-8 py-3 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
+                {{ __('Add to Cart') }} - {{ number_format($item->sale_price, 2, ',', '.') }} €
+            </button>
+        </form>
     </div>
 
-    <!-- Contact Seller Modal -->
+    <!-- Image Lightbox Modal -->
     <div 
-        x-show="isModalOpen" 
+        x-show="isLightboxOpen" 
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" 
         x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" 
-        class="fixed inset-0 z-10 overflow-y-auto bg-gray-500 bg-opacity-75" 
+        class="fixed inset-0 z-50 overflow-y-auto bg-gray-900 bg-opacity-75 flex items-center justify-center p-4" 
         style="display: none;"
-        @keydown.escape.window="isModalOpen = false"
+        @keydown.escape.window="isLightboxOpen = false"
     >
-        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div 
-                @click.outside="isModalOpen = false"
-                x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
-            >
-                <h3 class="text-lg font-medium leading-6 text-gray-900">
-                    {{ __('public.contact_modal_title', ['itemName' => $item->name]) }}
-                </h3>
-                
-                {{-- In resources/views/public/items/show.blade.php, inside the modal --}}
-                <form action="{{ route('public.items.contact', $item) }}" method="POST" class="mt-4 space-y-4">
-                    @csrf
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('public.contact_modal_name') }}</label>
-                        {{-- ADDED px-3 py-2 --}}
-                        <input type="text" name="name" id="name" required class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                    </div>
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('public.contact_modal_email') }}</label>
-                        {{-- ADDED px-3 py-2 --}}
-                        <input type="email" name="email" id="email" required class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                    </div>
-                    <div>
-                        <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('public.contact_modal_message') }}</label>
-                        {{-- ADDED px-3 py-2 --}}
-                        <textarea name="message" id="message" rows="4" required class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="{{ __('public.contact_modal_message_placeholder') }}"></textarea>
-                    </div>
-
-                    <div class="mt-6 flex justify-end space-x-3">
-                        <button @click="isModalOpen = false" type="button" class="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 dark:bg-gray-600 dark:text-gray-200 dark:border-gray-500 dark:hover:bg-gray-500">
-                            {{ __('public.contact_modal_cancel') }}
-                        </button>
-                        <button type="submit" class="rounded-md border border-transparent bg-teal-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
-                            {{ __('public.contact_modal_send') }}
-                        </button>
-                    </div>
-                </form>
-            </div>
+        <div @click.self="isLightboxOpen = false" class="relative w-full h-full flex items-center justify-center">
+            <img :src="mainImageUrl" alt="{{ $item->name }}" class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl">
+            <button @click="isLightboxOpen = false" class="absolute top-4 right-4 text-white hover:text-gray-300" aria-label="{{ __('public.lightbox.close') }}">
+                <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
         </div>
     </div>
 </div>

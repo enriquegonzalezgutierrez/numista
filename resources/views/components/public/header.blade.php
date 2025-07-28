@@ -6,7 +6,6 @@
             <a href="{{ route('public.items.index') }}" class="flex items-center space-x-3">
                  <img src="{{ asset('storage/logo.png') }}" alt="Logo" class="h-10 w-auto">
                  
-                 {{-- THE FIX: Hide text on small screens, show from 'sm' breakpoint up --}}
                  <span class="hidden sm:inline text-xl font-bold text-gray-800 dark:text-gray-200 tracking-tight">{{ config('app.name') }}</span>
             </a>
 
@@ -23,7 +22,7 @@
                             $cartCount = count(session('cart', []));
                         @endphp
                         <span class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-400 group-hover:text-gray-800">{{ $cartCount }}</span>
-                        <span class="sr-only">items in cart, view bag</span>
+                        <span class="sr-only">{{ __('public.header.cart_sr_text') }}</span>
                     </a>
                 </div>
                 

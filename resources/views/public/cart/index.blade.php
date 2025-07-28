@@ -3,24 +3,14 @@
 @section('title', __('Shopping Cart'))
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start">
-        
-        {{-- Main Content: Cart Items (takes 8 of 12 columns on large screens) --}}
-        <section class="lg:col-span-8">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-                <div class="flex justify-between items-baseline border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('Your Cart') }}</h1>
-                    <span class="text-sm font-medium text-gray-500">{{ __('Price') }}</span>
-                </div>
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{{ __('Your Cart') }}</h1>
 
-                @if(session('success'))
-                    <div class="px-6 pt-4">
-                        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md" role="alert">
-                            <p>{{ session('success') }}</p>
-                        </div>
-                    </div>
-                @endif
+    <div class="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12">
+        
+        <section aria-labelledby="cart-heading" class="lg:col-span-7">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                <h2 id="cart-heading" class="sr-only">{{ __('public.cart.sr_heading') }}</h2>
                 
                 <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($items as $item)
@@ -31,29 +21,29 @@
                         </li>
                     @endforelse
                 </ul>
-
-                @if(count($cart) > 0)
-                    <div class="border-t border-gray-200 dark:border-gray-700 p-6 text-right">
-                         <p class="text-lg font-medium text-gray-900 dark:text-white">
-                            {{ __('Subtotal') }} ({{ count($cart) }} {{ trans_choice('item', count($cart)) }}): <span class="font-bold">{{ number_format($total, 2, ',', '.') }} €</span>
-                        </p>
-                    </div>
-                @endif
             </div>
         </section>
 
-        {{-- Order Summary Sidebar (takes 4 of 12 columns on large screens) --}}
+        {{-- Order summary --}}
         @if(count($cart) > 0)
-        <section class="lg:col-span-4 mt-8 lg:mt-0 rounded-lg bg-white dark:bg-gray-800 p-6 shadow-sm h-fit sticky top-8">
-            <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ __('Order summary') }}</h2>
+        <section aria-labelledby="summary-heading" class="mt-16 rounded-lg bg-gray-50 dark:bg-gray-800 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8 lg:sticky lg:top-24">
+            <h2 id="summary-heading" class="text-lg font-medium text-gray-900 dark:text-white">{{ __('Order summary') }}</h2>
+
             <dl class="mt-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <dt class="text-sm text-gray-600 dark:text-gray-400">{{ __('Subtotal') }}</dt>
+                    <dd class="text-sm font-medium text-gray-900 dark:text-white">{{ number_format($total, 2, ',', '.') }} €</dd>
+                </div>
                 <div class="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
                     <dt class="text-base font-medium text-gray-900 dark:text-white">{{ __('Total') }}</dt>
                     <dd class="text-base font-medium text-gray-900 dark:text-white">{{ number_format($total, 2, ',', '.') }} €</dd>
                 </div>
             </dl>
+
             <div class="mt-6">
-                <a href="{{ route('checkout.create') }}" class="w-full flex items-center justify-center rounded-md border border-transparent bg-teal-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-teal-700">{{ __('Proceed to Checkout') }}</a>
+                <a href="{{ route('checkout.create') }}" class="w-full flex items-center justify-center rounded-md border border-transparent bg-teal-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-teal-700">
+                    {{ __('Proceed to Checkout') }}
+                </a>
             </div>
             <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
                 <p>

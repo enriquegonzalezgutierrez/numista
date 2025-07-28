@@ -1,3 +1,11 @@
+{{--
+    Reusable Toast Notification Component
+    - Powered by Alpine.js for show/hide logic and transitions.
+    - Automatically hides after 5 seconds.
+    - Props:
+        - `type`: 'success' or 'error'. Controls styling.
+        - `message`: The text to display in the notification.
+--}}
 @props(['type' => 'success', 'message'])
 
 <div
@@ -11,7 +19,7 @@
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
     @class([
-        'pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5', // <-- pointer-events-auto is crucial
+        'pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5',
         'bg-green-100 dark:bg-green-800/20' => $type === 'success',
         'bg-red-100 dark:bg-red-800/20' => $type === 'error',
     ])
