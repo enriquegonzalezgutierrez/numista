@@ -1,7 +1,5 @@
 <?php
 
-// src/Collection/Domain/Models/Customer.php
-
 namespace Numista\Collection\Domain\Models;
 
 use App\Models\User;
@@ -19,7 +17,6 @@ class Customer extends Model
         'user_id',
         'phone_number',
         'shipping_address',
-        // Add other customer-specific fields here in the future
     ];
 
     /**
@@ -32,11 +29,18 @@ class Customer extends Model
 
     /**
      * The orders placed by this customer.
-     * Note: This assumes orders are linked via the user_id.
      */
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'user_id', 'user_id');
+    }
+
+    /**
+     * The addresses associated with this customer.
+     */
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(Address::class);
     }
 
     protected static function newFactory(): CustomerFactory

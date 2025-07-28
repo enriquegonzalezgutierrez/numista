@@ -89,7 +89,7 @@ composer-install: ## Install composer dependencies
 # NPM Commands (use 'a' variable for arguments)
 # ==============================================================================
 npm: ## Run any npm command. Ex: make npm a="install some-package"
-	@docker-compose exec app npm $(a)
+	@docker-compose exec -u laravel app npm $(a)
 
 # ==============================================================================
 # Testing Commands

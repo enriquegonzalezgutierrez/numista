@@ -56,7 +56,8 @@ class ValuesRelationManager extends RelationManager
     }
 
     /**
-     * This method makes the relation manager only visible if the parent Attribute's type is 'select'.
+     * THE FIX: This method makes the relation manager only visible
+     * if the parent Attribute's type is 'select'.
      */
     public static function isVisibleFor(Model $ownerRecord, string $pageClass): bool
     {

@@ -1,18 +1,55 @@
 # Numista-App: Numismatics & Collectibles Project
 
-This is a web application for managing numismatic and other collectible collections. The project is built using the TALL stack on Docker.
-
-- **Backend**: Laravel 12 (dev)
-- **Frontend**: Livewire 3 & Blade
-- **Admin Panel**: Filament 3, featuring a dynamic, attribute-based form system.
-- **Database**: PostgreSQL 16
-- **PHP**: 8.2
-- **Testing**: Pest (PHPUnit) with automated CI via GitHub Actions.
-- **Environment**: Docker
+Numista-App is a modern, multi-tenant web application for managing numismatic and other collectible collections. It is built on the TALL stack and containerized with Docker, featuring a powerful admin panel and a fully responsive public marketplace.
 
 ---
 
-## 🚀 Local Development Setup
+## ✨ Visual Showcase
+
+| Marketplace (Desktop) | Item Details (Desktop) |
+| :---: | :---: |
+| ![Marketplace Screenshot](docs/screenshots/marketplace.png) | ![Item Details Screenshot](docs/screenshots/item-details.png) |
+
+| Cart Page (Desktop) | Mobile View |
+| :---: | :---: |
+| ![Cart Screenshot](docs/screenshots/cart.png) | ![Mobile View Screenshot](docs/screenshots/mobile-view.png) |
+
+---
+
+## 🚀 Key Features
+
+### Admin Panel (Filament)
+- **Multi-Tenant Architecture:** Each user manages their own isolated collection, with the ability to be part of multiple tenants.
+- **Dynamic EAV System:** A flexible Entity-Attribute-Value model allows admins to define custom attributes (e.g., "Year", "Grade", "Composition") for different item types without code changes.
+- **Dynamic Forms:** Item forms in Filament are generated dynamically based on the selected "Item Type," displaying only relevant attributes.
+- **Complete CRUD Management:** Full create, read, update, and delete functionality for Items, Categories, Collections, Orders, and Attributes.
+- **Interactive Dashboard:** A real-time dashboard with widgets for key statistics, charts, and recently added items.
+- **Secure Image Management:** Easy image uploads with reordering, stored securely in tenant-specific private directories.
+
+### Public Marketplace
+- **Fully Responsive Design:** A modern interface built with Tailwind CSS that looks great on all devices, from mobile phones to desktops.
+- **Advanced Filtering:** Users can filter items by search term, category, and any custom, filterable attribute.
+- **Interactive Shopping Cart:** A seamless, session-based shopping cart with "quick add" functionality directly from the item grid.
+- **Secure Checkout:** A clean checkout process for authenticated users to purchase items.
+- **User Accounts & Order History:** Customers can register, log in, and view their complete order history.
+- **Contact Seller Functionality:** An integrated contact form on the item page that sends a queued email to the item's owner.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Backend**: Laravel 12
+- **Frontend**: Livewire 3 & Alpine.js
+- **UI/Styling**: Tailwind CSS
+- **Admin Panel**: Filament 3
+- **Database**: PostgreSQL 16
+- **PHP**: 8.2
+- **Testing**: Pest (PHPUnit) with automated CI via GitHub Actions.
+- **Environment**: Docker & Docker Compose
+
+---
+
+## 🐳 Local Development Setup
 
 ### Prerequisites
 
@@ -71,7 +108,7 @@ The CI pipeline automatically runs `pint --test` and `php artisan test` on every
 
 ---
 
-## 🛠️ Useful Make Commands
+## 🧰 Useful Make Commands
 
 -   `make up`: Build and start all containers.
 -   `make setup`: **Run this after `make up` on a fresh install.**
@@ -87,21 +124,10 @@ The CI pipeline automatically runs `pint --test` and `php artisan test` on every
 
 ## 🏛️ Project Architecture
 
-The project follows a Domain-Driven Design (DDD) inspired structure.
-
-### Extensible Attribute System
-
-The application's core feature is a flexible **Entity-Attribute-Value (EAV)** model for managing collectible items.
+The project follows a Domain-Driven Design (DDD) inspired structure. The core feature is a flexible **Entity-Attribute-Value (EAV)** model for managing collectible items.
 
 -   **Items (`items` table):** Store only common data (name, description, price, etc.).
--   **Item Types (`type` column):** A fixed list of types (e.g., 'coin', 'stamp', 'comic') defined in `ItemTypeManager.php`.
--   **Attributes (`attributes` table):** A tenant can define custom attributes for their collection (e.g., "Year", "Publisher", "Composition"). This is managed via the **Settings > Attributes** section in the admin panel.
--   **Dynamic Forms:** The "Create/Edit Item" form in Filament is fully dynamic. When a user selects an "Item Type", the form automatically displays the attributes that have been linked to that type via the `AttributeSeeder`.
+-   **Attributes (`attributes` table):** A tenant can define custom attributes for their collection (e.g., "Year", "Publisher"). This is managed via the **Settings > Attributes** section in the admin panel.
+-   **Dynamic Forms:** The "Create/Edit Item" form in Filament is fully dynamic. When a user selects an "Item Type", the form automatically displays the attributes that have been linked to that type.
 
-This architecture allows tenants to customize the data they collect for each type of item without requiring any changes to the database schema or application code by the developer.
-
-### Image Management
-
--   **Storage:** Images are stored in a private, tenant-specific directory (`storage/app/tenants/tenant-{id}`).
--   **Database:** An `Image` model with a polymorphic relationship allows images to be attached to `Items`.
--   **Access:** A dedicated controller (`TenantFileController`) serves private files securely, while a `PublicImageController` serves images for items that are for sale.
+This architecture allows tenants to customize the data they collect for each type of item without requiring changes to the database schema.

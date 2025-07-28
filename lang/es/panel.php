@@ -2,7 +2,7 @@
 
 // lang/es/panel.php
 return [
-    // Navigation & Resource Labels
+    // --- Navigation & Resource Labels ---
     'nav_items' => 'Inventario',
     'label_item' => 'Ítem',
     'label_items' => 'Ítems',
@@ -20,8 +20,12 @@ return [
     'label_order' => 'Pedido',
     'label_orders' => 'Pedidos',
     'label_order_items' => 'Artículos del Pedido',
+    'nav_group_settings' => 'Configuración',
+    'nav_attributes' => 'Atributos',
+    'label_attribute' => 'Atributo',
+    'label_attributes' => 'Atributos',
 
-    // General Field & Column Labels
+    // --- General Field & Column Labels ---
     'field_name' => 'Nombre',
     'field_slug' => 'Slug (URL)',
     'field_description' => 'Descripción',
@@ -41,41 +45,81 @@ return [
     'field_total_amount' => 'Importe Total',
     'field_order_date' => 'Fecha del Pedido',
     'field_last_update' => 'Última Actualización',
+    'field_type' => 'Tipo',
+    'field_is_filterable' => 'Es filtrable',
+    'field_value' => 'Valor',
+    'label_predefined_options' => 'Opciones Predefinidas',
 
-    // General UI Text
+    // --- Attribute Name Translations ---
+    'attribute_name_artist' => 'Artista',
+    'attribute_name_author' => 'Autor',
+    'attribute_name_brand' => 'Marca',
+    'attribute_name_character' => 'Personaje',
+    'attribute_name_chassis_number' => 'Número de Bastidor',
+    'attribute_name_composition' => 'Composición',
+    'attribute_name_conflict' => 'Conflicto',
+    'attribute_name_country' => 'País',
+    'attribute_name_cover_date' => 'Fecha de Portada',
+    'attribute_name_denomination' => 'Denominación',
+    'attribute_name_dimensions' => 'Dimensiones',
+    'attribute_name_event' => 'Evento',
+    'attribute_name_face_value' => 'Valor Facial',
+    'attribute_name_gemstone' => 'Gema',
+    'attribute_name_grade' => 'Grado',
+    'attribute_name_isbn' => 'ISBN',
+    'attribute_name_issue_number' => 'Número de Ejemplar',
+    'attribute_name_license_plate' => 'Matrícula',
+    'attribute_name_location' => 'Ubicación',
+    'attribute_name_material' => 'Material',
+    'attribute_name_mint_mark' => 'Marca de Ceca',
+    'attribute_name_model' => 'Modelo',
+    'attribute_name_movie_title' => 'Título de Película',
+    'attribute_name_photographer' => 'Fotógrafo',
+    'attribute_name_player' => 'Jugador',
+    'attribute_name_publisher' => 'Editorial',
+    'attribute_name_record_label' => 'Sello Discográfico',
+    'attribute_name_serial_number' => 'Número de Serie',
+    'attribute_name_sport' => 'Deporte',
+    'attribute_name_team' => 'Equipo',
+    'attribute_name_technique' => 'Técnica',
+    'attribute_name_weight' => 'Peso',
+    'attribute_name_year' => 'Año',
+
+    // --- General UI Text ---
     'placeholder_none' => 'Ninguna',
     'helper_alt_text' => 'Describe la imagen para accesibilidad y SEO.',
+    'helper_is_filterable' => 'Permitir filtrar por este atributo en el marketplace público.',
     'search_placeholder' => 'Buscar...',
 
-    // Table Filters
+    // --- Table Filters ---
     'filter_item_type' => 'Tipo de Ítem',
     'filter_status' => 'Estado',
     'filter_category' => 'Categoría',
     'filter_collection' => 'Colección',
 
-    // Actions, Buttons & Modals
+    // --- Actions, Buttons & Modals ---
     'action_create' => 'Añadir',
     'action_edit' => 'Editar',
     'action_delete' => 'Eliminar',
     'action_attach' => 'Asociar',
     'action_detach' => 'Desasociar',
     'action_create_image' => 'Añadir Imagen',
-
+    'action_create_attribute' => 'Crear Atributo',
+    'action_create_option' => 'Añadir Opción',
     'action_bulk_change_status' => 'Cambiar estado',
     'action_bulk_attach_category' => 'Asignar categoría',
     'action_bulk_change_visibility' => 'Cambiar visibilidad',
-
     'modal_attach_title_category' => 'Asociar a Categorías',
     'modal_attach_title_collection' => 'Asociar a Colecciones',
     'modal_attach_button' => 'Asociar Selección',
     'modal_create_image_title' => 'Añadir Nueva Imagen',
 
-    // Notifications
+    // --- Notifications ---
     'notification_status_updated' => 'El estado de los ítems ha sido actualizado.',
     'notification_categories_attached' => 'Las categorías han sido asignadas correctamente.',
     'notification_visibility_updated' => 'La visibilidad de las categorías ha sido actualizada.',
 
-    // Widgets
+    // --- Widgets ---
     'widget_stats_total_items' => 'Total de Ítems',
     'widget_stats_collection_value' => 'Valor de la Colección',
     'widget_stats_items_for_sale' => 'Ítems en Venta',
@@ -90,40 +134,30 @@ return [
     'widget_stats_collections' => 'Colecciones Creadas',
     'widget_table_valuable_items' => 'Ítems más Valiosos en Venta',
     'widget_table_column_sale_price' => 'Precio de Venta',
-
-    // Descriptions for Stats Widget (Add these new keys)
     'widget_stats_total_items_desc' => 'Número total de ítems en el inventario',
     'widget_stats_collection_value_desc' => 'Suma del precio de compra de todos los ítems',
     'widget_stats_items_for_sale_desc' => 'Ítems marcados actualmente para la venta',
     'widget_stats_categories_desc' => 'Total de categorías para organizar ítems',
     'widget_stats_collections_desc' => 'Agrupaciones temáticas de ítems',
 
-    // --- Attribute Resource ---
-    'nav_group_settings' => 'Configuración',
-    'nav_attributes' => 'Atributos',
-    'label_attribute' => 'Atributo',
-    'label_attributes' => 'Atributos',
-    'field_type' => 'Tipo',
-    'field_is_filterable' => 'Es filtrable',
-    'helper_is_filterable' => 'Permitir filtrar por este atributo en el marketplace público.',
-    'action_create_attribute' => 'Crear Atributo',
+    'My Orders' => 'Mis Pedidos',
+    'Order Number' => 'Nº de Pedido',
+    'Date' => 'Fecha',
+    'Total' => 'Total',
+    'Status' => 'Estado',
+    'Items' => 'Artículos',
+    "You haven't placed any orders yet." => 'Aún no has realizado ningún pedido.',
+    'Browse Marketplace' => 'Explorar el Marketplace',
 
-    // --- Attribute Values Relation Manager ---
-    'label_predefined_options' => 'Opciones Predefinidas',
-    'field_value' => 'Valor',
-    'action_create_option' => 'Añadir Opción',
+    // --- Tenant Registration & Profile Pages ---
+    'page_register_tenant_title' => 'Registrar Nueva Colección',
+    'page_edit_tenant_title' => 'Editar Perfil de la Colección',
+    'field_collection_name' => 'Nombre de la Colección',
+    'field_collection_slug' => 'Slug (URL)',
 
-    // --- Attribute Names (for public & admin) ---
-    'attribute_name_year' => 'Año',
-    'attribute_name_country' => 'País',
-    'attribute_name_grade' => 'Grado',
-    'attribute_name_brand' => 'Marca',
-    'attribute_name_model' => 'Modelo',
-    'attribute_name_material' => 'Material',
-    'attribute_name_artist' => 'Artista',
-    'attribute_name_dimensions' => 'Dimensiones',
-    'attribute_name_composition' => 'Composición',
-    'attribute_name_weight' => 'Peso',
-    'attribute_name_denomination' => 'Denominación',
-    'attribute_name_mint_mark' => 'Marca de Ceca',
+    // --- Actions, Buttons & Modals ---
+    'action_update_status' => 'Actualizar Estado',
+    'modal_change_order_status_heading' => 'Cambiar Estado del Pedido',
+    'notification_order_status_updated_title' => 'Estado del Pedido Actualizado',
+    'notification_order_status_updated_body' => 'El estado del pedido ha sido actualizado correctamente.',
 ];

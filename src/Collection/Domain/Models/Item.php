@@ -124,9 +124,37 @@ class Item extends Model
 
         // Category filter
         $query->when($filters['categories'] ?? null, function ($query, $categories) {
+            if (! is_array($categories)) {
+                return;
+            }
             $query->whereHas('categories', function ($q) use ($categories) {
-                $q->whereIn('id', $categories);
+                $q->whereIn('category_id', $categories);
             });
+        });
+
+        // Dynamic Attribute Filter (Corrected Logic)
+        $query->when($filters['attributes'] ?? null, function ($query, $attributes) {
+            foreach ($attributes as $attributeId => $value) {
+                if (empty($value)) {
+                    continue;
+                }
+
+                $attribute = Attribute::find($attributeId);
+                if (! $attribute) {
+                    continue;
+                }
+
+                $query->whereHas('attributes', function ($q) use ($attribute, $value) {
+                    $q->where('attribute_id', $attribute->id);
+
+                    if ($attribute->type === 'select') {
+                        // Correctly filters by the numeric ID of the option
+                        $q->where('attribute_value_id', $value);
+                    } else {
+                        $q->where('value', 'like', '%'.$value.'%');
+                    }
+                });
+            }
         });
 
         return $query;

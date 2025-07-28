@@ -1,7 +1,5 @@
 <?php
 
-// src/Collection/Domain/Observers/CollectionObserver.php
-
 namespace Numista\Collection\Domain\Observers;
 
 use Illuminate\Support\Facades\Cache;
@@ -10,11 +8,6 @@ use Numista\Collection\Domain\Models\Collection;
 
 class CollectionObserver
 {
-    /**
-     * Handle the Collection "creating" event.
-     *
-     * @param  \Numista\Collection\Domain\Models\Collection  $$collection
-     */
     public function creating(Collection $collection): void
     {
         if (empty($collection->slug)) {
@@ -22,9 +15,6 @@ class CollectionObserver
         }
     }
 
-    /**
-     * Handle the Collection "updating" event.
-     */
     public function updating(Collection $collection): void
     {
         if ($collection->isDirty('name')) {
@@ -47,9 +37,6 @@ class CollectionObserver
         Cache::forget("widgets:stats_overview:tenant_{$tenantId}");
     }
 
-    /**
-     * Creates a unique slug for the collection.
-     */
     private function createUniqueSlug(string $name, ?int $exceptId = null): string
     {
         $baseSlug = Str::slug($name);
@@ -64,7 +51,6 @@ class CollectionObserver
         while ($query->exists()) {
             $slug = $baseSlug.'-'.$counter;
             $counter++;
-            // Reset the query for the next loop iteration
             $query = Collection::where('slug', $slug);
             if ($exceptId) {
                 $query->where('id', '!=', $exceptId);

@@ -5,9 +5,9 @@ import forms from '@tailwindcss/forms';
 export default {
     // Files to scan for Tailwind classes
     content: [
-        // Application's Blade templates and JS files
-        './resources/**/*.blade.php',
-        './resources/**/*.js',
+        // Application's Blade templates, including components
+        './resources/views/**/*.blade.php',
+        './resources/js/**/*.js',
         
         // Filament's Blade templates
         './vendor/filament/**/*.blade.php',
@@ -16,13 +16,11 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
     ],
 
-    // Enable dark mode based on the 'class' attribute (used by Filament)
-    darkMode: 'class', 
+    darkMode: 'class',
 
     theme: {
         extend: {
             colors: {
-                // Custom color palette for the application
                 primary: colors.teal,
                 slate: colors.slate,
                 gray: colors.gray,
@@ -31,7 +29,6 @@ export default {
     },
 
     plugins: [
-        // Tailwind Forms plugin for better form styling
         forms,
     ],
 }

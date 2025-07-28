@@ -1,7 +1,5 @@
 <?php
 
-// src/Collection/Domain/Observers/ItemObserver.php
-
 namespace Numista\Collection\Domain\Observers;
 
 use Illuminate\Support\Facades\Cache;
@@ -37,7 +35,6 @@ class ItemObserver
     protected function clearTenantWidgetsCache(int $tenantId): void
     {
         Cache::forget("widgets:stats_overview:tenant_{$tenantId}");
-        // Note: Add keys for other cached widgets here in the future
     }
 
     private function createUniqueSlug(string $name, ?int $exceptId = null): string
@@ -54,7 +51,6 @@ class ItemObserver
         while ($query->exists()) {
             $slug = $baseSlug.'-'.$counter;
             $counter++;
-            // Reset the query for the next loop iteration
             $query = Item::where('slug', $slug);
             if ($exceptId) {
                 $query->where('id', '!=', $exceptId);

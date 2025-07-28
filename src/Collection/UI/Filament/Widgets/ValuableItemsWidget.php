@@ -1,7 +1,5 @@
 <?php
 
-// src/Collection/UI/Filament/Widgets/ValuableItemsWidget.php
-
 namespace Numista\Collection\UI\Filament\Widgets;
 
 use Filament\Facades\Filament;
@@ -18,11 +16,6 @@ class ValuableItemsWidget extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
-    public function getHeading(): string
-    {
-        return __('panel.widget_table_valuable_items');
-    }
-
     public function table(Table $table): Table
     {
         /** @var Tenant $currentTenant */
@@ -31,7 +24,7 @@ class ValuableItemsWidget extends BaseWidget
         return $table
             ->heading(__('panel.widget_table_valuable_items'))
             ->query(
-                Item::query() // Use a direct query
+                Item::query()
                     ->where('tenant_id', $currentTenant->id)
                     ->where('status', 'for_sale')
                     ->whereNotNull('sale_price')

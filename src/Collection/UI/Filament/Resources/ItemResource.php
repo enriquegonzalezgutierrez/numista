@@ -18,6 +18,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB; // Import DB facade for the subquery
 use Illuminate\Support\Str;
 use Numista\Collection\Domain\Models\Attribute;
 use Numista\Collection\Domain\Models\Item;
@@ -90,12 +91,14 @@ class ItemResource extends Resource
                                     ];
                                 }
 
+                                // THE FIX: Use a whereIn subquery to get attributes linked to the item type
                                 $attributes = Attribute::query()
                                     ->whereIn('id', function ($query) use ($itemType) {
                                         $query->select('attribute_id')
                                             ->from('attribute_item_type')
                                             ->where('item_type', $itemType);
                                     })
+                                    ->with('values')
                                     ->orderBy('name')
                                     ->get();
 
@@ -104,24 +107,29 @@ class ItemResource extends Resource
                                 }
 
                                 return $attributes->map(function (Attribute $attribute) {
-                                    $field = match ($attribute->type) {
-                                        'number' => TextInput::make("attributes.{$attribute->id}.value")->numeric(),
-                                        'date' => DatePicker::make("attributes.{$attribute->id}.value"),
-                                        'select' => Select::make("attributes.{$attribute->id}.attribute_value_id")
-                                            ->options(function () use ($attribute) {
-                                                $options = $attribute->values()->pluck('value', 'id')->toArray();
-                                                if (strtolower($attribute->name) === 'grade') {
-                                                    return array_map(fn ($value) => __("item.grade_{$value}"), $options);
-                                                }
+                                    if ($attribute->type === 'select') {
+                                        $options = $attribute->values->pluck('value', 'id');
 
-                                                return $options;
-                                            }),
-                                        default => TextInput::make("attributes.{$attribute->id}.value"),
-                                    };
+                                        $attributeKey = strtolower(str_replace(' ', '_', $attribute->name));
+                                        $translationPrefix = "item.options.{$attributeKey}.";
+                                        $translatedOptions = $options->mapWithKeys(function ($value, $id) use ($translationPrefix) {
+                                            $key = $translationPrefix.$value;
 
-                                    $translationKey = 'item.attribute_'.strtolower(str_replace(' ', '_', $attribute->name));
+                                            return [$id => trans()->has($key) ? __($key) : $value];
+                                        });
 
-                                    return $field->label(__($translationKey));
+                                        $field = Select::make("attributes.{$attribute->id}.attribute_value_id")->options($translatedOptions);
+                                    } else {
+                                        $field = match ($attribute->type) {
+                                            'number' => TextInput::make("attributes.{$attribute->id}.value")->numeric(),
+                                            'date' => DatePicker::make("attributes.{$attribute->id}.value"),
+                                            default => TextInput::make("attributes.{$attribute->id}.value"),
+                                        };
+                                    }
+
+                                    $key = 'panel.attribute_name_'.strtolower(str_replace(' ', '_', $attribute->name));
+
+                                    return $field->label(trans()->has($key) ? __($key) : $attribute->name);
                                 })->all();
                             })->columns(3),
                     ])
@@ -142,6 +150,7 @@ class ItemResource extends Resource
             ])->columns(3);
     }
 
+    // ... (El resto del fichero ItemResource.php no cambia)
     public static function table(Table $table): Table
     {
         return $table

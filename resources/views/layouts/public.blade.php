@@ -11,8 +11,8 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
 
-        <!-- Styles & Scripts handled by Vite -->
-        @vite(['resources/css/public.css', 'resources/js/app.js'])
+        <!-- Styles handled by Vite -->
+        @vite(['resources/css/public.css'])
         
         {{-- Define custom CSS variables for theme colors --}}
         @php
@@ -26,17 +26,33 @@
             }
         </style>
     </head>
-    {{-- This structure ensures the footer is always at the bottom --}}
     <body class="antialiased font-sans flex flex-col min-h-screen">
         <div class="flex-grow">
             <x-public.header />
 
-            {{-- The main content area will grow to fill available space --}}
             <main class="flex-grow py-8 sm:py-12">
                     @yield('content')
             </main>
         </div>
 
         <x-public.footer />
+
+        <!-- Global notification live region, positioned in the bottom-right corner. -->
+        <div aria-live="assertive" class="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6 z-50">
+            <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
+                {{-- Session Success Message --}}
+                @if (session('success'))
+                    <x-public.notification type="success" message="{{ session('success') }}" />
+                @endif
+
+                {{-- Session Error Message --}}
+                @if (session('error'))
+                    <x-public.notification type="error" message="{{ session('error') }}" />
+                @endif
+            </div>
+        </div>
+
+        {{-- THE FIX: Add the Vite script directive here --}}
+        @vite(['resources/js/app.js'])
     </body>
 </html>
