@@ -8,5 +8,8 @@
     "Already registered?": "¿Ya estás registrado?",
     "Whoops! Something went wrong.": "¡Ups! Algo salió mal.",
     "Name": "Nombre",
-    "Not a member?": "¿No eres miembro?"
+    "Not a member?": "¿No eres miembro?",
+    "Forgot your password?": "¿Olvidaste tu clave de acceso?",
+    "Email Password Reset Link": "Enviar Enlace de Restablecimiento",
+    "Reset Password": "Restablecer Contraseña"
 }

@@ -4,13 +4,15 @@ use App\Http\Controllers\TenantFileController;
 use Illuminate\Support\Facades\Route;
 use Numista\Collection\UI\Public\Controllers\AddressController;
 use Numista\Collection\UI\Public\Controllers\Auth\AuthenticatedSessionController;
+use Numista\Collection\UI\Public\Controllers\Auth\NewPasswordController;
+use Numista\Collection\UI\Public\Controllers\Auth\PasswordResetLinkController;
 use Numista\Collection\UI\Public\Controllers\Auth\RegisteredUserController;
 use Numista\Collection\UI\Public\Controllers\CartController;
 use Numista\Collection\UI\Public\Controllers\CheckoutController;
 use Numista\Collection\UI\Public\Controllers\ContactSellerController;
 use Numista\Collection\UI\Public\Controllers\MyAccountController;
 use Numista\Collection\UI\Public\Controllers\OrderController;
-use Numista\Collection\UI\Public\Controllers\ProfileController; // Import new controller
+use Numista\Collection\UI\Public\Controllers\ProfileController;
 use Numista\Collection\UI\Public\Controllers\PublicImageController;
 use Numista\Collection\UI\Public\Controllers\PublicItemController;
 
@@ -26,6 +28,12 @@ Route::middleware('guest')->group(function () {
     Route::post('register', [RegisteredUserController::class, 'store']);
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
+
+    // THE FIX: Add password reset routes
+    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
+    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');
 });
 
 Route::middleware('auth')->group(function () {
@@ -35,7 +43,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [MyAccountController::class, 'dashboard'])->name('dashboard');
         Route::get('/orders', [MyAccountController::class, 'orders'])->name('orders');
 
-        // THE FIX: Add a GET route for the delete confirmation page
         Route::get('addresses/{address}/delete', [AddressController::class, 'confirmDestroy'])->name('addresses.confirmDestroy');
         Route::resource('addresses', AddressController::class)->except(['show']);
 

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
@@ -37,7 +36,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * The attributes that are hidden for serialization.
      *
      * @var list<string>
      */
@@ -56,7 +55,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_admin' => 'boolean', // <-- It's better to have the cast here
+            'is_admin' => 'boolean',
         ];
     }
 
@@ -66,7 +65,6 @@ class User extends Authenticatable implements FilamentUser, HasTenants
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        // Only allow access if the user has the 'is_admin' flag set to true.
         return $this->is_admin;
     }
 

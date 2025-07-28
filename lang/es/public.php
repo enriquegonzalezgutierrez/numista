@@ -127,4 +127,7 @@ return [
         'country' => 'País',
         'phone' => 'Teléfono (Opcional)',
     ],
+    'auth' => [
+        'forgot_password_desc' => 'No hay problema. Simplemente dinos tu dirección de correo y te enviaremos un enlace para restablecer tu clave de acceso.',
+    ],
 ];
