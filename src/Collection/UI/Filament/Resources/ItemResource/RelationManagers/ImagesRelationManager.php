@@ -18,6 +18,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Numista\Collection\Application\Items\SetFeaturedImageService;
+use Numista\Collection\Domain\Models\Image;
 
 class ImagesRelationManager extends RelationManager
 {
@@ -56,7 +57,9 @@ class ImagesRelationManager extends RelationManager
             ->columns([
                 ImageColumn::make('path')
                     ->label(__('panel.field_image_preview'))
-                    ->disk('tenants'),
+                    ->disk('tenants')
+                    ->url(fn (Image $record): string => route('tenant.files', ['path' => $record->path]))
+                    ->openUrlInNewTab(),
 
                 TextColumn::make('alt_text')
                     ->label(__('panel.field_alt_text')),
@@ -71,7 +74,6 @@ class ImagesRelationManager extends RelationManager
                 CreateAction::make()
                     ->label(__('panel.action_create_image'))
                     ->modalHeading(__('panel.modal_create_image_title')),
-                // We don't need a custom creation service here, Filament's default works fine.
             ])
             ->actions([
                 EditAction::make()

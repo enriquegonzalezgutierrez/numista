@@ -10,17 +10,21 @@ use Numista\Collection\UI\Public\Controllers\Auth\RegisteredUserController;
 use Numista\Collection\UI\Public\Controllers\CartController;
 use Numista\Collection\UI\Public\Controllers\CheckoutController;
 use Numista\Collection\UI\Public\Controllers\ContactSellerController;
+use Numista\Collection\UI\Public\Controllers\LandingPageController;
 use Numista\Collection\UI\Public\Controllers\MyAccountController;
 use Numista\Collection\UI\Public\Controllers\OrderController;
 use Numista\Collection\UI\Public\Controllers\ProfileController;
 use Numista\Collection\UI\Public\Controllers\PublicImageController;
 use Numista\Collection\UI\Public\Controllers\PublicItemController;
 
-Route::get('/', [PublicItemController::class, 'index'])->name('public.items.index');
+Route::get('/', LandingPageController::class)->name('landing');
+
+Route::get('/marketplace', [PublicItemController::class, 'index'])->name('public.items.index');
 Route::get('/items/{item:slug}', [PublicItemController::class, 'show'])->name('public.items.show');
 Route::post('/items/{item:slug}/contact', ContactSellerController::class)->name('public.items.contact');
 
-Route::get('/item-images/{image}', [PublicImageController::class, 'show'])->name('public.images.show');
+// THE FIX: Renamed the route for clarity and to avoid conflicts
+Route::get('/images/{image}', [PublicImageController::class, 'show'])->name('public.images.show');
 Route::get('/tenant-files/{path}', [TenantFileController::class, 'show'])->where('path', '.*')->name('tenant.files');
 
 Route::middleware('guest')->group(function () {
@@ -28,8 +32,6 @@ Route::middleware('guest')->group(function () {
     Route::post('register', [RegisteredUserController::class, 'store']);
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
-
-    // THE FIX: Add password reset routes
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
@@ -42,10 +44,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('my-account')->name('my-account.')->group(function () {
         Route::get('/', [MyAccountController::class, 'dashboard'])->name('dashboard');
         Route::get('/orders', [MyAccountController::class, 'orders'])->name('orders');
-
         Route::get('addresses/{address}/delete', [AddressController::class, 'confirmDestroy'])->name('addresses.confirmDestroy');
         Route::resource('addresses', AddressController::class)->except(['show']);
-
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');

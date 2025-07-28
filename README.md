@@ -20,18 +20,19 @@ Numista-App is a modern, multi-tenant web application for managing numismatic an
 
 ### Admin Panel (Filament)
 - **Multi-Tenant Architecture:** Each user manages their own isolated collection, with the ability to be part of multiple tenants.
-- **Dynamic EAV System:** A flexible Entity-Attribute-Value model allows admins to define custom attributes (e.g., "Year", "Grade", "Composition") for different item types without code changes.
-- **Dynamic Forms:** Item forms in Filament are generated dynamically based on the selected "Item Type," displaying only relevant attributes.
-- **Complete CRUD Management:** Full create, read, update, and delete functionality for Items, Categories, Collections, Orders, and Attributes.
+- **Dynamic EAV System:** A flexible Entity-Attribute-Value model allows admins to define custom attributes (e.g., "Year", "Grade") for different item types.
+- **Dynamic Forms:** Item forms are generated dynamically based on the selected "Item Type," displaying only relevant attributes.
+- **Complete CRUD Management:** Full create, read, update, and delete functionality for Items, Categories, Collections, and Attributes.
 - **Interactive Dashboard:** A real-time dashboard with widgets for key statistics, charts, and recently added items.
-- **Advanced Image Management:** Easy image uploads with reordering and the ability to set a "featured" image, all stored securely in tenant-specific private directories.
+- **Advanced Image Management:** Easy image uploads with reordering and the ability to set a "featured" image for items. Collections also support a primary image. All files are stored securely in tenant-specific private directories.
 
 ### Public Marketplace & E-commerce
+- **Dynamic Landing Page:** An attractive homepage that showcases featured collections and the latest items available for sale.
 - **Fully Responsive Design:** A modern interface built with Tailwind CSS that looks great on all devices.
 - **Advanced Filtering:** Users can filter items by search term, category, and any custom, filterable attribute.
 - **Full E-commerce Flow:** Includes a seamless shopping cart, a secure checkout process, and a user account section.
-- **User Accounts & Order History:** Customers can register, log in, manage their shipping addresses, update their profile, reset their password, and view their complete order history.
-- **Event-Driven Notifications:** Uses Domain Events (`OrderPlaced`) to asynchronously handle post-order logic like sending confirmation emails and updating item statuses, ensuring a fast user experience.
+- **User Accounts & Order History:** Customers can register, log in, manage addresses, update their profile, reset their password, and view their order history.
+- **Event-Driven Notifications:** Uses Domain Events (`OrderPlaced`) to asynchronously handle post-order logic like sending confirmation emails and updating item statuses.
 
 ---
 
