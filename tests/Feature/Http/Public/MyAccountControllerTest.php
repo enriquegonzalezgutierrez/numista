@@ -17,7 +17,9 @@ class MyAccountControllerTest extends TestCase
     #[Test]
     public function guests_cannot_access_the_my_account_page(): void
     {
-        $response = $this->get(route('my-account'));
+        // THE FIX: Use the new named route for the main account page
+        $response = $this->get(route('my-account.orders'));
+
         $response->assertRedirect(route('login'));
     }
 
@@ -27,7 +29,7 @@ class MyAccountControllerTest extends TestCase
         $user = User::factory()->create();
         $orderForUser = Order::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->get(route('my-account'));
+        $response = $this->actingAs($user)->get(route('my-account.orders'));
 
         $response->assertStatus(200);
         $response->assertViewIs('public.my-account');
@@ -41,7 +43,7 @@ class MyAccountControllerTest extends TestCase
         $otherUser = User::factory()->create();
         $orderForOtherUser = Order::factory()->create(['user_id' => $otherUser->id]);
 
-        $response = $this->actingAs($user)->get(route('my-account'));
+        $response = $this->actingAs($user)->get(route('my-account.orders'));
 
         $response->assertStatus(200);
         $response->assertDontSee($orderForOtherUser->order_number);

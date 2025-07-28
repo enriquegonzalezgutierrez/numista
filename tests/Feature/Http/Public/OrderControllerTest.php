@@ -36,7 +36,6 @@ class OrderControllerTest extends TestCase
 
         $response = $this->actingAs($userOne)->get(route('orders.show', $orderForUserTwo));
 
-        // Expect a "Forbidden" error, not a 404.
         $response->assertStatus(403);
     }
 

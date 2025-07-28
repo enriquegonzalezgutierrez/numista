@@ -94,8 +94,8 @@ class CheckoutController extends Controller
     {
         // Security check: ensure the user is viewing their own success page
         if ($order->user_id !== Auth::id()) {
-            // THE FIX: Redirect to the new 'my-account' route
-            return redirect()->route('my-account');
+            // THE FIX: Redirect to the new 'my-account.orders' route
+            return redirect()->route('my-account.orders');
         }
 
         return view('public.checkout.success', compact('order'));

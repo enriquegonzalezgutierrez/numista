@@ -38,8 +38,8 @@
                     @if (auth()->user()->is_admin)
                         <a href="{{ route('filament.admin.pages.dashboard', ['tenant' => auth()->user()->tenants()->first()]) }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">{{ __('Dashboard') }}</a>
                     @else
-                        {{-- THE FIX: Changed route from 'home' to 'my-account' --}}
-                        <a href="{{ route('my-account') }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">{{ __('My Account') }}</a>
+                        {{-- THE FIX: Changed route from 'my-account' to the new named route 'my-account.orders' --}}
+                        <a href="{{ route('my-account.orders') }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">{{ __('My Account') }}</a>
                     @endif
 
                     <span class="h-6 w-px bg-gray-200 dark:bg-gray-600" aria-hidden="true"></span>
