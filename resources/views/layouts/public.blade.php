@@ -11,8 +11,8 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
 
-        <!-- Styles & Scripts handled by Vite -->
-        @vite(['resources/css/public.css', 'resources/js/app.js'])
+        <!-- Styles handled by Vite -->
+        @vite(['resources/css/public.css'])
         
         {{-- Define custom CSS variables for theme colors --}}
         @php
@@ -37,7 +37,6 @@
 
         <x-public.footer />
 
-        {{-- THE FIX: Notification container added here --}}
         <!-- Global notification live region, positioned in the bottom-right corner. -->
         <div aria-live="assertive" class="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6 z-50">
             <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
@@ -52,5 +51,8 @@
                 @endif
             </div>
         </div>
+
+        {{-- THE FIX: Add the Vite script directive here --}}
+        @vite(['resources/js/app.js'])
     </body>
 </html>

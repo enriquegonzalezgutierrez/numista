@@ -1,18 +1,17 @@
-{{-- resources/views/components/public/header.blade.php --}}
 <header class="bg-white dark:bg-gray-800/50 backdrop-blur-sm shadow-sm sticky top-0 z-10">
     <div class="mx-auto max-w-7xl py-3 px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center">
-            {{-- Logo and App Name --}}
+            
             <a href="{{ route('public.items.index') }}" class="flex items-center space-x-3">
-                 <img src="{{ asset('storage/logo.png') }}" alt="Logo" class="h-10 w-auto">
+                 <img src="{{ asset('storage/logo.png') }}" alt="{{ config('app.name') }}" class="h-10 w-auto">
                  
                  <span class="hidden sm:inline text-xl font-bold text-gray-800 dark:text-gray-200 tracking-tight">{{ config('app.name') }}</span>
             </a>
 
-            {{-- Right side navigation --}}
+            
             <nav class="flex items-center space-x-2 sm:space-x-4">
                 
-                {{-- Cart Icon --}}
+                
                 <div class="flow-root">
                     <a href="{{ route('cart.index') }}" class="group -m-2 flex items-center p-2">
                         <svg class="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -28,7 +27,7 @@
                 
                 <span class="h-6 w-px bg-gray-200 dark:bg-gray-600" aria-hidden="true"></span>
                 
-                {{-- Authentication Links --}}
+                
                 @guest
                     <a href="{{ route('login') }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">{{ __('Login') }}</a>
                     @if (Route::has('register'))
@@ -36,10 +35,10 @@
                     @endif
                 @else
                     @if (auth()->user()->is_admin)
-                        <a href="{{ route('filament.admin.pages.dashboard', ['tenant' => auth()->user()->tenants()->first()]) }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">{{ __('Dashboard') }}</a>
+                        <a href="{{ route('filament.admin.pages.dashboard', ['tenant' => auth()->user()->tenants()->first()]) }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">{{ __('public.dashboard') }}</a>
                     @else
-                        {{-- THE FIX: Changed route from 'my-account' to the new named route 'my-account.orders' --}}
-                        <a href="{{ route('my-account.orders') }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">{{ __('My Account') }}</a>
+                        
+                        <a href="{{ route('my-account.orders') }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">{{ __('public.my_account') }}</a>
                     @endif
 
                     <span class="h-6 w-px bg-gray-200 dark:bg-gray-600" aria-hidden="true"></span>

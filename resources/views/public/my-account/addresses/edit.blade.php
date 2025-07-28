@@ -1,77 +1,19 @@
 @extends('layouts.account')
 
-@section('title', __('Account Details'))
+@section('title', __('public.edit_address'))
 
 @section('account-content')
-<div class="divide-y divide-gray-200 dark:divide-gray-700">
-    {{-- Update Profile Information --}}
-    <div class="p-6 md:p-8">
-        <h2 class="text-xl font-semibold">{{ __('Profile Information') }}</h2>
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __("Update your account's profile information and email address.") }}
-        </p>
+<div class="p-6 text-gray-900 dark:text-gray-100">
+    <h2 class="text-2xl font-semibold mb-6">{{ __('public.edit_address') }}</h2>
 
-        <form method="post" action="{{ route('my-account.profile.update') }}" class="mt-6 space-y-6">
-            @csrf
-            @method('patch')
-
-            <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Name') }}</label>
-                <input id="name" name="name" type="text" class="mt-1 block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-teal-500" value="{{ old('name', $user->name) }}" required autofocus autocomplete="name" />
-                @error('name')<p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
-            </div>
-
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Email') }}</label>
-                <input id="email" name="email" type="email" class="mt-1 block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-teal-500" value="{{ old('email', $user->email) }}" required autocomplete="username" />
-                 @error('email')<p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
-            </div>
-
-            <div class="flex items-center gap-4">
-                <button type="submit" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700">{{ __('Save') }}</button>
-                @if (session('status') === 'profile-updated')
-                    <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)" class="text-sm text-gray-600 dark:text-gray-400">{{ __('Saved.') }}</p>
-                @endif
-            </div>
-        </form>
-    </div>
-
-    {{-- Update Password --}}
-    <div class="p-6 md:p-8">
-        <h2 class="text-xl font-semibold">{{ __('Update Password') }}</h2>
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __('Ensure your account is using a long, random password to stay secure.') }}
-        </p>
-        
-        <form method="post" action="{{ route('my-account.password.update') }}" class="mt-6 space-y-6">
-            @csrf
-            @method('put')
-
-             <div>
-                <label for="current_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Current Password') }}</label>
-                <input id="current_password" name="current_password" type="password" class="mt-1 block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-teal-500" autocomplete="current-password" />
-                @error('current_password', 'updatePassword')<p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
-            </div>
-
-            <div>
-                <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('New Password') }}</label>
-                <input id="password" name="password" type="password" class="mt-1 block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-teal-500" autocomplete="new-password" />
-                @error('password', 'updatePassword')<p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
-            </div>
-
-            <div>
-                <label for="password_confirmation" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Confirm Password') }}</label>
-                <input id="password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-teal-500" autocomplete="new-password" />
-                 @error('password_confirmation', 'updatePassword')<p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <button type="submit" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700">{{ __('Save') }}</button>
-                @if (session('status') === 'password-updated')
-                    <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)" class="text-sm text-gray-600 dark:text-gray-400">{{ __('Saved.') }}</p>
-                @endif
-            </div>
-        </form>
-    </div>
+    <form action="{{ route('my-account.addresses.update', $address) }}" method="POST">
+        @csrf
+        @method('PATCH')
+        @include('public.my-account.addresses.partials.form-fields', ['address' => $address, 'countries' => $countries])
+        <div class="mt-6 flex justify-end space-x-4">
+            <a href="{{ route('my-account.addresses.index') }}" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">{{ __('public.cancel') }}</a>
+            <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700">{{ __('public.update_address') }}</button>
+        </div>
+    </form>
 </div>
 @endsection

@@ -1,12 +1,12 @@
 @props(['item', 'quantity'])
 
 <li class="flex py-6 px-4 sm:px-6">
-    {{-- Item Image --}}
+    
     <div class="flex-shrink-0">
         <img src="{{ $item->images->first() ? route('public.images.show', ['image' => $item->images->first()->id]) : '/images/placeholder.svg' }}" alt="{{ $item->name }}" class="w-24 h-24 sm:w-32 sm:h-32 rounded-md object-cover object-center">
     </div>
 
-    {{-- Item Details --}}
+    
     <div class="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
         <div class="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
             <div>
@@ -19,14 +19,14 @@
             </div>
 
             <div class="mt-4 sm:mt-0 sm:pr-9">
-                {{-- Quantity Stepper --}}
+                
                 <form action="{{ route('cart.update', $item) }}" method="POST"
                       x-data="{ quantity: {{ $quantity }} }"
                       x-ref="updateForm" class="flex items-center">
                     @csrf
                     @method('PATCH')
                     
-                    <label for="quantity-{{$item->id}}" class="sr-only">{{ __('Quantity') }}, {{ $item->name }}</label>
+                    <label for="quantity-{{$item->id}}" class="sr-only">{{ __('public.quantity') }}, {{ $item->name }}</label>
                     <div class="flex items-center rounded-md border border-gray-300 dark:border-gray-600">
                         <button
                             type="button"
@@ -50,13 +50,13 @@
                     </div>
                 </form>
 
-                {{-- Remove Button --}}
+                
                 <div class="absolute top-0 right-0">
                     <form action="{{ route('cart.remove', $item) }}" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="-m-2 inline-flex p-2 text-gray-400 hover:text-gray-500">
-                            <span class="sr-only">{{ __('Remove') }}</span>
+                            <span class="sr-only">{{ __('public.remove') }}</span>
                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" /></svg>
                         </button>
                     </form>

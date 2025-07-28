@@ -49,6 +49,39 @@ class AddressControllerTest extends TestCase
             ->assertViewHas('address', $address);
     }
 
+    // THE FIX: New test for the delete confirmation page
+    #[Test]
+    public function a_user_can_see_the_delete_confirmation_page_for_their_own_address(): void
+    {
+        $address = Address::factory()->create(['customer_id' => $this->user->customer->id]);
+
+        $this->actingAs($this->user)
+            ->get(route('my-account.addresses.confirmDestroy', $address))
+            ->assertStatus(200)
+            ->assertViewIs('public.my-account.addresses.confirm-delete')
+            ->assertViewHas('address', $address)
+            ->assertSee(__('public.confirm_address_delete'));
+    }
+
+    #[Test]
+    public function a_user_cannot_see_the_delete_confirmation_page_for_another_users_address(): void
+    {
+        $addressOfAnotherUser = Address::factory()->create(['customer_id' => $this->anotherUser->customer->id]);
+
+        $this->actingAs($this->user)
+            ->get(route('my-account.addresses.confirmDestroy', $addressOfAnotherUser))
+            ->assertStatus(403);
+    }
+
+    #[Test]
+    public function a_guest_is_redirected_from_the_delete_confirmation_page(): void
+    {
+        $address = Address::factory()->create(['customer_id' => $this->user->customer->id]);
+
+        $this->get(route('my-account.addresses.confirmDestroy', $address))
+            ->assertRedirect(route('login'));
+    }
+
     // El resto de los tests no fallaban y se quedan igual
     #[Test]
     public function guests_are_redirected_from_address_pages_to_login(): void

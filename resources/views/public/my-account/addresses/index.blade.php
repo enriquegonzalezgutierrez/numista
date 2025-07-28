@@ -27,11 +27,10 @@
                     </address>
                     <div class="mt-4 flex items-center space-x-4">
                         <a href="{{ route('my-account.addresses.edit', $address) }}" class="text-sm font-medium text-teal-600 hover:text-teal-500">{{ __('public.edit') }}</a>
-                        <form action="{{ route('my-account.addresses.destroy', $address) }}" method="POST" onsubmit="return confirm('{{ __('public.confirm_address_delete') }}');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-sm font-medium text-red-600 hover:text-red-500">{{ __('public.delete') }}</button>
-                        </form>
+                        
+                        <a href="{{ route('my-account.addresses.confirmDestroy', $address) }}" class="text-sm font-medium text-red-600 hover:text-red-500">
+                            {{ __('public.delete') }}
+                        </a>
                     </div>
                 </div>
             @endforeach

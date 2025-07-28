@@ -4,7 +4,7 @@
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="lg:grid lg:grid-cols-12 lg:gap-x-12">
         {{-- Sidebar Navigation --}}
-        <aside class="lg:col-span-3 mb-8 lg:mb-0">
+        <aside class="lg:col-span-3 mb-8 lg:mb-0 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <nav class="space-y-1">
                 <a href="{{ route('my-account.dashboard') }}" 
                    @class([

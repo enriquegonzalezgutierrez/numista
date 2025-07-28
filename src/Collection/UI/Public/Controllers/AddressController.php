@@ -54,6 +54,14 @@ class AddressController extends Controller
         return redirect()->route('my-account.addresses.index')->with('success', __('public.address_update_success'));
     }
 
+    // THE FIX: New method to show the confirmation page
+    public function confirmDestroy(Address $address): View
+    {
+        $this->authorizeOwnership($address);
+
+        return view('public.my-account.addresses.confirm-delete', compact('address'));
+    }
+
     public function destroy(Address $address): RedirectResponse
     {
         $this->authorizeOwnership($address);

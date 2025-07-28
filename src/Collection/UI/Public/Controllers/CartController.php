@@ -48,7 +48,7 @@ class CartController extends Controller
 
         session()->put('cart', $cart);
 
-        return redirect()->route('cart.index')->with('success', __('Item added to cart successfully!'));
+        return redirect()->route('cart.index')->with('success', __('public.cart_add_success'));
     }
 
     /**
@@ -63,7 +63,7 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
 
-        return redirect()->route('cart.index')->with('success', __('Cart updated successfully!'));
+        return redirect()->route('cart.index')->with('success', __('public.cart_update_success'));
     }
 
     /**
@@ -78,6 +78,6 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
 
-        return redirect()->route('cart.index')->with('success', __('Item removed successfully!'));
+        return redirect()->route('cart.index')->with('success', __('public.cart_remove_success'));
     }
 }

@@ -32,12 +32,13 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     Route::prefix('my-account')->name('my-account.')->group(function () {
-        // THE FIX: Redirect base to a new dashboard route
         Route::get('/', [MyAccountController::class, 'dashboard'])->name('dashboard');
         Route::get('/orders', [MyAccountController::class, 'orders'])->name('orders');
+
+        // THE FIX: Add a GET route for the delete confirmation page
+        Route::get('addresses/{address}/delete', [AddressController::class, 'confirmDestroy'])->name('addresses.confirmDestroy');
         Route::resource('addresses', AddressController::class)->except(['show']);
 
-        // THE FIX: Add routes for profile management
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');

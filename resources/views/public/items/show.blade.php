@@ -13,7 +13,7 @@
 
     <div class="bg-white dark:bg-gray-800">
         <div class="pt-6">
-            {{-- Breadcrumb --}}
+            
             <nav aria-label="Breadcrumb" class="mx-auto flex max-w-7xl items-center space-x-2 px-4 sm:px-6 lg:px-8">
                 <ol role="list" class="flex items-center space-x-2">
                     <li>
@@ -28,10 +28,10 @@
                 </ol>
             </nav>
 
-            {{-- Main Product Grid --}}
+            
             <div class="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">
                 
-                {{-- Image gallery --}}
+                
                 <div class="lg:col-span-1">
                     <div class="aspect-[4/3] w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
                         <button @click="isLightboxOpen = true" class="w-full h-full">
@@ -55,7 +55,7 @@
                     @endif
                 </div>
 
-                {{-- Product info --}}
+                
                 <div class="mt-10 lg:col-span-1 lg:mt-0">
                     <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">{{ $item->name }}</h1>
                     <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ __('public.from_collection') }} <strong>{{ $item->tenant->name }}</strong></p>
@@ -64,17 +64,17 @@
                         <p class="text-3xl tracking-tight text-gray-900 dark:text-white">{{ number_format($item->sale_price, 2, ',', '.') }} €</p>
                     </div>
 
-                    {{-- Desktop "Add to Cart" button --}}
+                    
                     <div class="mt-10 hidden lg:block">
                         <form action="{{ route('cart.add', $item) }}" method="POST">
                             @csrf
                             <button type="submit" class="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-600 px-8 py-3 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
-                                {{ __('Add to Cart') }}
+                                {{ __('public.add_to_cart') }}
                             </button>
                         </form>
                     </div>
                     
-                    {{-- Tabs for Desktop --}}
+                    
                     <div class="mt-10 hidden lg:block">
                         <div class="border-b border-gray-200 dark:border-gray-700">
                             <nav class="-mb-px flex space-x-8" aria-label="Tabs">
@@ -93,7 +93,7 @@
                     </div>
                 </div>
 
-                {{-- Accordion for Mobile --}}
+                
                 <div class="mt-10 divide-y divide-gray-200 dark:divide-gray-700 border-t border-gray-200 dark:border-gray-700 lg:hidden">
                      @include('public.items.partials.item-info-accordion')
                 </div>
@@ -102,17 +102,17 @@
         </div>
     </div>
 
-    {{-- Sticky Add to Cart bar for mobile --}}
+    
     <div class="fixed bottom-0 left-0 right-0 lg:hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 p-4">
         <form action="{{ route('cart.add', $item) }}" method="POST">
             @csrf
             <button type="submit" class="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-600 px-8 py-3 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
-                {{ __('Add to Cart') }} - {{ number_format($item->sale_price, 2, ',', '.') }} €
+                {{ __('public.add_to_cart') }} - {{ number_format($item->sale_price, 2, ',', '.') }} €
             </button>
         </form>
     </div>
 
-    <!-- Image Lightbox Modal -->
+    
     <div 
         x-show="isLightboxOpen" 
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" 

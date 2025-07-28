@@ -1,10 +1,10 @@
 @extends('layouts.public')
 
-@section('title', __('Checkout'))
+@section('title', __('public.checkout'))
 
 @section('content')
 <div x-data="{ addressOption: '{{ $addresses->isNotEmpty() ? 'existing' : 'new' }}' }" class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white">{{ __('Checkout') }}</h1>
+    <h1 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white">{{ __('public.checkout') }}</h1>
     
     @if ($errors->any())
         <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative" role="alert">
@@ -21,16 +21,16 @@
         @csrf
         <div class="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start">
             <section class="lg:col-span-7 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-                <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ __('Shipping Information') }}</h2>
+                <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ __('public.shipping_information') }}</h2>
 
                 <div class="mt-4">
                     <fieldset>
-                        <legend class="sr-only">Shipping address</legend>
+                        <legend class="sr-only">{{ __('public.shipping_address') }}</legend>
                         <div class="space-y-4">
                             @if($addresses->isNotEmpty())
                                 <div class="flex items-center">
                                     <input id="address_option_existing" name="address_option" type="radio" value="existing" x-model="addressOption" class="h-4 w-4 border-gray-300 text-teal-600 focus:ring-teal-500">
-                                    <label for="address_option_existing" class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-200">Usar una dirección guardada</label>
+                                    <label for="address_option_existing" class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-200">{{ __('public.address.use_saved') }}</label>
                                 </div>
 
                                 <div x-show="addressOption === 'existing'" x-collapse class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -50,16 +50,16 @@
 
                                 <div class="flex items-center">
                                     <input id="address_option_new" name="address_option" type="radio" value="new" x-model="addressOption" class="h-4 w-4 border-gray-300 text-teal-600 focus:ring-teal-500">
-                                    <label for="address_option_new" class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-200">Añadir una nueva dirección</label>
+                                    <label for="address_option_new" class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-200">{{ __('public.address.add_new') }}</label>
                                 </div>
                             @endif
 
                             <div x-show="addressOption === 'new'" x-collapse>
-                                {{-- THE FIX: Pass the $countries variable to the partial --}}
+                                
                                 @include('public.my-account.addresses.partials.form-fields', ['address' => new \Numista\Collection\Domain\Models\Address(), 'countries' => $countries])
                                 <div class="mt-4 flex items-center">
                                     <input id="save_address" name="save_address" type="checkbox" value="1" class="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500">
-                                    <label for="save_address" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">Guardar esta dirección para futuras compras</label>
+                                    <label for="save_address" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">{{ __('public.address.save_for_future') }}</label>
                                 </div>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
             </section>
 
             <section class="lg:col-span-5 mt-8 lg:mt-0 rounded-lg bg-white dark:bg-gray-800 p-6 shadow-sm h-fit sticky top-8">
-                <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ __('Order Summary') }}</h2>
+                <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ __('public.order_summary') }}</h2>
                 <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700 mt-4">
                     @foreach($items as $item)
                         <li class="flex py-4 space-x-4">
@@ -83,19 +83,18 @@
                 </ul>
                 <dl class="mt-6 space-y-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                     <div class="flex items-center justify-between">
-                        <dt class="text-base font-medium text-gray-900 dark:text-white">{{ __('Total') }}</dt>
+                        <dt class="text-base font-medium text-gray-900 dark:text-white">{{ __('panel.Total') }}</dt>
                         <dd class="text-base font-medium text-gray-900 dark:text-white">{{ number_format($total, 2, ',', '.') }} €</dd>
                     </div>
                 </dl>
                 <div class="mt-6">
-                    <button type="submit" class="w-full flex items-center justify-center rounded-md border border-transparent bg-teal-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-teal-700">{{ __('Place Order') }}</button>
+                    <button type="submit" class="w-full flex items-center justify-center rounded-md border border-transparent bg-teal-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-teal-700">{{ __('public.place_order') }}</button>
                 </div>
             </section>
         </div>
     </form>
 </div>
 <style>
-    /* Custom style for selected address card */
     input[type="radio"]:checked + p + address + span {
         border-color: var(--c-600);
     }
