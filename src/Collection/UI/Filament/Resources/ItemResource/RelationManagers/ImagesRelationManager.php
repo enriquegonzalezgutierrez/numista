@@ -14,24 +14,20 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Numista\Collection\Application\Items\SetFeaturedImageService;
 
 class ImagesRelationManager extends RelationManager
 {
     protected static string $relationship = 'images';
 
-    /**
-     * Defines the title for the relation manager section on the parent resource page.
-     */
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __('panel.label_images');
     }
 
-    /**
-     * Defines the form schema for creating and editing an Image record.
-     */
     public function form(Form $form): Form
     {
         return $form
@@ -64,14 +60,18 @@ class ImagesRelationManager extends RelationManager
 
                 TextColumn::make('alt_text')
                     ->label(__('panel.field_alt_text')),
-            ])
-            ->filters([
-                //
+
+                ToggleColumn::make('is_featured')
+                    ->label('Destacada')
+                    ->afterStateUpdated(function (Model $record, $state, SetFeaturedImageService $service) {
+                        $service->handle($record, $state);
+                    }),
             ])
             ->headerActions([
                 CreateAction::make()
                     ->label(__('panel.action_create_image'))
                     ->modalHeading(__('panel.modal_create_image_title')),
+                // We don't need a custom creation service here, Filament's default works fine.
             ])
             ->actions([
                 EditAction::make()

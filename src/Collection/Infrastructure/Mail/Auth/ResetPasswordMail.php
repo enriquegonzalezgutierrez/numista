@@ -1,6 +1,6 @@
 <?php
 
-namespace Numista\Collection\UI\Public\Mail\Auth;
+namespace Numista\Collection\Infrastructure\Mail\Auth;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

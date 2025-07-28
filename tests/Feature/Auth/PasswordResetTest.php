@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
-use Numista\Collection\UI\Public\Mail\Auth\ResetPasswordMail;
+use Illuminate\Support\Facades\Queue;
+use Numista\Collection\Infrastructure\Mail\Auth\ResetPasswordMail;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -21,12 +22,12 @@ class PasswordResetTest extends TestCase
     public function password_reset_link_can_be_requested(): void
     {
         Mail::fake();
+        Queue::fake();
 
         $user = User::factory()->create();
 
         $this->post(route('password.email'), ['email' => $user->email]);
 
-        // THE FIX: Use assertQueued because the Mailable implements ShouldQueue
         Mail::assertQueued(ResetPasswordMail::class, function ($mail) use ($user) {
             return $mail->hasTo($user->email);
         });

@@ -1,7 +1,5 @@
 <?php
 
-// tests/Feature/Http/Public/CheckoutControllerTest.php
-
 namespace Tests\Feature\Http\Public;
 
 use App\Models\User;
@@ -27,8 +25,6 @@ class CheckoutControllerTest extends TestCase
         parent::setUp();
         $this->user = User::factory()->has(Customer::factory())->create();
         $this->item = Item::factory()->create(['status' => 'for_sale', 'sale_price' => 100]);
-
-        // THE FIX: Add a country for validation rules
         Country::factory()->create(['iso_code' => 'ES']);
     }
 
@@ -43,27 +39,25 @@ class CheckoutControllerTest extends TestCase
     #[Test]
     public function guests_are_redirected_from_checkout_to_login(): void
     {
-        $response = $this->get(route('checkout.create'));
-        $response->assertRedirect(route('login'));
+        $this->get(route('checkout.create'))->assertRedirect(route('login'));
     }
 
     #[Test]
     public function checkout_is_not_accessible_with_an_empty_cart(): void
     {
-        $response = $this->actingAs($this->user)->get(route('checkout.create'));
-        $response->assertRedirect(route('public.items.index'));
-        $response->assertSessionHas('error');
+        $this->actingAs($this->user)->get(route('checkout.create'))
+            ->assertRedirect(route('public.items.index'))
+            ->assertSessionHas('error');
     }
 
     #[Test]
     public function authenticated_users_with_items_can_see_the_checkout_page(): void
     {
         $this->addItemToCart();
-        $response = $this->actingAs($this->user)->get(route('checkout.create'));
-
-        $response->assertStatus(200);
-        $response->assertViewIs('public.checkout.index');
-        $response->assertSee($this->item->name);
+        $this->actingAs($this->user)->get(route('checkout.create'))
+            ->assertStatus(200)
+            ->assertViewIs('public.checkout.index')
+            ->assertSee($this->item->name);
     }
 
     #[Test]
@@ -72,12 +66,9 @@ class CheckoutControllerTest extends TestCase
         $this->addItemToCart();
         $response = $this->actingAs($this->user)->post(route('checkout.store'), [
             'address_option' => 'new',
-            'shipping_address' => [
-                'recipient_name' => '', // Invalid data
-            ],
+            'shipping_address' => ['recipient_name' => ''],
         ]);
 
-        // THE FIX: Check for the specific field error within the array
         $response->assertSessionHasErrors('shipping_address.recipient_name');
         $this->assertEquals(0, Order::count());
     }
@@ -88,7 +79,7 @@ class CheckoutControllerTest extends TestCase
         $this->addItemToCart();
         $response = $this->actingAs($this->user)->post(route('checkout.store'), [
             'address_option' => 'existing',
-            'selected_address_id' => 999, // Non-existent ID
+            'selected_address_id' => 999,
         ]);
 
         $response->assertSessionHasErrors('selected_address_id');
@@ -106,12 +97,13 @@ class CheckoutControllerTest extends TestCase
             'city' => 'Newville',
             'postal_code' => '54321',
             'country_code' => 'ES',
+            'state' => 'Seville',
+            'phone' => '123456789',
         ];
 
         $response = $this->actingAs($this->user)->post(route('checkout.store'), [
             'address_option' => 'new',
             'shipping_address' => $newAddressData,
-            'save_address' => '1',
         ]);
 
         $this->assertEquals(1, Order::count());

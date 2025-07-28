@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
-use Numista\Collection\UI\Public\Mail\Auth\ResetPasswordMail;
+use Numista\Collection\Infrastructure\Mail\Auth\ResetPasswordMail;
 
 class PasswordResetLinkController extends Controller
 {
@@ -38,7 +38,6 @@ class PasswordResetLinkController extends Controller
 
         Mail::to($user)->send(new ResetPasswordMail($token, $user->email));
 
-        // Using the key from the passwords translation file for consistency
         return back()->with('status', __(Password::RESET_LINK_SENT));
     }
 }

@@ -216,6 +216,12 @@ return [
         'type' => 'tipo',
         'status' => 'estado',
         'grade' => 'grado',
+        'shipping_address.label' => 'etiqueta de dirección',
+        'shipping_address.recipient_name' => 'nombre del destinatario',
+        'shipping_address.street_address' => 'dirección',
+        'shipping_address.city' => 'ciudad',
+        'shipping_address.postal_code' => 'código postal',
+        'shipping_address.country_code' => 'país',
     ],
 
 ];

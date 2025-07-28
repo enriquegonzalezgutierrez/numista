@@ -7,11 +7,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Numista\Collection\Application\MyAccount\AddressService;
 use Numista\Collection\Domain\Models\Address;
 use Numista\Collection\Domain\Models\Country;
 
 class AddressController extends Controller
 {
+    public function __construct(private AddressService $addressService) {}
+
     public function index(): View
     {
         $user = Auth::user();
@@ -31,7 +34,7 @@ class AddressController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validatedData = $request->validate($this->validationRules());
-        Auth::user()->customer->addresses()->create($validatedData);
+        $this->addressService->createForUser(Auth::user(), $validatedData);
 
         return redirect()->route('my-account.addresses.index')->with('success', __('public.address_add_success'));
     }
@@ -49,12 +52,11 @@ class AddressController extends Controller
     {
         $this->authorizeOwnership($address);
         $validatedData = $request->validate($this->validationRules());
-        $address->update($validatedData);
+        $this->addressService->updateForUser($address, $validatedData);
 
         return redirect()->route('my-account.addresses.index')->with('success', __('public.address_update_success'));
     }
 
-    // THE FIX: New method to show the confirmation page
     public function confirmDestroy(Address $address): View
     {
         $this->authorizeOwnership($address);
@@ -65,7 +67,7 @@ class AddressController extends Controller
     public function destroy(Address $address): RedirectResponse
     {
         $this->authorizeOwnership($address);
-        $address->delete();
+        $this->addressService->deleteForUser($address);
 
         return redirect()->route('my-account.addresses.index')->with('success', __('public.address_delete_success'));
     }

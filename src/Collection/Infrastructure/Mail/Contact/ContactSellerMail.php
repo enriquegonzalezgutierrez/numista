@@ -1,8 +1,6 @@
 <?php
 
-// src/Collection/UI/Public/Mail/ContactSellerMail.php
-
-namespace Numista\Collection\UI\Public\Mail;
+namespace Numista\Collection\Infrastructure\Mail\Contact;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,7 +32,6 @@ class ContactSellerMail extends Mailable implements ShouldQueue
         return new Envelope(
             from: config('mail.from.address'),
             replyTo: $this->fromEmail,
-            // Use the translation key for the subject
             subject: __('mail.contact_subject', ['itemName' => $this->item->name]),
         );
     }
@@ -44,7 +41,6 @@ class ContactSellerMail extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
-        // This points to the Blade view for the email content
         return new Content(
             markdown: 'emails.contact.seller',
         );
