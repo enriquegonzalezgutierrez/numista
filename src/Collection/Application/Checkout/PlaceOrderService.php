@@ -4,6 +4,7 @@ namespace Numista\Collection\Application\Checkout;
 
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Numista\Collection\Domain\Events\OrderPlaced;
 use Numista\Collection\Domain\Models\Address;
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\Order;
@@ -12,7 +13,7 @@ class PlaceOrderService
 {
     public function handle(User $user, array $cart, array $data): Order
     {
-        return DB::transaction(function () use ($user, $cart, $data) {
+        $order = DB::transaction(function () use ($user, $cart, $data) {
             $address = $this->getAddress($user, $data);
 
             $shippingAddressText = "{$address->recipient_name}\n{$address->street_address}\n{$address->postal_code} {$address->city}, {$address->country_code}";
@@ -44,6 +45,11 @@ class PlaceOrderService
 
             return $order;
         });
+
+        // Dispatch the event after the transaction has been successfully committed.
+        OrderPlaced::dispatch($order);
+
+        return $order;
     }
 
     private function getAddress(User $user, array $data): Address
