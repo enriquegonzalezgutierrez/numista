@@ -73,7 +73,8 @@
                 </dl>
 
                 <div class="mt-8">
-                    <a href="{{ route('home') }}" class="text-sm font-medium text-teal-600 hover:text-teal-500">
+                    {{-- THE FIX: Changed route from 'home' to 'my-account' --}}
+                    <a href="{{ route('my-account') }}" class="text-sm font-medium text-teal-600 hover:text-teal-500">
                         ← {{ __('Back to My Orders') }}
                     </a>
                 </div>

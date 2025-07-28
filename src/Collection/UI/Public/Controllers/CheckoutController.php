@@ -84,8 +84,6 @@ class CheckoutController extends Controller
         // Clear the cart from the session
         $request->session()->forget('cart');
 
-        // TODO: Send order confirmation email
-
         return redirect()->route('checkout.success', $order);
     }
 
@@ -96,7 +94,8 @@ class CheckoutController extends Controller
     {
         // Security check: ensure the user is viewing their own success page
         if ($order->user_id !== Auth::id()) {
-            return redirect()->route('home');
+            // THE FIX: Redirect to the new 'my-account' route
+            return redirect()->route('my-account');
         }
 
         return view('public.checkout.success', compact('order'));

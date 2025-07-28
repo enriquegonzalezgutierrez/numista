@@ -9,7 +9,8 @@ use Numista\Collection\UI\Public\Controllers\Auth\RegisteredUserController;
 use Numista\Collection\UI\Public\Controllers\CartController;
 use Numista\Collection\UI\Public\Controllers\CheckoutController;
 use Numista\Collection\UI\Public\Controllers\ContactSellerController;
-use Numista\Collection\UI\Public\Controllers\HomeController;
+// THE FIX: Import the new MyAccountController
+use Numista\Collection\UI\Public\Controllers\MyAccountController;
 use Numista\Collection\UI\Public\Controllers\OrderController;
 use Numista\Collection\UI\Public\Controllers\PublicImageController;
 use Numista\Collection\UI\Public\Controllers\PublicItemController;
@@ -17,7 +18,7 @@ use Numista\Collection\UI\Public\Controllers\PublicItemController;
 // --- Public Marketplace Routes ---
 Route::get('/', [PublicItemController::class, 'index'])->name('public.items.index');
 Route::get('/items/{item:slug}', [PublicItemController::class, 'show'])->name('public.items.show');
-Route::post('/items/{item:slug}/contact', ContactSellerController::class)->name('public.items.contact'); // Corrected line
+Route::post('/items/{item:slug}/contact', ContactSellerController::class)->name('public.items.contact');
 
 // --- File Serving Routes ---
 Route::get('/item-images/{image}', [PublicImageController::class, 'show'])->name('public.images.show');
@@ -33,7 +34,8 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    // THE FIX: Use the new MyAccountController for the 'my-account' route
+    Route::get('/my-account', [MyAccountController::class, 'index'])->name('my-account');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('checkout', [CheckoutController::class, 'create'])->name('checkout.create');
     Route::post('checkout', [CheckoutController::class, 'store'])->name('checkout.store');

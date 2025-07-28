@@ -24,8 +24,8 @@ class LatestItemsWidget extends BaseWidget
         return $table
             ->heading(__('panel.widget_table_latest_items'))
             ->query(
-                Item::query() // Use a direct query
-                    ->with('images') // Eager load images like the resource does
+                Item::query()
+                    ->with('images')
                     ->where('tenant_id', $currentTenant->id)
                     ->latest()
                     ->limit(5)

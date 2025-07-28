@@ -14,7 +14,6 @@ use Numista\Collection\Domain\Models\Tenant;
 class StatsOverviewWidget extends BaseWidget
 {
     // Make the widget poll for new data every 30 seconds.
-    // Set to null to disable polling.
     protected static ?string $pollingInterval = '30s';
 
     protected function getStats(): array

@@ -57,7 +57,7 @@ return [
     'status_completed' => 'Completado',
     'status_cancelled' => 'Cancelado',
 
-    // --- Option Definitions for Selectable Attributes ---
+    // THE FIX: Define translations for selectable attribute options
     'options' => [
         'grade' => [ // This key should match the attribute name in lowercase: 'grado' -> 'grade'
             'unc' => 'UNC (Sin Circular)',

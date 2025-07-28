@@ -1,6 +1,6 @@
 <?php
 
-// src/Collection/UI/Public/Controllers/HomeController.php
+// src/Collection/UI/Public/Controllers/MyAccountController.php
 
 namespace Numista\Collection\UI\Public\Controllers;
 
@@ -8,20 +8,18 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-// THE FIX: Extend the base routing Controller from the framework
-class HomeController extends Controller
+class MyAccountController extends Controller
 {
     /**
      * Create a new controller instance.
      */
     public function __construct()
     {
-        // This will now work because Illuminate\Routing\Controller has the middleware method
         $this->middleware('auth');
     }
 
     /**
-     * Show the application dashboard.
+     * Show the application dashboard (My Account page).
      */
     public function index(): View
     {
@@ -33,6 +31,7 @@ class HomeController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('public.home', compact('orders'));
+        // THE FIX: Return the new, consistently named view.
+        return view('public.my-account', compact('orders'));
     }
 }
