@@ -3,7 +3,51 @@
 // lang/es/public.php
 
 return [
-    // Marketplace & Filters
+    'item' => 'producto|productos',
+    'or' => 'o',
+    'my_account' => 'Mi Cuenta',
+    'dashboard' => 'Panel de Control',
+    'my_orders' => 'Mis Pedidos',
+    'my_addresses' => 'Mis Direcciones',
+    'account_details' => 'Detalles de la cuenta',
+    'hello_user' => '¡Hola, :name!',
+    'dashboard_welcome' => 'Bienvenido a tu panel de control. Desde aquí puedes gestionar tus pedidos, direcciones y detalles de tu cuenta.',
+    'no_orders_yet' => 'Aún no has realizado ningún pedido.',
+    'browse_marketplace' => 'Explorar el Marketplace',
+    'order_details' => 'Detalles del Pedido',
+    'order_number' => 'Nº de Pedido',
+    'placed_on' => 'Realizado el',
+    'items_ordered' => 'Artículos del Pedido',
+    'back_to_my_orders' => 'Volver a Mis Pedidos',
+    'add_address' => 'Añadir Dirección',
+    'no_addresses_saved' => 'No tienes ninguna dirección guardada.',
+    'add_new_address' => 'Añadir Nueva Dirección',
+    'edit_address' => 'Editar Dirección',
+    'cancel' => 'Cancelar',
+    'save_address' => 'Guardar Dirección',
+    'update_address' => 'Actualizar Dirección',
+    'confirm_address_delete' => '¿Estás seguro de que quieres eliminar esta dirección?',
+    'delete' => 'Eliminar',
+    'edit' => 'Editar',
+    'profile_info' => 'Información del Perfil',
+    'profile_info_desc' => 'Actualiza la información de perfil y la dirección de correo electrónico de tu cuenta.',
+    'save' => 'Guardar',
+    'saved' => 'Guardado.',
+    'update_password' => 'Actualizar Contraseña',
+    'update_password_desc' => 'Asegúrate de que tu cuenta utiliza una contraseña larga y aleatoria para mantenerla segura.',
+    'current_password' => 'Contraseña Actual',
+    'new_password' => 'Nueva Contraseña',
+    'address_add_success' => 'Dirección añadida con éxito.',
+    'address_update_success' => 'Dirección actualizada con éxito.',
+    'address_delete_success' => 'Dirección eliminada con éxito.',
+    'status_profile_updated' => 'Perfil actualizado.',
+    'status_password_updated' => 'Contraseña actualizada.',
+    'name' => 'Nombre',
+    'not_a_member' => '¿No eres miembro?',
+
+    'header' => [
+        'cart_sr_text' => 'artículos en el carrito, ver cesta',
+    ],
     'marketplace_title' => 'Marketplace de Coleccionables',
     'marketplace_subtitle' => 'Explora ítems únicos de todas nuestras colecciones.',
     'filter_search_label' => 'Buscar por nombre',
@@ -20,8 +64,6 @@ return [
     'no_items_found_filtered' => 'No se encontraron ítems con esos filtros.',
     'clear_filters_link' => 'Limpiar filtros',
     'results_count' => 'Mostrando :count resultado|Mostrando :count resultados',
-
-    // Item Details Page
     'item_details' => 'Detalles del Ítem',
     'from_collection' => 'De la colección de',
     'price' => 'Precio',
@@ -34,21 +76,6 @@ return [
     'lightbox' => [
         'close' => 'Cerrar',
     ],
-
-    // Header
-    'header' => [
-        'cart_sr_text' => 'artículos en el carrito, ver cesta',
-    ],
-
-    // Cart Page
-    'cart' => [
-        'sr_heading' => 'Artículos en tu cesta de compra',
-        'in_stock' => 'En stock',
-        'decrease_quantity' => 'Reducir cantidad',
-        'increase_quantity' => 'Aumentar cantidad',
-    ],
-
-    // Contact Modal
     'contact_modal_title' => 'Contactar sobre: :itemName',
     'contact_modal_name' => 'Tu Nombre',
     'contact_modal_email' => 'Tu Email',
@@ -58,4 +85,33 @@ return [
     'contact_modal_send' => 'Enviar Mensaje',
     'contact_modal_success' => '¡Tu mensaje ha sido enviado con éxito!',
     'contact_modal_error_seller' => 'No se pudo encontrar la información del vendedor.',
+    'shopping_cart' => 'Carrito de Compra',
+    'your_cart' => 'Tu Carrito',
+    'cart_add_success' => '¡Artículo añadido al carrito con éxito!',
+    'cart_update_success' => '¡Carrito actualizado con éxito!',
+    'cart_remove_success' => '¡Artículo eliminado con éxito!',
+    'product' => 'Producto',
+    'quantity' => 'Cantidad',
+    'subtotal' => 'Subtotal',
+    'update' => 'Actualizar',
+    'remove' => 'Eliminar',
+    'proceed_to_checkout' => 'Proceder al Pago',
+    'cart_empty' => 'Tu carrito está vacío.',
+    'continue_shopping' => 'Seguir Comprando',
+    'add_to_cart' => 'Añadir al Carrito',
+    'order_summary' => 'Resumen del Pedido',
+    'checkout' => 'Finalizar Compra',
+    'shipping_information' => 'Información de Envío',
+    'shipping_address' => 'Dirección de Envío',
+    'place_order' => 'Realizar Pedido',
+    'thank_you' => '¡Gracias!',
+    'order_placed_successfully' => 'Tu pedido se ha realizado correctamente.',
+    'your_order_number_is' => 'Tu número de pedido es:',
+    'view_your_orders' => 'Ver Tus Pedidos',
+    'cart' => [
+        'sr_heading' => 'Artículos en tu cesta de compra',
+        'in_stock' => 'En stock',
+        'decrease_quantity' => 'Reducir cantidad',
+        'increase_quantity' => 'Aumentar cantidad',
+    ],
 ];

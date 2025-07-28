@@ -1,7 +1,5 @@
 <?php
 
-// tests/Feature/Http/Public/MyAccountControllerTest.php
-
 namespace Tests\Feature\Http\Public;
 
 use App\Models\User;
@@ -15,37 +13,46 @@ class MyAccountControllerTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function guests_cannot_access_the_my_account_page(): void
+    public function guests_are_redirected_from_account_pages(): void
     {
-        // THE FIX: Use the new named route for the main account page
-        $response = $this->get(route('my-account.orders'));
-
-        $response->assertRedirect(route('login'));
+        $this->get(route('my-account.dashboard'))->assertRedirect(route('login'));
+        $this->get(route('my-account.orders'))->assertRedirect(route('login'));
     }
 
     #[Test]
-    public function an_authenticated_user_can_see_their_own_orders_on_my_account_page(): void
+    public function an_authenticated_user_can_view_the_account_dashboard(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('my-account.dashboard'))
+            ->assertStatus(200)
+            ->assertViewIs('public.my-account.dashboard')
+            ->assertViewHas('user', $user) // Verify controller passes correct data
+            ->assertSee($user->name); // Simple check for the name
+    }
+
+    #[Test]
+    public function an_authenticated_user_can_see_their_own_orders_on_orders_page(): void
     {
         $user = User::factory()->create();
         $orderForUser = Order::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->get(route('my-account.orders'));
-
-        $response->assertStatus(200);
-        $response->assertViewIs('public.my-account');
-        $response->assertSee($orderForUser->order_number);
+        $this->actingAs($user)->get(route('my-account.orders'))
+            ->assertStatus(200)
+            ->assertViewIs('public.my-account.orders')
+            ->assertSee($orderForUser->order_number);
     }
 
     #[Test]
-    public function an_authenticated_user_cannot_see_orders_from_other_users_on_my_account_page(): void
+    public function an_authenticated_user_cannot_see_orders_from_other_users_on_orders_page(): void
     {
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
         $orderForOtherUser = Order::factory()->create(['user_id' => $otherUser->id]);
 
-        $response = $this->actingAs($user)->get(route('my-account.orders'));
-
-        $response->assertStatus(200);
-        $response->assertDontSee($orderForOtherUser->order_number);
+        $this->actingAs($user)->get(route('my-account.orders'))
+            ->assertStatus(200)
+            ->assertDontSee($orderForOtherUser->order_number);
     }
 }

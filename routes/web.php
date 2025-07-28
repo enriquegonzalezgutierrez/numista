@@ -1,10 +1,8 @@
 <?php
 
-// routes/web.php
-
 use App\Http\Controllers\TenantFileController;
 use Illuminate\Support\Facades\Route;
-use Numista\Collection\UI\Public\Controllers\AddressController; // Import new controller
+use Numista\Collection\UI\Public\Controllers\AddressController;
 use Numista\Collection\UI\Public\Controllers\Auth\AuthenticatedSessionController;
 use Numista\Collection\UI\Public\Controllers\Auth\RegisteredUserController;
 use Numista\Collection\UI\Public\Controllers\CartController;
@@ -12,6 +10,7 @@ use Numista\Collection\UI\Public\Controllers\CheckoutController;
 use Numista\Collection\UI\Public\Controllers\ContactSellerController;
 use Numista\Collection\UI\Public\Controllers\MyAccountController;
 use Numista\Collection\UI\Public\Controllers\OrderController;
+use Numista\Collection\UI\Public\Controllers\ProfileController; // Import new controller
 use Numista\Collection\UI\Public\Controllers\PublicImageController;
 use Numista\Collection\UI\Public\Controllers\PublicItemController;
 
@@ -33,10 +32,15 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     Route::prefix('my-account')->name('my-account.')->group(function () {
-        Route::get('/', fn () => redirect()->route('my-account.orders'));
-        Route::get('/orders', [MyAccountController::class, 'index'])->name('orders');
-        // THE FIX: Add the resource routes for addresses
+        // THE FIX: Redirect base to a new dashboard route
+        Route::get('/', [MyAccountController::class, 'dashboard'])->name('dashboard');
+        Route::get('/orders', [MyAccountController::class, 'orders'])->name('orders');
         Route::resource('addresses', AddressController::class)->except(['show']);
+
+        // THE FIX: Add routes for profile management
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
     });
 
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');

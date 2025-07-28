@@ -8,84 +8,60 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Numista\Collection\Domain\Models\Address;
-use Numista\Collection\Domain\Models\Country; // Import the Country model
+use Numista\Collection\Domain\Models\Country;
 
 class AddressController extends Controller
 {
-    /**
-     * Display a listing of the user's addresses.
-     */
     public function index(): View
     {
-        $addresses = Auth::user()->customer->addresses()->latest()->get();
+        $user = Auth::user();
+        $addresses = $user->customer->addresses()->latest()->get();
 
-        return view('public.my-account.addresses.index', compact('addresses'));
+        return view('public.my-account.addresses.index', compact('addresses', 'user'));
     }
 
-    /**
-     * Show the form for creating a new address.
-     */
     public function create(): View
     {
-        // THE FIX: Fetch countries from the database
         $countries = Country::orderBy('name')->pluck('name', 'iso_code');
+        $user = Auth::user();
 
-        return view('public.my-account.addresses.create', compact('countries'));
+        return view('public.my-account.addresses.create', compact('countries', 'user'));
     }
 
-    /**
-     * Store a newly created address in storage.
-     */
     public function store(Request $request): RedirectResponse
     {
         $validatedData = $request->validate($this->validationRules());
-
         Auth::user()->customer->addresses()->create($validatedData);
 
-        return redirect()->route('my-account.addresses.index')->with('success', 'Dirección añadida con éxito.');
+        return redirect()->route('my-account.addresses.index')->with('success', __('public.address_add_success'));
     }
 
-    /**
-     * Show the form for editing the specified address.
-     */
     public function edit(Address $address): View
     {
         $this->authorizeOwnership($address);
-
-        // THE FIX: Fetch countries from the database
         $countries = Country::orderBy('name')->pluck('name', 'iso_code');
+        $user = Auth::user();
 
-        return view('public.my-account.addresses.edit', compact('address', 'countries'));
+        return view('public.my-account.addresses.edit', compact('address', 'countries', 'user'));
     }
 
-    /**
-     * Update the specified address in storage.
-     */
     public function update(Request $request, Address $address): RedirectResponse
     {
         $this->authorizeOwnership($address);
-
         $validatedData = $request->validate($this->validationRules());
         $address->update($validatedData);
 
-        return redirect()->route('my-account.addresses.index')->with('success', 'Dirección actualizada con éxito.');
+        return redirect()->route('my-account.addresses.index')->with('success', __('public.address_update_success'));
     }
 
-    /**
-     * Remove the specified address from storage.
-     */
     public function destroy(Address $address): RedirectResponse
     {
         $this->authorizeOwnership($address);
-
         $address->delete();
 
-        return redirect()->route('my-account.addresses.index')->with('success', 'Dirección eliminada con éxito.');
+        return redirect()->route('my-account.addresses.index')->with('success', __('public.address_delete_success'));
     }
 
-    /**
-     * Reusable validation rules for addresses.
-     */
     private function validationRules(): array
     {
         return [
@@ -100,9 +76,6 @@ class AddressController extends Controller
         ];
     }
 
-    /**
-     * Security check to ensure a user can only manage their own addresses.
-     */
     private function authorizeOwnership(Address $address): void
     {
         if ($address->customer_id !== Auth::user()->customer->id) {

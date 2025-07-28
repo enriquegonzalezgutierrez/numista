@@ -1,13 +1,13 @@
 @extends('layouts.account')
 
-@section('title', 'Mis Direcciones')
+@section('title', __('public.my_addresses'))
 
 @section('account-content')
 <div class="p-6 text-gray-900 dark:text-gray-100">
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-semibold">Mis Direcciones</h2>
+        <h2 class="text-2xl font-semibold">{{ __('public.my_addresses') }}</h2>
         <a href="{{ route('my-account.addresses.create') }}" class="inline-flex items-center px-4 py-2 bg-teal-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-teal-700 active:bg-teal-900 focus:outline-none focus:border-teal-900 focus:ring ring-teal-300 disabled:opacity-25 transition ease-in-out duration-150">
-            Añadir Dirección
+            {{ __('public.add_address') }}
         </a>
     </div>
 
@@ -20,18 +20,17 @@
                         {{ $address->recipient_name }}<br>
                         {{ $address->street_address }}<br>
                         {{ $address->postal_code }} {{ $address->city }}, {{ $address->state }}<br>
-                        {{-- In a real app, you would convert country code to country name --}}
                         {{ $address->country_code }}<br>
                         @if($address->phone)
                             Tlf: {{ $address->phone }}
                         @endif
                     </address>
                     <div class="mt-4 flex items-center space-x-4">
-                        <a href="{{ route('my-account.addresses.edit', $address) }}" class="text-sm font-medium text-teal-600 hover:text-teal-500">Editar</a>
-                        <form action="{{ route('my-account.addresses.destroy', $address) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta dirección?');">
+                        <a href="{{ route('my-account.addresses.edit', $address) }}" class="text-sm font-medium text-teal-600 hover:text-teal-500">{{ __('public.edit') }}</a>
+                        <form action="{{ route('my-account.addresses.destroy', $address) }}" method="POST" onsubmit="return confirm('{{ __('public.confirm_address_delete') }}');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-sm font-medium text-red-600 hover:text-red-500">Eliminar</button>
+                            <button type="submit" class="text-sm font-medium text-red-600 hover:text-red-500">{{ __('public.delete') }}</button>
                         </form>
                     </div>
                 </div>
@@ -39,7 +38,7 @@
         </div>
     @else
         <div class="text-center py-8">
-            <p class="text-gray-500 dark:text-gray-400">No tienes ninguna dirección guardada.</p>
+            <p class="text-gray-500 dark:text-gray-400">{{ __("public.no_addresses_saved") }}</p>
         </div>
     @endif
 </div>

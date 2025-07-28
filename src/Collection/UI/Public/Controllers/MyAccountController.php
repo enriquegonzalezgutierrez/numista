@@ -1,7 +1,5 @@
 <?php
 
-// src/Collection/UI/Public/Controllers/MyAccountController.php
-
 namespace Numista\Collection\UI\Public\Controllers;
 
 use Illuminate\Routing\Controller;
@@ -10,18 +8,25 @@ use Illuminate\View\View;
 
 class MyAccountController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
     /**
-     * Show the application dashboard (My Account page).
+     * Show the account dashboard.
      */
-    public function index(): View
+    public function dashboard(): View
+    {
+        $user = Auth::user();
+
+        return view('public.my-account.dashboard', compact('user'));
+    }
+
+    /**
+     * Show the user's order history.
+     */
+    public function orders(): View
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
@@ -31,7 +36,6 @@ class MyAccountController extends Controller
             ->latest()
             ->paginate(10);
 
-        // THE FIX: Return the new, consistently named view.
-        return view('public.my-account', compact('orders'));
+        return view('public.my-account.orders', compact('orders'));
     }
 }
