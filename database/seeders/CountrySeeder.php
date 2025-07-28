@@ -15,14 +15,13 @@ class CountrySeeder extends Seeder
         // Clear the table to avoid duplicates on re-seeding
         DB::table('countries')->delete();
 
-        // Insert countries with Spanish names
+        // THE FIX: Restore multiple countries to test the dynamic select
         DB::table('countries')->insert([
             ['name' => 'España', 'iso_code' => 'ES'],
             ['name' => 'Estados Unidos', 'iso_code' => 'US'],
             ['name' => 'México', 'iso_code' => 'MX'],
             ['name' => 'Francia', 'iso_code' => 'FR'],
             ['name' => 'Alemania', 'iso_code' => 'DE'],
-            // Add more countries as needed
         ]);
     }
 }

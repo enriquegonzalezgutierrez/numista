@@ -34,17 +34,19 @@ class ItemFactory extends Factory
         ];
     }
 
-    // --- STATES FOR SEEDER DATA GENERATION ---
-    // These states add extra attributes to the factory's in-memory model instance.
-    // They are NOT persisted to the 'items' table directly.
-    // The ItemSeeder reads these attributes to populate the EAV structure.
+    // A helper function to get the Spanish Country ID consistently
+    private function getSpainCountryId(): ?int
+    {
+        // Find or create Spain to ensure it exists for tests
+        return Country::firstOrCreate(['iso_code' => 'ES'], ['name' => 'España'])->id;
+    }
 
     public function coin(): static
     {
         return $this->state(fn (array $attributes) => [
             'type' => 'coin',
             'name' => 'Coin: '.ucfirst(fake()->words(2, true)),
-            'country_id' => Country::inRandomOrder()->first()?->id,
+            'country_id' => $this->getSpainCountryId(),
             'year' => fake()->numberBetween(1800, 2023),
             'denomination' => fake()->randomElement(['1 Dollar', '50 Pesetas', '100 Pesos', '2 Euros']),
             'mint_mark' => fake()->randomElement(['S', 'D', 'P', 'O', 'M']),
@@ -59,13 +61,26 @@ class ItemFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'type' => 'banknote',
             'name' => 'Banknote: '.ucfirst(fake()->words(2, true)),
-            'country_id' => Country::inRandomOrder()->first()?->id,
+            'country_id' => $this->getSpainCountryId(),
             'year' => fake()->numberBetween(1900, 2020),
             'denomination' => fake()->randomElement(['100 Pesetas', '5 Dollars', '20 Euros']),
             'serial_number' => fake()->bothify('??########?'),
             'grade' => fake()->randomElement(['unc', 'au', 'xf', 'vf']),
         ]);
     }
+
+    public function stamp(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => 'stamp',
+            'name' => 'Stamp: '.fake()->country().' '.fake()->year(),
+            'country_id' => $this->getSpainCountryId(),
+            'year' => fake()->numberBetween(1840, 2020),
+            'face_value' => fake()->randomElement(['5c', '10p', '1.00€']),
+        ]);
+    }
+
+    // ... (the other states like comic, watch, etc., don't have a country_id and don't need changes)
 
     public function comic(): static
     {
@@ -87,17 +102,6 @@ class ItemFactory extends Factory
             'brand' => fake()->randomElement(['Rolex', 'Omega', 'Seiko', 'Casio']),
             'model' => fake()->word().' '.fake()->randomNumber(4),
             'material' => fake()->randomElement(['Stainless Steel', 'Gold', 'Titanium']),
-        ]);
-    }
-
-    public function stamp(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'type' => 'stamp',
-            'name' => 'Stamp: '.fake()->country().' '.fake()->year(),
-            'country_id' => Country::inRandomOrder()->first()->id,
-            'year' => fake()->numberBetween(1840, 2020),
-            'face_value' => fake()->randomElement(['5c', '10p', '1.00€']),
         ]);
     }
 

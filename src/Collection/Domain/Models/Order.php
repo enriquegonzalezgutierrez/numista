@@ -16,6 +16,7 @@ class Order extends Model
     protected $fillable = [
         'tenant_id',
         'user_id',
+        'address_id', // Add address_id to fillable
         'order_number',
         'total_amount',
         'status',
@@ -40,12 +41,13 @@ class Order extends Model
     }
 
     /**
-     * Create a new factory instance for the model.
-     *
-     * This overrides Laravel's default convention to correctly locate the factory.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory<static>
+     * Get the shipping address for the order.
      */
+    public function shippingAddress(): BelongsTo
+    {
+        return $this->belongsTo(Address::class, 'address_id');
+    }
+
     protected static function newFactory(): OrderFactory
     {
         return OrderFactory::new();

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Numista\Collection\Domain\Models\Address;
+use Numista\Collection\Domain\Models\Country; // Import the Country model
 
 class AddressController extends Controller
 {
@@ -26,7 +27,10 @@ class AddressController extends Controller
      */
     public function create(): View
     {
-        return view('public.my-account.addresses.create');
+        // THE FIX: Fetch countries from the database
+        $countries = Country::orderBy('name')->pluck('name', 'iso_code');
+
+        return view('public.my-account.addresses.create', compact('countries'));
     }
 
     /**
@@ -48,7 +52,10 @@ class AddressController extends Controller
     {
         $this->authorizeOwnership($address);
 
-        return view('public.my-account.addresses.edit', compact('address'));
+        // THE FIX: Fetch countries from the database
+        $countries = Country::orderBy('name')->pluck('name', 'iso_code');
+
+        return view('public.my-account.addresses.edit', compact('address', 'countries'));
     }
 
     /**

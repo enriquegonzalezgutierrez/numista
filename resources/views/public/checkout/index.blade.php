@@ -3,28 +3,70 @@
 @section('title', __('Checkout'))
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
+<div x-data="{ addressOption: '{{ $addresses->isNotEmpty() ? 'existing' : 'new' }}' }" class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white">{{ __('Checkout') }}</h1>
+    
+    @if ($errors->any())
+        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative" role="alert">
+            <strong class="font-bold">{{ __('Whoops! Something went wrong.') }}</strong>
+            <ul class="mt-3 list-disc list-inside text-sm">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    
     <form action="{{ route('checkout.store') }}" method="POST">
         @csrf
         <div class="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start">
             <section class="lg:col-span-7 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
                 <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ __('Shipping Information') }}</h2>
+
                 <div class="mt-4">
-                    <label for="shipping_address" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Shipping Address') }}</label>
-                    
-                    {{-- THE FIX: Added padding (px-3 py-2) and dark mode styles --}}
-                    <textarea 
-                        id="shipping_address" 
-                        name="shipping_address" 
-                        rows="4" 
-                        required 
-                        class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
-                    >{{ old('shipping_address', $user->customer?->shipping_address) }}</textarea>
+                    <fieldset>
+                        <legend class="sr-only">Shipping address</legend>
+                        <div class="space-y-4">
+                            @if($addresses->isNotEmpty())
+                                <div class="flex items-center">
+                                    <input id="address_option_existing" name="address_option" type="radio" value="existing" x-model="addressOption" class="h-4 w-4 border-gray-300 text-teal-600 focus:ring-teal-500">
+                                    <label for="address_option_existing" class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-200">Usar una dirección guardada</label>
+                                </div>
+
+                                <div x-show="addressOption === 'existing'" x-collapse class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                    @foreach($addresses as $address)
+                                        <label for="address-{{ $address->id }}" class="relative block cursor-pointer rounded-lg border bg-white dark:bg-gray-700 p-4 shadow-sm focus:outline-none ring-teal-500">
+                                            <input type="radio" name="selected_address_id" id="address-{{ $address->id }}" value="{{ $address->id }}" class="sr-only" aria-labelledby="address-{{ $address->id }}-label" aria-describedby="address-{{ $address->id }}-description">
+                                            <p id="address-{{ $address->id }}-label" class="text-sm font-medium text-gray-900 dark:text-white">{{ $address->label }}</p>
+                                            <address id="address-{{ $address->id }}-description" class="mt-1 not-italic text-sm text-gray-500 dark:text-gray-400">
+                                                {{ $address->recipient_name }}<br>
+                                                {{ $address->street_address }}<br>
+                                                {{ $address->postal_code }} {{ $address->city }}
+                                            </address>
+                                            <span class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"></span>
+                                        </label>
+                                    @endforeach
+                                </div>
+
+                                <div class="flex items-center">
+                                    <input id="address_option_new" name="address_option" type="radio" value="new" x-model="addressOption" class="h-4 w-4 border-gray-300 text-teal-600 focus:ring-teal-500">
+                                    <label for="address_option_new" class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-200">Añadir una nueva dirección</label>
+                                </div>
+                            @endif
+
+                            <div x-show="addressOption === 'new'" x-collapse>
+                                {{-- THE FIX: Pass the $countries variable to the partial --}}
+                                @include('public.my-account.addresses.partials.form-fields', ['address' => new \Numista\Collection\Domain\Models\Address(), 'countries' => $countries])
+                                <div class="mt-4 flex items-center">
+                                    <input id="save_address" name="save_address" type="checkbox" value="1" class="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500">
+                                    <label for="save_address" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">Guardar esta dirección para futuras compras</label>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
                 </div>
             </section>
 
-            {{-- Order Summary --}}
             <section class="lg:col-span-5 mt-8 lg:mt-0 rounded-lg bg-white dark:bg-gray-800 p-6 shadow-sm h-fit sticky top-8">
                 <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ __('Order Summary') }}</h2>
                 <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700 mt-4">
@@ -52,4 +94,10 @@
         </div>
     </form>
 </div>
+<style>
+    /* Custom style for selected address card */
+    input[type="radio"]:checked + p + address + span {
+        border-color: var(--c-600);
+    }
+</style>
 @endsection

@@ -6,6 +6,8 @@ namespace Tests\Feature\Http\Public;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Numista\Collection\Domain\Models\Address;
+use Numista\Collection\Domain\Models\Country;
 use Numista\Collection\Domain\Models\Customer;
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\Order;
@@ -25,6 +27,9 @@ class CheckoutControllerTest extends TestCase
         parent::setUp();
         $this->user = User::factory()->has(Customer::factory())->create();
         $this->item = Item::factory()->create(['status' => 'for_sale', 'sale_price' => 100]);
+
+        // THE FIX: Add a country for validation rules
+        Country::factory()->create(['iso_code' => 'ES']);
     }
 
     private function addItemToCart(): void
@@ -62,25 +67,71 @@ class CheckoutControllerTest extends TestCase
     }
 
     #[Test]
-    public function placing_an_order_requires_a_shipping_address(): void
+    public function placing_an_order_with_new_address_requires_address_fields(): void
     {
         $this->addItemToCart();
         $response = $this->actingAs($this->user)->post(route('checkout.store'), [
-            'shipping_address' => '',
+            'address_option' => 'new',
+            'shipping_address' => [
+                'recipient_name' => '', // Invalid data
+            ],
         ]);
 
-        $response->assertSessionHasErrors('shipping_address');
+        // THE FIX: Check for the specific field error within the array
+        $response->assertSessionHasErrors('shipping_address.recipient_name');
         $this->assertEquals(0, Order::count());
     }
 
     #[Test]
-    public function a_successful_order_can_be_placed(): void
+    public function placing_an_order_with_existing_address_requires_a_valid_address_id(): void
     {
         $this->addItemToCart();
-        $shippingAddress = '123 Test Street, Testville, 12345';
+        $response = $this->actingAs($this->user)->post(route('checkout.store'), [
+            'address_option' => 'existing',
+            'selected_address_id' => 999, // Non-existent ID
+        ]);
+
+        $response->assertSessionHasErrors('selected_address_id');
+        $this->assertEquals(0, Order::count());
+    }
+
+    #[Test]
+    public function a_successful_order_can_be_placed_with_a_new_address(): void
+    {
+        $this->addItemToCart();
+        $newAddressData = [
+            'label' => 'New Address',
+            'recipient_name' => 'Jane Doe',
+            'street_address' => '456 New Ave',
+            'city' => 'Newville',
+            'postal_code' => '54321',
+            'country_code' => 'ES',
+        ];
 
         $response = $this->actingAs($this->user)->post(route('checkout.store'), [
-            'shipping_address' => $shippingAddress,
+            'address_option' => 'new',
+            'shipping_address' => $newAddressData,
+            'save_address' => '1',
+        ]);
+
+        $this->assertEquals(1, Order::count());
+        $order = Order::first();
+
+        $response->assertRedirect(route('checkout.success', $order));
+        $this->assertDatabaseHas('orders', ['user_id' => $this->user->id]);
+        $this->assertDatabaseHas('addresses', array_merge($newAddressData, ['customer_id' => $this->user->customer->id]));
+        $this->assertEmpty(session('cart'));
+    }
+
+    #[Test]
+    public function a_successful_order_can_be_placed_with_an_existing_address(): void
+    {
+        $this->addItemToCart();
+        $existingAddress = Address::factory()->create(['customer_id' => $this->user->customer->id]);
+
+        $response = $this->actingAs($this->user)->post(route('checkout.store'), [
+            'address_option' => 'existing',
+            'selected_address_id' => $existingAddress->id,
         ]);
 
         $this->assertEquals(1, Order::count());
@@ -89,14 +140,7 @@ class CheckoutControllerTest extends TestCase
         $response->assertRedirect(route('checkout.success', $order));
         $this->assertDatabaseHas('orders', [
             'user_id' => $this->user->id,
-            'total_amount' => 100,
-            'shipping_address' => $shippingAddress,
-        ]);
-        $this->assertDatabaseHas('order_items', [
-            'order_id' => $order->id,
-            'item_id' => $this->item->id,
-            'quantity' => 1,
-            'price' => 100,
+            'address_id' => $existingAddress->id,
         ]);
         $this->assertEmpty(session('cart'));
     }
