@@ -21,6 +21,7 @@ class TenantFactory extends Factory
      */
     public function definition(): array
     {
+        // THE FIX: Remove slug generation. The TenantObserver is the single source of truth.
         return [
             'name' => fake()->company(),
         ];

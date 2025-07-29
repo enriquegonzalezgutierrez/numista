@@ -55,13 +55,13 @@
                                 </div>
 
                                 <div x-show="addressOption === 'new'" x-collapse>
-                                    @include('public.my-account.addresses.partials.form-fields', ['address' => new \Numista\Collection\Domain\Models\Address(), 'countries' => $countries])
+                                    @include('public.my-account.addresses.partials.form-fields', ['address' => new \Numista\Collection\Domain\Models\Address(), 'countries' => $countries, 'fieldPrefix' => 'shipping_address'])
                                 </div>
                             @else
                                 {{-- If no addresses, show the form directly and send a hidden input --}}
                                 <input type="hidden" name="address_option" value="new">
                                 <div>
-                                    @include('public.my-account.addresses.partials.form-fields', ['address' => new \Numista\Collection\Domain\Models\Address(), 'countries' => $countries])
+                                    @include('public.my-account.addresses.partials.form-fields', ['address' => new \Numista\Collection\Domain\Models\Address(), 'countries' => $countries, 'fieldPrefix' => 'shipping_address'])
                                 </div>
                             @endif
                         </div>
@@ -74,7 +74,7 @@
                 <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700 mt-4">
                     @foreach($items as $item)
                         <li class="flex py-4 space-x-4">
-                            <img src="{{ $item->images->first() ? route('public.images.show', ['image' => $item->images->first()->id]) : '/images/placeholder.svg' }}" alt="{{ $item->name }}" class="h-16 w-16 rounded-md object-cover">
+                            <img src="{{ $item->images->first()?->url ?? '/images/placeholder.svg' }}" alt="{{ $item->name }}" class="h-16 w-16 rounded-md object-cover">
                             <div class="flex-auto text-sm">
                                 <h3 class="font-medium text-gray-900 dark:text-white">{{ $item->name }}</h3>
                                 <p class="text-gray-500 dark:text-gray-400">{{ $cart[$item->id]['quantity'] }} x {{ number_format($item->sale_price, 2, ',', '.') }} €</p>

@@ -14,6 +14,7 @@ class Item extends Model
 {
     use HasFactory;
 
+    // THE FIX: Add 'tenant_id' to the fillable array.
     protected $fillable = [
         'tenant_id', 'name', 'slug', 'description', 'type', 'quantity',
         'purchase_price', 'purchase_date', 'status', 'sale_price',
