@@ -11,18 +11,19 @@ class LandingPageController extends Controller
 {
     public function __invoke(): View
     {
-        // THE FIX: Eager load the 'image' relationship for collections
+        // THE FIX: Constrain the 'items_count' to only include items that are for sale.
         $featuredCollections = Collection::query()
             ->with('image')
-            ->withCount('items')
+            ->withCount(['items' => function ($query) {
+                $query->where('status', 'for_sale');
+            }])
             ->latest()
             ->take(3)
             ->get();
 
-        // Eager load the main image for each item for efficiency
         $latestItems = Item::query()
             ->where('status', 'for_sale')
-            ->with(['images', 'tenant']) // images relation already fetches all images
+            ->with(['images', 'tenant'])
             ->latest('created_at')
             ->take(8)
             ->get();

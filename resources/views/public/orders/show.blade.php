@@ -41,7 +41,7 @@
                         <li class="flex items-start py-6 space-x-4">
                             {{-- Image Container --}}
                             <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700">
-                                <img src="{{ $orderItem->item->images->first() ? route('public.images.show', ['image' => $orderItem->item->images->first()->id]) : '/images/placeholder.svg' }}" alt="{{ $orderItem->item->name }}" class="h-full w-full object-cover object-center">
+                                <img src="{{ $orderItem->item->images->first()?->url ?? '/images/placeholder.svg' }}" alt="{{ $orderItem->item->name }}" class="h-full w-full object-cover object-center">
                             </div>
 
                             {{-- Text Container --}}

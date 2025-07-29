@@ -14,7 +14,6 @@ use Numista\Collection\UI\Public\Controllers\LandingPageController;
 use Numista\Collection\UI\Public\Controllers\MyAccountController;
 use Numista\Collection\UI\Public\Controllers\OrderController;
 use Numista\Collection\UI\Public\Controllers\ProfileController;
-use Numista\Collection\UI\Public\Controllers\PublicImageController;
 use Numista\Collection\UI\Public\Controllers\PublicItemController;
 
 Route::get('/', LandingPageController::class)->name('landing');
@@ -23,9 +22,9 @@ Route::get('/marketplace', [PublicItemController::class, 'index'])->name('public
 Route::get('/items/{item:slug}', [PublicItemController::class, 'show'])->name('public.items.show');
 Route::post('/items/{item:slug}/contact', ContactSellerController::class)->name('public.items.contact');
 
-// THE FIX: Renamed the route for clarity and to avoid conflicts
-Route::get('/images/{image}', [PublicImageController::class, 'show'])->name('public.images.show');
-Route::get('/tenant-files/{path}', [TenantFileController::class, 'show'])->where('path', '.*')->name('tenant.files');
+// THE FIX: New route for images using route-model binding. The old route is kept for other tenant files if needed.
+Route::get('/images/{image}', [TenantFileController::class, 'showImage'])->name('images.show');
+Route::get('/tenant-files/{path}', [TenantFileController::class, 'showFile'])->where('path', '.*')->name('tenant.files');
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
@@ -60,6 +59,7 @@ Route::middleware('auth')->group(function () {
 Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/add/{item}', [CartController::class, 'add'])->name('add');
+    Route::post('/add/{item}/async', [CartController::class, 'addAsync'])->name('add.async');
     Route::patch('/update/{item}', [CartController::class, 'update'])->name('update');
     Route::delete('/remove/{item}', [CartController::class, 'remove'])->name('remove');
 });

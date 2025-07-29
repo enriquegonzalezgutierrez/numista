@@ -39,6 +39,16 @@ class ItemFinder
             });
         });
 
+        // THE FIX: Add the logic for the collections filter
+        $query->when($filters['collections'] ?? null, function ($query, $collections) {
+            if (! is_array($collections)) {
+                return;
+            }
+            $query->whereHas('collections', function ($q) use ($collections) {
+                $q->whereIn('collection_id', $collections);
+            });
+        });
+
         // Dynamic Attribute Filter
         $query->when($filters['attributes'] ?? null, function ($query, $attributes) {
             foreach ($attributes as $attributeId => $value) {

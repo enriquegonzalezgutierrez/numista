@@ -4,7 +4,7 @@
     <div class="relative h-80 w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700 group-hover:opacity-75 sm:h-64">
         @php
             $imageUrl = $collection->image 
-                ? route('public.images.show', ['image' => $collection->image->id]) 
+                ? $collection->image->url
                 : '/images/collection-placeholder.svg'; // A generic placeholder
         @endphp
         <img src="{{ $imageUrl }}" 
@@ -12,7 +12,8 @@
              class="h-full w-full object-cover object-center">
     </div>
     <h3 class="mt-4 text-base font-semibold text-gray-900 dark:text-white">
-        <a href="#">
+        {{-- THE FIX: The href now points to the marketplace, filtered by the collection ID --}}
+        <a href="{{ route('public.items.index', ['collections' => [$collection->id]]) }}">
             <span class="absolute inset-0"></span>
             {{ $collection->name }}
         </a>

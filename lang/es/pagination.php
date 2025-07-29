@@ -16,4 +16,10 @@ return [
     'previous' => '« Anterior',
     'next' => 'Siguiente »',
 
+    // THE FIX: Add the summary translation key
+    'showing' => 'Mostrando del',
+    'to' => 'al',
+    'of' => 'de',
+    'results' => 'resultados',
+
 ];

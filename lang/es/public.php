@@ -46,6 +46,8 @@ return [
     'not_a_member' => '¿No eres miembro?',
 
     'header' => [
+        // THE FIX: Add the key for the new link
+        'marketplace' => 'Marketplace',
         'cart_sr_text' => 'artículos en el carrito, ver cesta',
     ],
     'marketplace_title' => 'Marketplace de Coleccionables',

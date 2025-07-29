@@ -58,7 +58,8 @@ class ImagesRelationManager extends RelationManager
                 ImageColumn::make('path')
                     ->label(__('panel.field_image_preview'))
                     ->disk('tenants')
-                    ->url(fn (Image $record): string => route('tenant.files', ['path' => $record->path]))
+                    // THE FIX: Use the new accessor for the URL
+                    ->url(fn (Image $record): string => $record->url)
                     ->openUrlInNewTab(),
 
                 TextColumn::make('alt_text')
