@@ -14,7 +14,7 @@
         <div class="lg:grid lg:grid-cols-4 lg:gap-x-8">
             
             {{-- Desktop Filters Sidebar --}}
-            <aside class="hidden lg:block bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm h-fit sticky top-8">
+            <aside class="hidden lg:block bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm h-fit sticky top-24">
                 <form action="{{ route('public.items.index') }}" method="GET" id="desktop-filter-form">
                     <x-public.items.filter-form 
                         :categories="$categories" 
@@ -51,24 +51,42 @@
             </div>
 
             {{-- Product grid --}}
-            <div class="lg:col-span-3">
+            <div class="lg:col-span-3" x-data="{
+                nextPageUrl: '{{ $items->nextPageUrl() }}',
+                loading: false,
+                loadMore() {
+                    if (!this.nextPageUrl) return;
+                    this.loading = true;
+                    fetch(this.nextPageUrl, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(response => {
+                            const nextUrl = response.headers.get('X-Next-Page-Url');
+                            this.nextPageUrl = nextUrl ? nextUrl : null;
+                            return response.text();
+                        })
+                        .then(html => {
+                            this.$refs.itemsContainer.insertAdjacentHTML('beforeend', html);
+                            this.loading = false;
+                        });
+                }
+            }">
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
                     <div class="flex items-center justify-between mb-4">
-                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ trans_choice('public.results_count', $items->total(), ['count' => $items->total()]) }}</p>
+                        {{-- THE FIX: Remove the results count as simplePaginate doesn't provide it --}}
+                        <div></div>
                         <div class="lg:hidden">
                             <button @click="mobileFiltersOpen = true" class="inline-flex items-center rounded-md bg-white dark:bg-slate-700 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-600 hover:bg-slate-50">{{ __('public.filter_show_button') }}<svg class="ml-2 h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 01.628.74v2.288a2.25 2.25 0 01-.659 1.59l-4.682 4.683a2.25 2.25 0 00-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 018 18.25v-5.757a2.25 2.25 0 00-.659-1.59L2.659 6.22A2.25 2.25 0 012 4.629V2.34a.75.75 0 01.628-.74z" clip-rule="evenodd" /></svg></button>
                         </div>
                     </div>
                     
                     @if($items->isNotEmpty())
-                        {{-- Modern, responsive grid. It automatically adjusts the number of columns based on available space. --}}
-                        <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
-                            @foreach($items as $item)
-                                <x-public.items.item-card :item="$item" />
-                            @endforeach
+                        <div x-ref="itemsContainer" class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
+                            @include('public.items.partials._items-grid', ['items' => $items])
                         </div>
-                        <div class="mt-12">
-                            {{ $items->withQueryString()->links() }}
+                        <div class="mt-12 text-center" x-show="nextPageUrl">
+                            <button @click="loadMore" :disabled="loading" class="rounded-md bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 disabled:opacity-50">
+                                <span x-show="!loading">Cargar más</span>
+                                <span x-show="loading">Cargando...</span>
+                            </button>
                         </div>
                     @else
                         <div class="rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 p-12 text-center">

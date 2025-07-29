@@ -2,7 +2,7 @@
 
 namespace Numista\Collection\Application\Items;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Numista\Collection\Domain\Models\Attribute;
 use Numista\Collection\Domain\Models\Item;
@@ -11,7 +11,7 @@ class ItemFinder
 {
     public function __construct(private int $perPage = 12) {}
 
-    public function forMarketplace(array $filters = []): LengthAwarePaginator
+    public function forMarketplace(array $filters = []): Paginator
     {
         $query = Item::query()
             ->where('status', 'for_sale')
@@ -19,7 +19,8 @@ class ItemFinder
 
         $this->applyFilters($query, $filters);
 
-        return $query->latest('created_at')->paginate($this->perPage)->withQueryString();
+        // THE FIX: Change to simplePaginate for "Load More" functionality.
+        return $query->latest('created_at')->simplePaginate($this->perPage)->withQueryString();
     }
 
     private function applyFilters(Builder $query, array $filters): void

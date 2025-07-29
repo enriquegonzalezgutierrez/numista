@@ -12,7 +12,7 @@ use Numista\Collection\Domain\Models\Item;
 
 class PublicItemController extends Controller
 {
-    public function index(Request $request, ItemFinder $itemFinder): View
+    public function index(Request $request, ItemFinder $itemFinder): View|\Illuminate\Http\Response
     {
         $filters = collect($request->all())->filter()->all();
         if (isset($filters['attributes'])) {
@@ -23,6 +23,13 @@ class PublicItemController extends Controller
         }
 
         $items = $itemFinder->forMarketplace($filters);
+
+        // THE FIX: Handle async requests for "Load More"
+        if ($request->wantsJson()) {
+            $html = view('public.items.partials._items-grid', ['items' => $items])->render();
+
+            return response($html)->header('X-Next-Page-Url', $items->nextPageUrl());
+        }
 
         $categories = Category::query()
             ->whereHas('items', fn ($q) => $q->where('status', 'for_sale'))

@@ -26,16 +26,24 @@ class TenantFileController extends Controller
             abort(404);
         }
 
-        // --- THE FIX: Simplified and Correct Authorization ---
+        // --- THE FIX: Expanded Authorization Logic ---
 
-        // 1. Is the resource publicly accessible?
+        // Condition 1: Is the resource publicly browsable?
         $isPubliclyAccessible = ($parent instanceof Item && $parent->status === 'for_sale') || $parent instanceof Collection;
 
-        // 2. Can the current user access the tenant?
+        // Condition 2: Can the current authenticated user access the tenant (e.g., is an admin)?
         $canUserAccessTenant = $user && $user->canAccessTenant($parent->tenant);
 
-        // 3. Deny if not public AND user cannot access the tenant.
-        if (! $isPubliclyAccessible && ! $canUserAccessTenant) {
+        // Condition 3: Has the current authenticated user purchased this item?
+        $userHasPurchasedItem = false;
+        if ($user && $parent instanceof Item) {
+            $userHasPurchasedItem = $user->orders()->whereHas('items', function ($query) use ($parent) {
+                $query->where('item_id', $parent->id);
+            })->exists();
+        }
+
+        // Deny access if NONE of the conditions are met.
+        if (! $isPubliclyAccessible && ! $canUserAccessTenant && ! $userHasPurchasedItem) {
             abort(403, 'You do not have permission to access this file.');
         }
 

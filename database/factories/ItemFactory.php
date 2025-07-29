@@ -5,6 +5,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 use Numista\Collection\Domain\Models\Country;
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\Tenant;
@@ -22,10 +23,11 @@ class ItemFactory extends Factory
      */
     public function definition(): array
     {
-        // THE FIX: Remove slug generation. The ItemObserver is the single source of truth.
+        // THE FIX: Use a closure for slug to ensure it's generated from the final 'name' attribute.
         return [
             'tenant_id' => Tenant::factory(),
             'name' => ucfirst(fake()->words(3, true)),
+            'slug' => fn (array $attributes) => Str::slug($attributes['name']),
             'description' => fake()->paragraph(2),
             'type' => 'object', // A generic default
             'quantity' => fake()->numberBetween(1, 5),
