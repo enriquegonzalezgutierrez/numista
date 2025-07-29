@@ -1,7 +1,5 @@
 <?php
 
-// database/seeders/ItemSeeder.php
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -30,13 +28,12 @@ class ItemSeeder extends Seeder
             return;
         }
 
-        // Pre-load all attributes and key them by their lowercase, snake_case name for easy lookup.
         $this->attributes = Attribute::where('tenant_id', $tenant->id)->get()->keyBy(fn ($attr) => strtolower(str_replace(' ', '_', $attr->name)));
 
-        // Clean previous items and images for the tenant
+        // THE FIX: Only delete the item-specific directory, not the entire tenant directory.
         Item::where('tenant_id', $tenant->id)->get()->each(fn ($item) => $item->delete());
-        Storage::disk('tenants')->deleteDirectory("tenant-{$tenant->id}");
-        $this->command->info('Cleaned previous items and images for the tenant.');
+        Storage::disk('tenants')->deleteDirectory("tenant-{$tenant->id}/item-images");
+        $this->command->info('Cleaned previous items and item images for the tenant.');
 
         $this->command->info('Creating a large volume of items with multiple placeholders...');
 
@@ -142,7 +139,6 @@ class ItemSeeder extends Seeder
             return;
         }
 
-        // THE FIX: Convert the English name to the snake_case key to find it in the collection.
         $attributeKey = strtolower(str_replace(' ', '_', $attributeName));
         $attribute = $this->attributes->get($attributeKey);
 

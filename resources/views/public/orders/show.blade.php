@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', __('Order') . ' ' . $order->order_number)
+@section('title', __('public.order_details') . ' #' . $order->order_number)
 
 @section('content')
 <div class="py-12">
@@ -9,12 +9,12 @@
             <div class="p-6 md:p-8 border-b border-gray-200 dark:border-gray-700">
                 <div class="md:flex md:justify-between md:items-start">
                     <div>
-                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('Order Details') }}</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('public.order_details') }}</h2>
                         <p class="text-gray-500 dark:text-gray-400 mt-1">
-                            {{ __('Order') }} <span class="font-medium text-gray-700 dark:text-gray-300">#{{ $order->order_number }}</span>
+                            {{ __('panel.label_order') }} <span class="font-medium text-gray-700 dark:text-gray-300">#{{ $order->order_number }}</span>
                         </p>
                         <p class="text-sm text-gray-500 dark:text-gray-400">
-                            {{ __('Placed on') }} {{ $order->created_at->translatedFormat('F j, Y') }}
+                            {{ __('public.placed_on') }} {{ $order->created_at->translatedFormat('F j, Y') }}
                         </p>
                     </div>
                     <div class="mt-4 md:mt-0 text-left md:text-right">
@@ -34,14 +34,14 @@
             </div>
             
             <div class="p-6 md:p-8">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ __('Items Ordered') }}</h3>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ __('public.items_ordered') }}</h3>
                 <div class="flow-root">
                     <ul role="list" class="-my-6 divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach($order->items as $orderItem)
                         <li class="flex items-start py-6 space-x-4">
                             {{-- Image Container --}}
                             <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700">
-                                <img src="{{ $orderItem->item->images->first() ? route('public.images.show', ['image' => $orderItem->item->images->first()->id]) : '/images/placeholder.svg' }}" alt="{{ $orderItem->item->name }}" class="h-full w-full object-cover object-center">
+                                <img src="{{ $orderItem->item->images->first()?->url ?? '/images/placeholder.svg' }}" alt="{{ $orderItem->item->name }}" class="h-full w-full object-cover object-center">
                             </div>
 
                             {{-- Text Container --}}
@@ -67,15 +67,14 @@
             <div class="border-t border-gray-200 dark:border-gray-700 p-6 md:p-8">
                 <dl class="space-y-4">
                     <div class="flex items-center justify-between">
-                        <dt class="text-base font-medium text-gray-900 dark:text-white">{{ __('Total') }}</dt>
+                        <dt class="text-base font-medium text-gray-900 dark:text-white">{{ __('panel.Total') }}</dt>
                         <dd class="ml-4 text-base font-medium text-gray-900 dark:text-white">{{ number_format($order->total_amount, 2, ',', '.') }} €</dd>
                     </div>
                 </dl>
 
                 <div class="mt-8">
-                    {{-- THE FIX: Changed route from 'my-account' to the new named route 'my-account.orders' --}}
                     <a href="{{ route('my-account.orders') }}" class="text-sm font-medium text-teal-600 hover:text-teal-500">
-                        ← {{ __('Back to My Orders') }}
+                        ← {{ __('public.back_to_my_orders') }}
                     </a>
                 </div>
             </div>

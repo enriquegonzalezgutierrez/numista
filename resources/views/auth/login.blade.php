@@ -3,11 +3,9 @@
 @section('content')
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-        {{-- Card container for the form --}}
         <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg px-8 pt-6 pb-8">
             <h2 class="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 dark:text-white mb-6">{{ __('Login') }}</h2>
         
-            {{-- General error message area (for auth failures) --}}
             @if ($errors->any() && !$errors->has('email') && !$errors->has('password'))
                 <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative" role="alert">
                     <strong class="font-bold">{{ __('Whoops! Something went wrong.') }}</strong>
@@ -24,7 +22,6 @@
                 <div>
                     <label for="email" class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">{{ __('Email') }}</label>
                     <div class="mt-2">
-                        {{-- Unified input field styling --}}
                         <input id="email" name="email" type="email" autocomplete="email" required autofocus
                                class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-teal-500" 
                                value="{{ old('email') }}">
@@ -33,7 +30,15 @@
                 </div>
 
                 <div>
-                    <label for="password" class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">{{ __('Password') }}</label>
+                    <div class="flex items-center justify-between">
+                        <label for="password" class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">{{ __('Password') }}</label>
+                        {{-- THE FIX: Add the "Forgot your password?" link --}}
+                        @if (Route::has('password.request'))
+                            <div class="text-sm">
+                                <a href="{{ route('password.request') }}" class="font-semibold text-teal-600 hover:text-teal-500">{{ __('Forgot your password?') }}</a>
+                            </div>
+                        @endif
+                    </div>
                     <div class="mt-2">
                         <input id="password" name="password" type="password" autocomplete="current-password" required 
                                class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-teal-500">

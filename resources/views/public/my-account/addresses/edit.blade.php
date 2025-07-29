@@ -6,7 +6,8 @@
 <div class="p-6 text-gray-900 dark:text-gray-100">
     <h2 class="text-2xl font-semibold mb-6">{{ __('public.edit_address') }}</h2>
 
-    <form action="{{ route('my-account.addresses.update', $address) }}" method="POST">
+    {{-- THE FIX: Add x-data so the required attributes work --}}
+    <form action="{{ route('my-account.addresses.update', $address) }}" method="POST" x-data="{ addressOption: 'new' }">
         @csrf
         @method('PATCH')
         @include('public.my-account.addresses.partials.form-fields', ['address' => $address, 'countries' => $countries])

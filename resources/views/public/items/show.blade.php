@@ -6,7 +6,7 @@
 
 <div x-data="{
         isModalOpen: false,
-        mainImageUrl: '{{ $item->images->first() ? route('public.images.show', ['image' => $item->images->first()->id]) : '/images/placeholder.svg' }}',
+        mainImageUrl: '{{ $item->images->first()?->url ?? '/images/placeholder.svg' }}',
         isLightboxOpen: false,
         activeTab: 'description'
     }">
@@ -42,11 +42,11 @@
                         <div class="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
                             <div class="grid grid-cols-4 gap-6">
                                 @foreach($item->images as $image)
-                                    <button @click="mainImageUrl = '{{ route('public.images.show', ['image' => $image->id]) }}'" 
-                                            :class="{ 'ring-2 ring-offset-2 ring-teal-500': mainImageUrl === '{{ route('public.images.show', ['image' => $image->id]) }}' }"
+                                    <button @click="mainImageUrl = '{{ $image->url }}'" 
+                                            :class="{ 'ring-2 ring-offset-2 ring-teal-500': mainImageUrl === '{{ $image->url }}' }"
                                             class="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white dark:bg-gray-800 text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-offset-gray-800">
                                         <span class="absolute inset-0 overflow-hidden rounded-md">
-                                            <img src="{{ route('public.images.show', ['image' => $image->id]) }}" alt="" class="h-full w-full object-cover object-center">
+                                            <img src="{{ $image->url }}" alt="" class="h-full w-full object-cover object-center">
                                         </span>
                                     </button>
                                 @endforeach

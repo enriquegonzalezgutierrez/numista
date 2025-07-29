@@ -3,8 +3,12 @@
 namespace App\Providers;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Blade; // Import the Blade facade
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Numista\Collection\Application\Listeners\SendOrderConfirmationEmail;
+use Numista\Collection\Application\Listeners\UpdateSoldItemStatus;
+use Numista\Collection\Domain\Events\OrderPlaced;
 use Numista\Collection\Domain\Models\Category;
 use Numista\Collection\Domain\Models\Collection;
 use Numista\Collection\Domain\Models\Item;
@@ -37,9 +41,19 @@ class AppServiceProvider extends ServiceProvider
         // Set Carbon's locale globally
         Carbon::setLocale(config('app.locale'));
 
-        // THE FIX: Register a custom Blade directive for checking active routes
         Blade::if('active', function (string $routePattern) {
             return request()->routeIs($routePattern);
         });
+
+        // Manually register event listeners
+        Event::listen(
+            OrderPlaced::class,
+            SendOrderConfirmationEmail::class
+        );
+
+        Event::listen(
+            OrderPlaced::class,
+            UpdateSoldItemStatus::class
+        );
     }
 }

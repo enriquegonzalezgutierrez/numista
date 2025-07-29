@@ -14,7 +14,7 @@ return [
     */
 
     'reset' => 'Tu clave de acceso ha sido restablecida.',
-    'sent' => 'Hemos enviado por correo electrónico el enlace para restablecer tu clave de acceso.',
+    'sent' => '¡Te hemos enviado por correo el enlace para restablecer tu clave de acceso!',
     'throttled' => 'Por favor, espera antes de volver a intentarlo.',
     'token' => 'Este token de restablecimiento de clave de acceso no es válido.',
     'user' => 'No podemos encontrar un usuario con esa dirección de correo electrónico.',

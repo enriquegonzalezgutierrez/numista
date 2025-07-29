@@ -46,6 +46,8 @@ return [
     'not_a_member' => '¿No eres miembro?',
 
     'header' => [
+        // THE FIX: Add the key for the new link
+        'marketplace' => 'Marketplace',
         'cart_sr_text' => 'artículos en el carrito, ver cesta',
     ],
     'marketplace_title' => 'Marketplace de Coleccionables',
@@ -126,5 +128,8 @@ return [
         'state' => 'Provincia / Estado',
         'country' => 'País',
         'phone' => 'Teléfono (Opcional)',
+    ],
+    'auth' => [
+        'forgot_password_desc' => 'No hay problema. Simplemente dinos tu dirección de correo y te enviaremos un enlace para restablecer tu clave de acceso.',
     ],
 ];

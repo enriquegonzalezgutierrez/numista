@@ -1,28 +1,20 @@
 <?php
 
-// src/Collection/UI/Public/Controllers/PublicItemController.php
-
 namespace Numista\Collection\UI\Public\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Numista\Collection\Application\Items\ItemFinder;
 use Numista\Collection\Domain\Models\Attribute;
 use Numista\Collection\Domain\Models\Category;
 use Numista\Collection\Domain\Models\Item;
 
 class PublicItemController extends Controller
 {
-    /**
-     * Display a paginated list of all items that are for sale,
-     * applying any filters from the request.
-     */
-    public function index(Request $request): View
+    public function index(Request $request, ItemFinder $itemFinder): View
     {
-        // --- NEW LOGIC: Clean up the filters ---
         $filters = collect($request->all())->filter()->all();
-
-        // Specifically handle the 'attributes' array to remove empty values within it
         if (isset($filters['attributes'])) {
             $filters['attributes'] = array_filter($filters['attributes']);
             if (empty($filters['attributes'])) {
@@ -30,13 +22,7 @@ class PublicItemController extends Controller
             }
         }
 
-        $items = Item::query()
-            ->where('status', 'for_sale')
-            ->with(['images', 'tenant', 'attributes'])
-            ->filter($filters)
-            ->latest('created_at')
-            ->paginate(12)
-            ->withQueryString(); // <-- withQueryString() is cleaner than appends()
+        $items = $itemFinder->forMarketplace($filters);
 
         $categories = Category::query()
             ->whereHas('items', fn ($q) => $q->where('status', 'for_sale'))
@@ -52,9 +38,6 @@ class PublicItemController extends Controller
         return view('public.items.index', compact('items', 'categories', 'filterableAttributes'));
     }
 
-    /**
-     * Display the detail page for a specific item.
-     */
     public function show(Item $item): View
     {
         if ($item->status !== 'for_sale') {

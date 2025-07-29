@@ -2,6 +2,7 @@
 
 namespace Numista\Collection\UI\Filament\Resources;
 
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -13,6 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Numista\Collection\Domain\Models\Collection;
 use Numista\Collection\UI\Filament\Resources\CollectionResource\Pages;
+use Numista\Collection\UI\Filament\Resources\CollectionResource\RelationManagers;
 
 class CollectionResource extends Resource
 {
@@ -24,56 +26,43 @@ class CollectionResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    /**
-     * Defines the navigation label for this resource.
-     */
     public static function getNavigationLabel(): string
     {
         return __('panel.nav_collections');
     }
 
-    /**
-     * Defines the singular model label for this resource.
-     */
     public static function getModelLabel(): string
     {
         return __('panel.label_collection');
     }
 
-    /**
-     * Defines the plural model label for this resource.
-     */
     public static function getPluralModelLabel(): string
     {
         return __('panel.label_collections');
     }
 
-    /**
-     * Defines the resource form schema.
-     */
     public static function form(Form $form): Form
     {
         return $form->schema([
-            TextInput::make('name')
-                ->label(__('panel.field_collection_name'))
-                ->required()
-                ->reactive()
-                ->afterStateUpdated(fn ($state, $set) => $set('slug', Str::slug($state))),
+            Section::make()->schema([
+                TextInput::make('name')
+                    ->label(__('panel.field_collection_name'))
+                    ->required()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn ($state, $set) => $set('slug', Str::slug($state))),
 
-            TextInput::make('slug')
-                ->label(__('panel.field_slug'))
-                ->required()
-                ->unique(ignoreRecord: true),
+                TextInput::make('slug')
+                    ->label(__('panel.field_slug'))
+                    ->required()
+                    ->unique(ignoreRecord: true),
 
-            Textarea::make('description')
-                ->label(__('panel.field_description'))
-                ->columnSpanFull(),
+                Textarea::make('description')
+                    ->label(__('panel.field_description'))
+                    ->columnSpanFull(),
+            ])->columns(2),
         ]);
     }
 
-    /**
-     * Defines the resource table schema.
-     */
     public static function table(Table $table): Table
     {
         return $table->columns([
@@ -94,7 +83,7 @@ class CollectionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ImageRelationManager::class,
         ];
     }
 

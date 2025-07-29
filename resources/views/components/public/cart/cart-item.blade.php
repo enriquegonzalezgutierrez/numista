@@ -3,7 +3,7 @@
 <li class="flex py-6 px-4 sm:px-6">
     
     <div class="flex-shrink-0">
-        <img src="{{ $item->images->first() ? route('public.images.show', ['image' => $item->images->first()->id]) : '/images/placeholder.svg' }}" alt="{{ $item->name }}" class="w-24 h-24 sm:w-32 sm:h-32 rounded-md object-cover object-center">
+        <img src="{{ $item->images->first()?->url ?? '/images/placeholder.svg' }}" alt="{{ $item->name }}" class="w-24 h-24 sm:w-32 sm:h-32 rounded-md object-cover object-center">
     </div>
 
     

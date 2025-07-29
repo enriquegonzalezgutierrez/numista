@@ -22,6 +22,7 @@ class ItemFactory extends Factory
      */
     public function definition(): array
     {
+        // THE FIX: Remove slug generation. The ItemObserver is the single source of truth.
         return [
             'tenant_id' => Tenant::factory(),
             'name' => ucfirst(fake()->words(3, true)),

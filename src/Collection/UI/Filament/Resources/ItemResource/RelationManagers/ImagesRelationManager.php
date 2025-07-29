@@ -14,24 +14,21 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Numista\Collection\Application\Items\SetFeaturedImageService;
+use Numista\Collection\Domain\Models\Image;
 
 class ImagesRelationManager extends RelationManager
 {
     protected static string $relationship = 'images';
 
-    /**
-     * Defines the title for the relation manager section on the parent resource page.
-     */
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __('panel.label_images');
     }
 
-    /**
-     * Defines the form schema for creating and editing an Image record.
-     */
     public function form(Form $form): Form
     {
         return $form
@@ -60,13 +57,19 @@ class ImagesRelationManager extends RelationManager
             ->columns([
                 ImageColumn::make('path')
                     ->label(__('panel.field_image_preview'))
-                    ->disk('tenants'),
+                    ->disk('tenants')
+                    // THE FIX: Use the new accessor for the URL
+                    ->url(fn (Image $record): string => $record->url)
+                    ->openUrlInNewTab(),
 
                 TextColumn::make('alt_text')
                     ->label(__('panel.field_alt_text')),
-            ])
-            ->filters([
-                //
+
+                ToggleColumn::make('is_featured')
+                    ->label('Destacada')
+                    ->afterStateUpdated(function (Model $record, $state, SetFeaturedImageService $service) {
+                        $service->handle($record, $state);
+                    }),
             ])
             ->headerActions([
                 CreateAction::make()

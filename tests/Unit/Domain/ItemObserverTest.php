@@ -16,9 +16,9 @@ class ItemObserverTest extends TestCase
     #[Test]
     public function it_automatically_generates_a_slug_when_creating_an_item(): void
     {
+        // THE FIX: Create the item with a specific name. The observer will handle the slug.
         $item = Item::factory()->create([
             'name' => 'Moneda de Plata',
-            'slug' => null, // Ensure slug is null initially
         ]);
 
         $this->assertNotNull($item->slug);
@@ -28,11 +28,11 @@ class ItemObserverTest extends TestCase
     #[Test]
     public function it_generates_a_unique_slug_for_items_with_the_same_name(): void
     {
-        Item::factory()->create(['name' => 'Moneda Repetida']);
+        // This test logic is now correct as it relies on the observer.
+        $item1 = Item::factory()->create(['name' => 'Moneda Repetida']);
+        $item2 = Item::factory()->create(['name' => 'Moneda Repetida']);
 
-        $newItem = Item::factory()->create(['name' => 'Moneda Repetida']);
-
-        $this->assertNotNull($newItem->slug);
-        $this->assertEquals('moneda-repetida-1', $newItem->slug);
+        $this->assertEquals('moneda-repetida', $item1->slug);
+        $this->assertEquals('moneda-repetida-1', $item2->slug);
     }
 }

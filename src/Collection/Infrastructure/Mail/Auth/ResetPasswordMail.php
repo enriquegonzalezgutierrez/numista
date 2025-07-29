@@ -1,8 +1,6 @@
 <?php
 
-// src/Collection/UI/Public/Mail/ContactSellerMail.php
-
-namespace Numista\Collection\UI\Public\Mail;
+namespace Numista\Collection\Infrastructure\Mail\Auth;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,21 +8,26 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Numista\Collection\Domain\Models\Item;
 
-class ContactSellerMail extends Mailable implements ShouldQueue
+class ResetPasswordMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     /**
+     * The password reset URL.
+     */
+    public string $resetUrl;
+
+    /**
      * Create a new message instance.
      */
-    public function __construct(
-        public Item $item,
-        public string $fromName,
-        public string $fromEmail,
-        public string $body
-    ) {}
+    public function __construct(string $token, string $email)
+    {
+        $this->resetUrl = route('password.reset', [
+            'token' => $token,
+            'email' => $email,
+        ]);
+    }
 
     /**
      * Get the message envelope.
@@ -32,10 +35,7 @@ class ContactSellerMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: config('mail.from.address'),
-            replyTo: $this->fromEmail,
-            // Use the translation key for the subject
-            subject: __('mail.contact_subject', ['itemName' => $this->item->name]),
+            subject: __('mail.password_reset_subject'),
         );
     }
 
@@ -44,9 +44,8 @@ class ContactSellerMail extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
-        // This points to the Blade view for the email content
         return new Content(
-            markdown: 'emails.contact.seller',
+            markdown: 'emails.auth.reset-password',
         );
     }
 

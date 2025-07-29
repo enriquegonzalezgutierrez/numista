@@ -21,11 +21,19 @@ class ProfileControllerTest extends TestCase
     }
 
     #[Test]
-    public function profile_page_is_displayed(): void
+    public function profile_page_is_displayed_for_authenticated_user(): void
     {
         $this->actingAs($this->user)
             ->get(route('my-account.profile.edit'))
-            ->assertStatus(200);
+            ->assertStatus(200)
+            ->assertViewIs('public.my-account.profile.edit');
+    }
+
+    #[Test]
+    public function guests_are_redirected_from_profile_page(): void
+    {
+        $this->get(route('my-account.profile.edit'))
+            ->assertRedirect(route('login'));
     }
 
     #[Test]
@@ -36,8 +44,8 @@ class ProfileControllerTest extends TestCase
                 'name' => 'Test User Updated',
                 'email' => 'test.updated@example.com',
             ])
-            ->assertSessionHasNoErrors()
-            ->assertRedirect(route('my-account.profile.edit'));
+            ->assertRedirect(route('my-account.profile.edit'))
+            ->assertSessionHas('success', __('public.status_profile_updated'));
 
         $this->user->refresh();
 
@@ -69,7 +77,8 @@ class ProfileControllerTest extends TestCase
                 'password_confirmation' => 'new-password',
             ])
             ->assertSessionHasNoErrors()
-            ->assertRedirect();
+            ->assertRedirect()
+            ->assertSessionHas('success', __('public.status_password_updated'));
 
         $this->assertTrue(Hash::check('new-password', $this->user->refresh()->password));
     }

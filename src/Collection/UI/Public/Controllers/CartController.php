@@ -5,6 +5,7 @@
 namespace Numista\Collection\UI\Public\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Numista\Collection\Domain\Models\Item;
@@ -49,6 +50,31 @@ class CartController extends Controller
         session()->put('cart', $cart);
 
         return redirect()->route('cart.index')->with('success', __('public.cart_add_success'));
+    }
+
+    /**
+     * THE FIX: Add an item to the cart asynchronously and return a JSON response.
+     */
+    public function addAsync(Request $request, Item $item): JsonResponse
+    {
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$item->id])) {
+            $cart[$item->id]['quantity']++;
+        } else {
+            $cart[$item->id] = [
+                'name' => $item->name,
+                'quantity' => 1,
+                'price' => $item->sale_price,
+            ];
+        }
+
+        session()->put('cart', $cart);
+
+        return response()->json([
+            'message' => __('public.cart_add_success'),
+            'cartCount' => count($cart),
+        ]);
     }
 
     /**

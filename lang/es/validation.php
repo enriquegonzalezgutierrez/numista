@@ -216,6 +216,21 @@ return [
         'type' => 'tipo',
         'status' => 'estado',
         'grade' => 'grado',
+
+        // THE FIX: Add translations for non-prefixed fields (for My Account section)
+        'label' => 'etiqueta de dirección',
+        'recipient_name' => 'nombre del destinatario',
+        'street_address' => 'dirección',
+        'postal_code' => 'código postal',
+        'country_code' => 'país',
+
+        // And keep the prefixed versions for the checkout form
+        'shipping_address.label' => 'etiqueta de dirección',
+        'shipping_address.recipient_name' => 'nombre del destinatario',
+        'shipping_address.street_address' => 'dirección',
+        'shipping_address.city' => 'ciudad',
+        'shipping_address.postal_code' => 'código postal',
+        'shipping_address.country_code' => 'país',
     ],
 
 ];
