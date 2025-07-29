@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 use Numista\Collection\Domain\Models\Tenant;
 
 class TenantFactory extends Factory
@@ -21,9 +22,10 @@ class TenantFactory extends Factory
      */
     public function definition(): array
     {
-        // THE FIX: Remove slug generation. The TenantObserver is the single source of truth.
+        // THE FIX: Use a closure for slug to ensure it's generated from the final 'name' attribute.
         return [
             'name' => fake()->company(),
+            'slug' => fn (array $attributes) => Str::slug($attributes['name']),
         ];
     }
 }
