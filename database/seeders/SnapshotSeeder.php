@@ -15,18 +15,18 @@ class SnapshotSeeder extends Seeder
      */
     public function run(): void
     {
-        // THE FIX: Create a single, predictable tenant for all items.
         $tenant = Tenant::factory()->create(['name' => 'Marketplace Test Collection']);
 
-        // Create a predictable set of items for snapshot testing, all belonging to the same tenant.
         Item::factory(15)
             ->sequence(fn ($sequence) => [
                 'name' => "Item {$sequence->index}",
                 'sale_price' => 10 + $sequence->index,
+                // THE FIX: Add a predictable description
+                'description' => "This is a predictable description for Item {$sequence->index}.",
             ])
             ->create([
                 'status' => 'for_sale',
-                'tenant_id' => $tenant->id, // Assign all items to the predictable tenant
+                'tenant_id' => $tenant->id,
             ]);
     }
 }

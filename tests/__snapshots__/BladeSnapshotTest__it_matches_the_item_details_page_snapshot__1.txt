@@ -129,7 +129,7 @@
                         <div class="py-6">
                             <div x-show="activeTab === 'description'" x-cloak>
     <div class="prose prose-sm mt-4 text-gray-600 dark:text-gray-300">
-        <p>Non odio et deserunt sed rerum. Incidunt in deleniti ipsam maiores qui rerum culpa dolor.</p>
+        <p>This is a predictable description for Item 0.</p>
     </div>
 </div>
 
@@ -151,7 +151,7 @@
     </h3>
     <div x-show="activeTab === 'description'" x-collapse>
         <div class="prose prose-sm pb-6 text-gray-600 dark:text-gray-300">
-            <p>Non odio et deserunt sed rerum. Incidunt in deleniti ipsam maiores qui rerum culpa dolor.</p>
+            <p>This is a predictable description for Item 0.</p>
         </div>
     </div>
 </div>
