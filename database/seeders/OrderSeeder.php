@@ -6,76 +6,54 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Numista\Collection\Domain\Models\Customer;
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\Order;
 use Numista\Collection\Domain\Models\Tenant;
 
 class OrderSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $tenant = Tenant::where('slug', 'coleccion-numista')->first();
-        if (! $tenant) {
-            $this->command->warn('Cannot run OrderSeeder. Missing tenant.');
+        $customer1 = User::where('email', 'cliente@numista.es')->first();
+        $customer2 = User::where('email', 'cliente2@numista.es')->first();
+        $tenant1 = Tenant::where('slug', 'coleccion-numista')->first();
+        $tenant2 = Tenant::where('slug', 'antiguedades-clasicas')->first();
+
+        if (! $customer1 || ! $customer2 || ! $tenant1 || ! $tenant2) {
+            $this->command->error('Default users or tenants not found. Cannot create orders.');
 
             return;
         }
 
-        $this->command->info('Creating a large volume of customers and orders...');
+        $this->command->info('Creating sample orders with tenant isolation...');
 
-        // Create a pool of 200 customers
-        $customers = User::factory(200)
-            ->customer()
-            ->has(Customer::factory())
-            ->create();
-        $this->command->info('Created 200 sample customers.');
-
-        $itemsForSale = Item::where('tenant_id', $tenant->id)
-            ->where('status', 'for_sale')
-            ->whereNotNull('sale_price')
-            ->get();
-
-        if ($itemsForSale->count() < 10) { // Need more items for variety
-            $this->command->warn('Not enough items for sale to create meaningful orders. Skipping OrderSeeder.');
-
-            return;
+        $itemsT1 = Item::where('tenant_id', $tenant1->id)->where('status', 'for_sale')->get();
+        if ($itemsT1->count() >= 2) {
+            $this->createOrderForCustomer($customer1, $itemsT1->random(2));
         }
 
-        // Create 400 orders
-        for ($i = 0; $i < 400; $i++) {
-            $customerUser = $customers->random();
-            $orderItems = $itemsForSale->random(rand(1, 4))->unique('id');
+        $itemsT2 = Item::where('tenant_id', $tenant2->id)->where('status', 'for_sale')->get();
+        if ($itemsT2->count() >= 2) {
+            $this->createOrderForCustomer($customer2, $itemsT2->random(2));
+        }
+    }
 
-            if ($orderItems->isEmpty()) {
-                continue;
-            }
+    private function createOrderForCustomer(User $customer, \Illuminate\Support\Collection $items): void
+    {
+        if ($items->isEmpty()) {
+            return;
+        }
+        $tenant = $items->first()->tenant;
+        $total = $items->sum('sale_price');
 
-            $order = Order::factory()->create([
-                'tenant_id' => $tenant->id,
-                'user_id' => $customerUser->id,
-                'total_amount' => 0,
+        $order = Order::factory()->create([
+            'tenant_id' => $tenant->id, 'user_id' => $customer->id, 'total_amount' => $total,
+        ]);
+
+        foreach ($items as $item) {
+            $order->items()->create([
+                'item_id' => $item->id, 'quantity' => 1, 'price' => $item->sale_price,
             ]);
-
-            $totalAmount = 0;
-            foreach ($orderItems as $item) {
-                $quantity = rand(1, 2);
-                $price = $item->sale_price;
-                $totalAmount += $price * $quantity;
-
-                $order->items()->create([
-                    'item_id' => $item->id,
-                    'quantity' => $quantity,
-                    'price' => $price,
-                ]);
-            }
-
-            $order->update(['total_amount' => $totalAmount]);
         }
-
-        $this->command->info('Order seeder finished. Created 400 sample orders.');
     }
 }

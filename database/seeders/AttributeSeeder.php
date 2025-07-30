@@ -11,65 +11,51 @@ use Numista\Collection\Domain\Models\Tenant;
 
 class AttributeSeeder extends Seeder
 {
-    private ?Tenant $tenant;
-
     public function run(): void
     {
-        $this->tenant = Tenant::where('slug', 'coleccion-numista')->first();
-        if (! $this->tenant) {
-            $this->command->warn('Default tenant "coleccion-numista" not found. Skipping AttributeSeeder.');
+        Attribute::truncate();
+        DB::table('attribute_item_type')->truncate();
+        $this->command->info('Cleaned previous attributes.');
+
+        $tenants = Tenant::all();
+        if ($tenants->isEmpty()) {
+            $this->command->warn('No tenants found, skipping AttributeSeeder.');
 
             return;
         }
 
-        Attribute::where('tenant_id', $this->tenant->id)->delete();
+        $this->command->info('Defining item attributes for all tenants...');
 
-        $this->command->info('Defining item attributes and their types...');
+        foreach ($tenants as $tenant) {
+            // --- Common Attributes ---
+            $this->createAttribute($tenant, 'Year', 'number', ['art', 'banknote', 'book', 'coin', 'stamp', 'watch']);
+            $this->createAttribute($tenant, 'Country', 'text', ['banknote', 'coin', 'stamp']);
+            $this->createAttribute($tenant, 'Grade', 'select', ['coin', 'banknote', 'comic']);
+            $this->createAttribute($tenant, 'Material', 'text', ['art', 'watch']);
 
-        // --- English names are used as keys for translation ---
-        $this->createAttribute('Year', 'number', ['art', 'banknote', 'book', 'camera', 'coin', 'movie_collectible', 'photo', 'postcard', 'radio', 'stamp', 'toy', 'vehicle', 'vinyl_record', 'watch']);
-        $this->createAttribute('Country', 'text', ['art', 'banknote', 'coin', 'military', 'stamp']);
-        $this->createAttribute('Grade', 'select', ['coin', 'banknote', 'comic']);
-        $this->createAttribute('Brand', 'text', ['camera', 'pen', 'radio', 'toy', 'vehicle', 'watch']);
-        $this->createAttribute('Model', 'text', ['camera', 'pen', 'vehicle', 'watch']);
-        $this->createAttribute('Material', 'text', ['antique', 'art', 'craftsmanship', 'jewelry', 'medal', 'military', 'pen', 'toy', 'vintage_item', 'watch']);
-        $this->createAttribute('Artist', 'text', ['art', 'craftsmanship', 'vinyl_record']);
-        $this->createAttribute('Publisher', 'text', ['book', 'comic', 'postcard']);
-        $this->createAttribute('Denomination', 'text', ['coin', 'banknote']);
-        $this->createAttribute('Mint Mark', 'text', ['coin']);
-        $this->createAttribute('Composition', 'text', ['coin', 'medal']);
-        $this->createAttribute('Weight', 'number', ['coin', 'jewelry', 'medal']);
-        $this->createAttribute('Serial Number', 'text', ['banknote']);
-        $this->createAttribute('Issue Number', 'text', ['comic']);
-        $this->createAttribute('Cover Date', 'date', ['comic']);
-        $this->createAttribute('Author', 'text', ['book']);
-        $this->createAttribute('ISBN', 'text', ['book']);
-        $this->createAttribute('Record Label', 'text', ['vinyl_record']);
-        $this->createAttribute('Face Value', 'text', ['stamp']);
-        $this->createAttribute('Dimensions', 'text', ['art', 'photo']);
-        $this->createAttribute('Photographer', 'text', ['photo']);
-        $this->createAttribute('Location', 'text', ['photo', 'postcard']);
-        $this->createAttribute('Technique', 'text', ['art', 'photo', 'craftsmanship']);
-        $this->createAttribute('License Plate', 'text', ['vehicle']);
-        $this->createAttribute('Chassis Number', 'text', ['vehicle']);
-        $this->createAttribute('Gemstone', 'text', ['jewelry']);
-        $this->createAttribute('Conflict', 'text', ['military']);
-        $this->createAttribute('Sport', 'text', ['sports']);
-        $this->createAttribute('Team', 'text', ['sports']);
-        $this->createAttribute('Player', 'text', ['sports']);
-        $this->createAttribute('Event', 'text', ['sports']);
-        $this->createAttribute('Movie Title', 'text', ['movie_collectible']);
-        $this->createAttribute('Character', 'text', ['movie_collectible', 'toy']);
+            // --- Type-Specific Attributes ---
+            $this->createAttribute($tenant, 'Denomination', 'text', ['coin', 'banknote']);
+            $this->createAttribute($tenant, 'Mint Mark', 'text', ['coin']);
+            $this->createAttribute($tenant, 'Composition', 'text', ['coin']);
+            $this->createAttribute($tenant, 'Weight', 'number', ['coin']);
+            $this->createAttribute($tenant, 'Serial Number', 'text', ['banknote']);
+            $this->createAttribute($tenant, 'Publisher', 'text', ['book', 'comic']);
+            $this->createAttribute($tenant, 'Issue Number', 'text', ['comic']);
+            $this->createAttribute($tenant, 'Cover Date', 'date', ['comic']);
+            $this->createAttribute($tenant, 'Author', 'text', ['book']);
+            $this->createAttribute($tenant, 'ISBN', 'text', ['book']);
+            $this->createAttribute($tenant, 'Brand', 'text', ['watch']);
+            $this->createAttribute($tenant, 'Model', 'text', ['watch']);
+            $this->createAttribute($tenant, 'Face Value', 'text', ['stamp']);
+            $this->createAttribute($tenant, 'Artist', 'text', ['art']);
+            $this->createAttribute($tenant, 'Dimensions', 'text', ['art']);
+        }
     }
 
-    private function createAttribute(string $name, string $type, array $itemTypes): void
+    private function createAttribute(Tenant $tenant, string $name, string $type, array $itemTypes): void
     {
-        if (! $this->tenant) {
-            return;
-        }
-
         $attribute = Attribute::create([
-            'tenant_id' => $this->tenant->id,
+            'tenant_id' => $tenant->id,
             'name' => $name,
             'type' => $type,
             'is_filterable' => in_array($name, ['Year', 'Country', 'Grade', 'Brand', 'Material', 'Artist', 'Publisher']),

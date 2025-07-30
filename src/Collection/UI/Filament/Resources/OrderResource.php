@@ -52,13 +52,11 @@ class OrderResource extends Resource
 
     public static function canCreate(): bool
     {
-        // Keep creation disabled as orders should come from the public side
         return false;
     }
 
     public static function canEdit(Model $record): bool
     {
-        // Keep the main 'Edit' page disabled, as we will use a modal Action
         return false;
     }
 
@@ -89,12 +87,8 @@ class OrderResource extends Resource
                     ->label(__('item.field_status'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'pending' => 'warning',
-                        'paid' => 'primary',
-                        'shipped' => 'info',
-                        'completed' => 'success',
-                        'cancelled' => 'danger',
-                        default => 'gray',
+                        'pending' => 'warning', 'paid' => 'primary', 'shipped' => 'info',
+                        'completed' => 'success', 'cancelled' => 'danger', default => 'gray',
                     })
                     ->formatStateUsing(fn ($state) => __("item.status_{$state}")),
                 TextColumn::make('created_at')->label(__('panel.field_order_date'))->dateTime('d/m/Y H:i')->sortable(),
@@ -102,33 +96,26 @@ class OrderResource extends Resource
             ->actions([
                 ViewAction::make(),
                 Action::make('update_status')
-                    ->label(__('panel.action_update_status')) // Use translation key
+                    ->label(__('panel.action_update_status'))
                     ->icon('heroicon-o-truck')
                     ->color('primary')
                     ->requiresConfirmation()
-                    ->modalHeading(__('panel.modal_change_order_status_heading')) // Use translation key
+                    ->modalHeading(__('panel.modal_change_order_status_heading'))
                     ->form([
                         Select::make('status')
-                            ->label(__('panel.field_new_status')) // Use translation key
+                            ->label(__('panel.field_new_status'))
                             ->options([
-                                'pending' => __('item.status_pending'),
-                                'paid' => __('item.status_paid'),
-                                'shipped' => __('item.status_shipped'),
-                                'completed' => __('item.status_completed'),
+                                'pending' => __('item.status_pending'), 'paid' => __('item.status_paid'),
+                                'shipped' => __('item.status_shipped'), 'completed' => __('item.status_completed'),
                                 'cancelled' => __('item.status_cancelled'),
-                            ])
-                            ->required(),
+                            ])->required(),
                     ])
                     ->action(function (Order $record, array $data): void {
                         $record->update(['status' => $data['status']]);
-                        // THE FIX FOR THE NOTIFICATION: Send it explicitly inside the action closure.
-                        Notification::make()
-                            ->success()
-                            ->title(__('panel.notification_order_status_updated_title')) // Use translation key
-                            ->body(__('panel.notification_order_status_updated_body')) // Use translation key
-                            ->send();
+                        Notification::make()->success()
+                            ->title(__('panel.notification_order_status_updated_title'))
+                            ->body(__('panel.notification_order_status_updated_body'))->send();
                     }),
-                // We remove successNotification() from here as we are sending it manually.
             ])
             ->defaultSort('created_at', 'desc');
     }

@@ -6,38 +6,53 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Numista\Collection\Domain\Models\Address;
+use Numista\Collection\Domain\Models\Customer;
 use Numista\Collection\Domain\Models\Tenant;
 
 class DevelopmentSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // --- 1. Create the Tenant using its factory ---
-        $tenant = Tenant::factory()->create([
-            'name' => 'Colección Numista',
+        // Clean up all user and tenant related data at the beginning.
+        DB::statement('SET CONSTRAINTS ALL DEFERRED');
+        DB::table('addresses')->truncate();
+        DB::table('customers')->truncate();
+        DB::table('tenant_user')->truncate();
+        User::truncate();
+        Tenant::truncate();
+        DB::statement('SET CONSTRAINTS ALL IMMEDIATE');
+        $this->command->info('Cleaned previous tenants, users, and customers.');
+
+        // --- 1. Create Tenants ---
+        $this->command->info('Creating tenants...');
+        $tenant1 = Tenant::factory()->create(['name' => 'Colección Numista']);
+        $tenant2 = Tenant::factory()->create(['name' => 'Antigüedades Clásicas']);
+
+        // --- 2. Create Admin Users ---
+        $this->command->info('Creating admin users...');
+        $admin1 = User::factory()->admin()->create(['name' => 'Admin Numista', 'email' => 'admin@numista.es', 'password' => 'admin']);
+        $admin1->tenants()->sync([$tenant1->id]);
+
+        $admin2 = User::factory()->admin()->create(['name' => 'Admin Clásicas', 'email' => 'admin2@numista.es', 'password' => 'admin2']);
+        $admin2->tenants()->sync([$tenant2->id]);
+
+        // --- 3. Create Customer Users, their Customer profiles, and then their Addresses ---
+        $this->command->info('Creating customer users and their addresses...');
+
+        $customerUser1 = User::factory()->customer()->create([
+            'name' => 'Cliente de Prueba 1', 'email' => 'cliente@numista.es', 'password' => 'cliente',
         ]);
+        // THE FIX: Explicitly create the Customer profile for the User.
+        $customerProfile1 = Customer::factory()->create(['user_id' => $customerUser1->id]);
+        // Now we can safely use the profile's ID.
+        Address::factory()->count(2)->create(['customer_id' => $customerProfile1->id]);
 
-        // --- 2. Create or find the Admin User using the Model's firstOrCreate method ---
-        // This is the correct way to handle "find or create" logic.
-        $adminUser = User::firstOrCreate(
-            ['email' => 'admin@numista.es'],
-            [
-                'name' => 'Usuario Administrador',
-                'password' => Hash::make('admin'), // We need to hash the password manually here
-                'is_admin' => true, // Explicitly set this user as an administrator
-            ]
-        );
-
-        // --- 3. Attach the User to the Tenant ---
-        $adminUser->tenants()->syncWithoutDetaching($tenant->id);
-
-        // Output info to the console
-        $this->command->info('Development seeder finished.');
-        $this->command->info('Admin User: admin@numista.es');
-        $this->command->info('Password: admin');
+        $customerUser2 = User::factory()->customer()->create([
+            'name' => 'Cliente de Prueba 2', 'email' => 'cliente2@numista.es', 'password' => 'cliente2',
+        ]);
+        $customerProfile2 = Customer::factory()->create(['user_id' => $customerUser2->id]);
+        Address::factory()->count(1)->create(['customer_id' => $customerProfile2->id, 'is_default' => true]);
     }
 }

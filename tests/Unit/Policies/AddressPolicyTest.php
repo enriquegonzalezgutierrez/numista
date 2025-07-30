@@ -16,11 +16,22 @@ class AddressPolicyTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Helper to create a user with an associated customer profile.
+     */
+    private function createCustomerUser(): User
+    {
+        $user = User::factory()->customer()->create();
+        Customer::factory()->create(['user_id' => $user->id]);
+
+        return $user;
+    }
+
     #[Test]
     public function a_user_can_view_their_own_address(): void
     {
         $policy = new AddressPolicy;
-        $user = User::factory()->has(Customer::factory())->create();
+        $user = $this->createCustomerUser();
         $address = Address::factory()->create(['customer_id' => $user->customer->id]);
 
         $this->assertTrue($policy->view($user, $address));
@@ -30,8 +41,8 @@ class AddressPolicyTest extends TestCase
     public function a_user_cannot_view_another_users_address(): void
     {
         $policy = new AddressPolicy;
-        $user = User::factory()->has(Customer::factory())->create();
-        $anotherUser = User::factory()->has(Customer::factory())->create();
+        $user = $this->createCustomerUser();
+        $anotherUser = $this->createCustomerUser();
         $addressOfAnotherUser = Address::factory()->create(['customer_id' => $anotherUser->customer->id]);
 
         $this->assertFalse($policy->view($user, $addressOfAnotherUser));
@@ -41,7 +52,7 @@ class AddressPolicyTest extends TestCase
     public function a_user_can_update_their_own_address(): void
     {
         $policy = new AddressPolicy;
-        $user = User::factory()->has(Customer::factory())->create();
+        $user = $this->createCustomerUser();
         $address = Address::factory()->create(['customer_id' => $user->customer->id]);
 
         $this->assertTrue($policy->update($user, $address));
@@ -51,8 +62,8 @@ class AddressPolicyTest extends TestCase
     public function a_user_cannot_update_another_users_address(): void
     {
         $policy = new AddressPolicy;
-        $user = User::factory()->has(Customer::factory())->create();
-        $anotherUser = User::factory()->has(Customer::factory())->create();
+        $user = $this->createCustomerUser();
+        $anotherUser = $this->createCustomerUser();
         $addressOfAnotherUser = Address::factory()->create(['customer_id' => $anotherUser->customer->id]);
 
         $this->assertFalse($policy->update($user, $addressOfAnotherUser));
@@ -62,7 +73,7 @@ class AddressPolicyTest extends TestCase
     public function a_user_can_delete_their_own_address(): void
     {
         $policy = new AddressPolicy;
-        $user = User::factory()->has(Customer::factory())->create();
+        $user = $this->createCustomerUser();
         $address = Address::factory()->create(['customer_id' => $user->customer->id]);
 
         $this->assertTrue($policy->delete($user, $address));
@@ -72,25 +83,23 @@ class AddressPolicyTest extends TestCase
     public function a_user_cannot_delete_another_users_address(): void
     {
         $policy = new AddressPolicy;
-        $user = User::factory()->has(Customer::factory())->create();
-        $anotherUser = User::factory()->has(Customer::factory())->create();
+        $user = $this->createCustomerUser();
+        $anotherUser = $this->createCustomerUser();
         $addressOfAnotherUser = Address::factory()->create(['customer_id' => $anotherUser->customer->id]);
 
         $this->assertFalse($policy->delete($user, $addressOfAnotherUser));
     }
 
     #[Test]
-    public function it_handles_a_user_that_is_not_yet_a_customer(): void
+    public function it_handles_a_user_that_is_an_admin_and_not_a_customer(): void
     {
-        // This test ensures we don't get a "property of non-object" error
-        // if a user somehow exists without a customer record.
         $policy = new AddressPolicy;
-        $userWithoutCustomer = User::factory()->create(); // No customer attached
-        $someAddress = Address::factory()->create();
+        $adminUser = User::factory()->admin()->create(); // This user will not have a customer profile
+        $customerForAddress = Customer::factory()->create(); // Creates its own user
+        $someAddress = Address::factory()->create(['customer_id' => $customerForAddress->id]);
 
-        // The policy should gracefully fail instead of throwing an error.
-        $this->assertFalse($policy->view($userWithoutCustomer, $someAddress));
-        $this->assertFalse($policy->update($userWithoutCustomer, $someAddress));
-        $this->assertFalse($policy->delete($userWithoutCustomer, $someAddress));
+        $this->assertFalse($policy->view($adminUser, $someAddress));
+        $this->assertFalse($policy->update($adminUser, $someAddress));
+        $this->assertFalse($policy->delete($adminUser, $someAddress));
     }
 }

@@ -47,7 +47,6 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
         Auth::login($user);
 
-        // THE FIX IS HERE
         return redirect()->route('public.items.index');
     }
 }

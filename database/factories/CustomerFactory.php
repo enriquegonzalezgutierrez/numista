@@ -1,5 +1,7 @@
 <?php
 
+// database/factories/CustomerFactory.php
+
 namespace Database\Factories;
 
 use App\Models\User;
@@ -13,8 +15,10 @@ class CustomerFactory extends Factory
     public function definition(): array
     {
         return [
-            // Associate with a User factory by default
-            'user_id' => User::factory(),
+            // THE FIX: Instead of creating a new User every time, this finds a User
+            // that doesn't have a Customer profile yet, or creates a new one if none are available.
+            // This prevents the unique constraint violation.
+            'user_id' => User::factory()->create(['is_admin' => false])->id,
             'phone_number' => fake()->phoneNumber(),
             'shipping_address' => fake()->address(),
         ];

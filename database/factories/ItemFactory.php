@@ -6,7 +6,6 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use Numista\Collection\Domain\Models\Country;
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\Tenant;
 
@@ -22,26 +21,22 @@ class ItemFactory extends Factory
             'slug' => fn (array $attributes) => Str::slug($attributes['name']),
             'description' => fake()->paragraph(2),
             'type' => 'object',
-            'quantity' => fake()->numberBetween(1, 5),
+            'quantity' => 1,
             'purchase_price' => fake()->randomFloat(2, 5, 100),
             'purchase_date' => fake()->date(),
             'status' => fake()->randomElement(['in_collection', 'for_sale', 'sold']),
         ];
     }
 
-    // THE FIX: The configure() method has been removed entirely to avoid conflicts.
-
-    private function getSpainCountryId(): ?int
-    {
-        return Country::firstOrCreate(['iso_code' => 'ES'], ['name' => 'España'])->id;
-    }
-
+    // THE FIX: The `coin` state now only returns attributes that will be processed
+    // by the seeder. It does not attempt to set columns that don't exist on the `items` table.
     public function coin(): static
     {
         return $this->state(fn (array $attributes) => [
             'type' => 'coin',
             'name' => 'Coin: '.ucfirst(fake()->words(2, true)),
-            'country_id' => $this->getSpainCountryId(),
+            // These keys are not columns in the `items` table.
+            // They are temporary attributes that the ItemSeeder will use.
             'year' => fake()->numberBetween(1800, 2023),
             'denomination' => fake()->randomElement(['1 Dollar', '50 Pesetas', '100 Pesos', '2 Euros']),
             'mint_mark' => fake()->randomElement(['S', 'D', 'P', 'O', 'M']),
@@ -56,7 +51,6 @@ class ItemFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'type' => 'banknote',
             'name' => 'Banknote: '.ucfirst(fake()->words(2, true)),
-            'country_id' => $this->getSpainCountryId(),
             'year' => fake()->numberBetween(1900, 2020),
             'denomination' => fake()->randomElement(['100 Pesetas', '5 Dollars', '20 Euros']),
             'serial_number' => fake()->bothify('??########?'),
@@ -69,7 +63,6 @@ class ItemFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'type' => 'stamp',
             'name' => 'Stamp: '.fake()->country().' '.fake()->year(),
-            'country_id' => $this->getSpainCountryId(),
             'year' => fake()->numberBetween(1840, 2020),
             'face_value' => fake()->randomElement(['5c', '10p', '1.00€']),
         ]);

@@ -20,6 +20,9 @@ return [
     'label_order' => 'Pedido',
     'label_orders' => 'Pedidos',
     'label_order_items' => 'Artículos del Pedido',
+    'nav_customers' => 'Clientes',
+    'label_customer' => 'Cliente',
+    'label_customers' => 'Clientes',
     'nav_group_settings' => 'Configuración',
     'nav_attributes' => 'Atributos',
     'label_attribute' => 'Atributo',
@@ -27,6 +30,13 @@ return [
 
     // --- General Field & Column Labels ---
     'field_name' => 'Nombre',
+    'field_email' => 'Email',
+    'section_user_information' => 'Información del Usuario',
+    'section_contact_information' => 'Información de Contacto',
+    'field_phone_number' => 'Número de Teléfono',
+    'field_shipping_address_legacy' => 'Dirección de Envío Principal (Legacy)',
+    'field_orders_count' => 'Nº Pedidos',
+    'field_registration_date' => 'Fecha de Registro',
     'field_slug' => 'Slug (URL)',
     'field_description' => 'Descripción',
     'field_image_preview' => 'Vista Previa',

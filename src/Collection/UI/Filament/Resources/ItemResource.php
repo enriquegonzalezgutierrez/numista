@@ -4,6 +4,7 @@
 
 namespace Numista\Collection\UI\Filament\Resources;
 
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -20,6 +21,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Numista\Collection\Domain\Models\Attribute;
 use Numista\Collection\Domain\Models\Item;
@@ -61,41 +63,27 @@ class ItemResource extends Resource
                     ->schema([
                         Forms\Components\Section::make(__('item.section_core'))
                             ->schema([
-                                TextInput::make('name')
-                                    ->label(__('item.field_name'))
-                                    ->required()->maxLength(255)->live(onBlur: true)
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
-
-                                TextInput::make('slug')
-                                    ->label(__('panel.field_slug'))
-                                    ->required()->unique(Item::class, 'slug', ignoreRecord: true)
-                                    ->disabled()->dehydrated(),
-
-                                Select::make('type')
-                                    ->label(__('item.field_type'))
-                                    ->options(fn (ItemTypeManager $manager): array => $manager->getTypesForSelect())
-                                    ->required()->live()
-                                    ->afterStateUpdated(fn (Set $set) => $set('attributes', [])),
-
-                                Textarea::make('description')
-                                    ->label(__('panel.field_description'))
-                                    ->columnSpanFull(),
+                                TextInput::make('name')->label(__('item.field_name'))->required()->maxLength(255)->live(onBlur: true)->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                TextInput::make('slug')->label(__('panel.field_slug'))->required()->unique(Item::class, 'slug', ignoreRecord: true)->disabled()->dehydrated(),
+                                Select::make('type')->label(__('item.field_type'))->options(fn (ItemTypeManager $manager): array => $manager->getTypesForSelect())->required()->live()->afterStateUpdated(fn (Set $set) => $set('attributes', [])),
+                                Textarea::make('description')->label(__('panel.field_description'))->columnSpanFull(),
                             ])->columns(2),
 
                         Forms\Components\Section::make(__('panel.label_attributes'))
                             ->schema(function (Get $get): array {
                                 $itemType = $get('type');
                                 if (empty($itemType)) {
-                                    return [
-                                        Forms\Components\Placeholder::make('no_attributes')
-                                            ->label('Select an item type to see its attributes.'),
-                                    ];
+                                    return [];
                                 }
 
+                                // This is the final, correct query. It uses a subquery to filter attributes
+                                // based on the pivot table `attribute_item_type` without needing a direct Eloquent relationship.
                                 $attributes = Attribute::query()
-                                    ->whereIn('id', function ($query) use ($itemType) {
-                                        $query->select('attribute_id')
+                                    ->where('tenant_id', Filament::getTenant()->id)
+                                    ->whereExists(function ($query) use ($itemType) {
+                                        $query->select(DB::raw(1))
                                             ->from('attribute_item_type')
+                                            ->whereColumn('attribute_item_type.attribute_id', 'attributes.id')
                                             ->where('item_type', $itemType);
                                     })
                                     ->with('values')
@@ -129,8 +117,7 @@ class ItemResource extends Resource
                                     return $field->label(trans()->has($key) ? __($key) : $attribute->name);
                                 })->all();
                             })->columns(3),
-                    ])
-                    ->columnSpan(['lg' => 2]),
+                    ])->columnSpan(['lg' => 2]),
 
                 Forms\Components\Group::make()
                     ->schema([
@@ -142,8 +129,7 @@ class ItemResource extends Resource
                                 Select::make('status')->options(fn (ItemStatusManager $manager) => $manager->getStatusesForSelect())->default('in_collection')->required()->live()->label(__('item.field_status')),
                                 TextInput::make('sale_price')->numeric()->prefix('€')->visible(fn (Get $get): bool => $get('status') === 'for_sale')->label(__('item.field_sale_price')),
                             ]),
-                    ])
-                    ->columnSpan(['lg' => 1]),
+                    ])->columnSpan(['lg' => 1]),
             ])->columns(3);
     }
 
@@ -170,7 +156,6 @@ class ItemResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // --- INICIO DE LA MODIFICACIÓN ---
                     BulkAction::make('change_status')
                         ->label(__('panel.action_bulk_change_status'))
                         ->icon('heroicon-o-check-badge')
@@ -186,7 +171,6 @@ class ItemResource extends Resource
                         })
                         ->successNotificationTitle(__('panel.notification_status_updated'))
                         ->deselectRecordsAfterCompletion(),
-                    // --- FIN DE LA MODIFICACIÓN ---
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
@@ -195,9 +179,9 @@ class ItemResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\CollectionsRelationManager::class,
-            RelationManagers\CategoriesRelationManager::class,
             RelationManagers\ImagesRelationManager::class,
+            RelationManagers\CategoriesRelationManager::class,
+            RelationManagers\CollectionsRelationManager::class,
         ];
     }
 

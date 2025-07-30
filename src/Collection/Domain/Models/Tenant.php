@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/Domain/Models/Tenant.php
+
 namespace Numista\Collection\Domain\Models;
 
 use App\Models\User;
