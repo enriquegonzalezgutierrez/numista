@@ -1,6 +1,12 @@
 @props(['categories', 'filterableAttributes', 'isMobile' => false])
 
-<div>
+<!--
+    THE FIX: The entire div is now an Alpine component.
+    - We add `@change="$el.closest('form').submit()"`
+    - This tells Alpine: "whenever any input inside this div changes,
+      find the closest parent <form> element and submit it."
+-->
+<div @change.debounce.500ms="$el.closest('form').submit()">
     <!-- Search Filter -->
     <div class="mb-6">
         <label for="search-{{ $isMobile ? 'mobile' : 'desktop' }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('public.filter_search_label') }}</label>
@@ -34,12 +40,9 @@
         @foreach($filterableAttributes as $attribute)
             <div class="mb-6 border-t border-gray-200 dark:border-gray-700 pt-6">
                 @php
-                    // Creates a translation key from the attribute name in the DB.
-                    // Example: "Mint Mark" -> "panel.attribute_name_mint_mark"
                     $labelKey = 'panel.attribute_name_' . strtolower(str_replace(' ', '_', $attribute->name));
                 @endphp
                 <label for="attribute-{{ $attribute->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}" class="text-lg font-medium text-gray-900 dark:text-white mb-2 block">
-                    {{-- If translation exists, use it. Otherwise, fallback to the DB name. --}}
                     {{ trans()->has($labelKey) ? __($labelKey) : $attribute->name }}
                 </label>
                 
@@ -48,13 +51,10 @@
                         <option value="">{{ __('public.filter_all_option') }}</option>
                         @foreach($attribute->values as $option)
                             @php
-                                // Creates a translation key for the option.
-                                // Example: Attribute "Grade", Option "unc" -> "item.options.grade.unc"
                                 $attributeKey = strtolower(str_replace(' ', '_', $attribute->name));
                                 $translationKey = "item.options.{$attributeKey}.{$option->value}";
                             @endphp
                             <option value="{{ $option->id }}" @selected(request('attributes.'.$attribute->id) == $option->id)>
-                                {{-- If translation exists, use it. Otherwise, fallback to the raw value. --}}
                                 {{ trans()->has($translationKey) ? __($translationKey) : $option->value }}
                             </option>
                         @endforeach

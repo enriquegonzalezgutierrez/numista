@@ -1,9 +1,12 @@
 <?php
 
+// src/Collection/Application/Items/ItemFinder.php
+
 namespace Numista\Collection\Application\Items;
 
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Numista\Collection\Domain\Models\Attribute;
 use Numista\Collection\Domain\Models\Item;
 
@@ -13,8 +16,6 @@ class ItemFinder
 
     public function forMarketplace(array $filters = []): Paginator
     {
-        // THE FIX: Ensure that 'images' and 'tenant' are always eager-loaded.
-        // This prevents the N+1 query problem on the marketplace page.
         $query = Item::query()
             ->where('status', 'for_sale')
             ->with(['images', 'tenant']);
@@ -24,11 +25,26 @@ class ItemFinder
         return $query->latest('created_at')->simplePaginate($this->perPage)->withQueryString();
     }
 
-    private function applyFilters(Builder $query, array $filters): void
+    public function applyFilters(Builder $query, array $filters): void
     {
-        // Search filter for item name
         $query->when($filters['search'] ?? null, function ($query, $search) {
-            $query->where('name', 'like', '%'.$search.'%');
+            // If using PostgreSQL, use the powerful full-text search.
+            if (DB::getDriverName() === 'pgsql') {
+                // Sanitize the search query to be used with to_tsquery
+                $searchQuery = implode(' & ', explode(' ', trim($search)));
+
+                // Use whereRaw to leverage PostgreSQL's full-text search capabilities
+                $query->whereRaw(
+                    "to_tsvector('spanish', name || ' ' || description) @@ to_tsquery('spanish', ?)",
+                    [$searchQuery]
+                );
+            } else {
+                // For other databases (like SQLite in tests), fall back to a simple LIKE search.
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', '%'.$search.'%')
+                        ->orWhere('description', 'like', '%'.$search.'%');
+                });
+            }
         });
 
         // Category filter

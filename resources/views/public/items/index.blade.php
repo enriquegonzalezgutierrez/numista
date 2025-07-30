@@ -16,13 +16,13 @@
             {{-- Desktop Filters Sidebar --}}
             <aside class="hidden lg:block bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm h-fit sticky top-24">
                 <form action="{{ route('public.items.index') }}" method="GET" id="desktop-filter-form">
-                    {{-- THE FIX: Update component path --}}
                     <x-public.filter-form 
                         :categories="$categories" 
                         :filterableAttributes="$filterableAttributes" 
                     />
+                    <!-- THE FIX: The submit button is now hidden, but still exists for accessibility -->
                     <div class="mt-8 border-t dark:border-gray-700 pt-6 space-y-3">
-                        <button type="submit" class="w-full rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700">{{ __('public.filter_apply_button') }}</button>
+                        <button type="submit" class="sr-only">{{ __('public.filter_apply_button') }}</button>
                         <a href="{{ route('public.items.index') }}" class="w-full block text-center rounded-md border border-slate-300 bg-white dark:bg-slate-700 dark:border-slate-600 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50">{{ __('public.filter_clear_button') }}</a>
                     </div>
                 </form>
