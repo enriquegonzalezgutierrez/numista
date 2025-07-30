@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Moneda de Plata de 1999</title>
 
-        <link rel="icon" href="http://localhost:8080/storage/favicon.png" type-="image/png">
+        <link rel="icon" href="http://localhost/storage/favicon.png" type-="image/png">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -29,8 +29,8 @@
         <div class="flex justify-between items-center">
             
             
-            <a href="http://localhost:8080" class="flex items-center space-x-3">
-                 <img src="http://localhost:8080/storage/logo.png" alt="Numista" class="h-10 w-auto">
+            <a href="http://localhost" class="flex items-center space-x-3">
+                 <img src="http://localhost/storage/logo.png" alt="Numista" class="h-10 w-auto">
                  
                  <span class="hidden sm:inline text-xl font-bold text-gray-800 dark:text-gray-200 tracking-tight">Numista</span>
             </a>
@@ -39,13 +39,13 @@
             <nav class="flex items-center space-x-2 sm:space-x-4">
                 
                 
-                <a href="http://localhost:8080/marketplace" 
+                <a href="http://localhost/marketplace" 
                    class="text-sm font-semibold transition-colors text-teal-600 dark:text-teal-400">
                     Marketplace
                 </a>
                 
                 <div class="flow-root" x-data="{ cartCount: 0 }" @cart-updated.window="cartCount = $event.detail.cartCount">
-                    <a href="http://localhost:8080/cart" class="group -m-2 flex items-center p-2">
+                    <a href="http://localhost/cart" class="group -m-2 flex items-center p-2">
                         <svg class="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.658-.463 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                         </svg>
@@ -57,8 +57,8 @@
                 <span class="h-6 w-px bg-gray-200 dark:bg-gray-600" aria-hidden="true"></span>
                 
                 
-                                    <a href="http://localhost:8080/login" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Acceso</a>
-                                            <a href="http://localhost:8080/register" class="hidden sm:inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700">Registro</a>
+                                    <a href="http://localhost/login" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Acceso</a>
+                                            <a href="http://localhost/register" class="hidden sm:inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700">Registro</a>
                                                 </nav>
         </div>
     </div>
@@ -67,7 +67,7 @@
                     
 <div x-data="{
         isModalOpen: false,
-        mainImageUrl: 'http://localhost:8080/images/1',
+        mainImageUrl: 'http://localhost/images/1',
         isLightboxOpen: false,
         activeTab: 'description'
     }">
@@ -79,7 +79,7 @@
                 <ol role="list" class="flex items-center space-x-2">
                     <li>
                         <div class="flex items-center">
-                            <a href="http://localhost:8080/marketplace" class="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300">Marketplace de Coleccionables</a>
+                            <a href="http://localhost/marketplace" class="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300">Marketplace de Coleccionables</a>
                             <svg width="16" height="20" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true" class="h-5 w-4 text-gray-300 dark:text-gray-500"><path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" /></svg>
                         </div>
                     </li>
@@ -112,7 +112,7 @@
 
                     
                     <div class="mt-10 hidden lg:block">
-                        <form action="http://localhost:8080/cart/add/1" method="POST">
+                        <form action="http://localhost/cart/add/1" method="POST">
                             <input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">                            <button type="submit" class="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-600 px-8 py-3 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
                                 Añadir al Carrito
                             </button>
@@ -245,7 +245,7 @@
 
     
     <div class="fixed bottom-0 left-0 right-0 lg:hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 p-4">
-        <form action="http://localhost:8080/cart/add/1" method="POST">
+        <form action="http://localhost/cart/add/1" method="POST">
             <input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">            <button type="submit" class="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-600 px-8 py-3 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
                 Añadir al Carrito - 123,45 €
             </button>
