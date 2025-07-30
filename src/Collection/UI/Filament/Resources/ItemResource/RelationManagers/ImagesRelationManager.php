@@ -58,7 +58,6 @@ class ImagesRelationManager extends RelationManager
                 ImageColumn::make('path')
                     ->label(__('panel.field_image_preview'))
                     ->disk('tenants')
-                    // THE FIX: Use the new accessor for the URL
                     ->url(fn (Image $record): string => $record->url)
                     ->openUrlInNewTab(),
 
@@ -67,7 +66,10 @@ class ImagesRelationManager extends RelationManager
 
                 ToggleColumn::make('is_featured')
                     ->label('Destacada')
-                    ->afterStateUpdated(function (Model $record, $state, SetFeaturedImageService $service) {
+                    ->afterStateUpdated(function (Model $record, $state) {
+                        // We must resolve the service from the container to ensure
+                        // its dependencies are injected correctly.
+                        $service = app(SetFeaturedImageService::class);
                         $service->handle($record, $state);
                     }),
             ])

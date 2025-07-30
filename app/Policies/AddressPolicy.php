@@ -1,5 +1,7 @@
 <?php
 
+// app/Policies/AddressPolicy.php
+
 namespace App\Policies;
 
 use App\Models\User;
@@ -7,10 +9,14 @@ use Numista\Collection\Domain\Models\Address;
 
 class AddressPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
+    // ... viewAny and create methods remain the same ...
+
     public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
+    public function create(User $user): bool
     {
         return true;
     }
@@ -20,15 +26,8 @@ class AddressPolicy
      */
     public function view(User $user, Address $address): bool
     {
-        return $user->customer->id === $address->customer_id;
-    }
-
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
-    {
-        return true;
+        // THE FIX: Check if the customer relationship exists before accessing its id.
+        return $user->customer && $user->customer->id === $address->customer_id;
     }
 
     /**
@@ -36,7 +35,8 @@ class AddressPolicy
      */
     public function update(User $user, Address $address): bool
     {
-        return $user->customer->id === $address->customer_id;
+        // THE FIX: Check if the customer relationship exists.
+        return $user->customer && $user->customer->id === $address->customer_id;
     }
 
     /**
@@ -44,6 +44,7 @@ class AddressPolicy
      */
     public function delete(User $user, Address $address): bool
     {
-        return $user->customer->id === $address->customer_id;
+        // THE FIX: Check if the customer relationship exists.
+        return $user->customer && $user->customer->id === $address->customer_id;
     }
 }
