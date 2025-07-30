@@ -41,17 +41,37 @@ COPY docker/app/supervisor/supervisord.conf /etc/supervisord.conf
 COPY docker/app/supervisor/laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
 COPY docker/app/supervisor/php-fpm.conf /etc/supervisor/conf.d/php-fpm.conf
 
-# Copy existing application directory contents and change ownership
-COPY --chown=laravel:laravel . .
+# THE FIX: Simplify Dockerfile. Only copy files and install dependencies.
+# Laravel optimizations will be handled by Makefile after the container is running.
 
-# Switch to the new user
+# Set user to laravel for npm install to avoid permission issues
 USER laravel
 
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
+# Copy dependency files and install them
+COPY --chown=laravel:laravel package.json package-lock.json ./
+RUN npm ci
 
+# Copy the rest of the application files
+COPY --chown=laravel:laravel . .
+
+# Install composer dependencies
+RUN composer install --optimize-autoloader --no-scripts
+
+# Build frontend assets
+RUN npm run build
+
+# Switch back to root to set final permissions
 USER root
 
-# Change the final command to start supervisord
-# Supervisord will then start php-fpm and the queue worker
+# Ensure storage and bootstrap/cache are writable by the server and user
+RUN chown -R laravel:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Switch to the final user
+USER laravel
+
+# Expose port 9000
+EXPOSE 9000
+
+# Final command to start supervisord
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

@@ -7,8 +7,8 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
 # Get variables from Laravel's .env file to use in commands
--include .env.example
-export $(shell sed 's/=.*//' .env.example)
+-include .env
+export
 
 # ==============================================================================
 # Docker Commands
@@ -31,14 +31,24 @@ logs: ## View real-time logs for all services
 # ==============================================================================
 # Application Setup & Maintenance
 # ==============================================================================
-setup: ## Run initial setup: install deps, generate key, migrate DB
+setup: ## Run initial setup: copy env, generate key, migrate, optimize
 	@echo "--- Starting project setup ---"
+	@cp -n .env.example .env || true
+	@make up
 	@make composer-install
 	@make npm a="install"
 	@make npm a="run build"
 	@make key-generate
 	@make migrate-fresh
+	@make optimize
 	@echo "--- ✅ Setup complete! The application is ready. ---"
+
+optimize: ## Cache routes and configuration for production
+	@echo "--- Caching configuration and routes ---"
+	@make artisan a="config:cache"
+	@make artisan a="route:cache"
+	@make artisan a="view:cache"
+	@echo "--- ✅ Application optimized! ---"
 
 cache-clear: ## Clear all application caches (config, route, view)
 	@echo "--- Clearing all application caches ---"
@@ -80,10 +90,10 @@ key-generate: ## Generate a new application key
 # Composer Commands (use 'a' variable for arguments)
 # ==============================================================================
 composer: ## Run any composer command. Ex: make composer a="update"
-	@docker-compose exec app composer $(a)
+	@docker-compose exec -u laravel app composer $(a)
 
 composer-install: ## Install composer dependencies
-	@docker-compose exec app composer install
+	@docker-compose exec -u laravel app composer install
 
 # ==============================================================================
 # NPM Commands (use 'a' variable for arguments)
@@ -135,4 +145,4 @@ help: ## Show this help message
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 # Mark targets as not being actual files
-.PHONY: up down stop restart logs setup cache-clear clear-all fix-permissions artisan migrate migrate-fresh key-generate composer composer-install npm test test-feature test-unit test-coverage lint fix bash db-shell help
+.PHONY: up down stop restart logs setup optimize cache-clear clear-all fix-permissions artisan migrate migrate-fresh key-generate composer composer-install npm test test-feature test-unit test-coverage lint fix bash db-shell help

@@ -1,38 +1,39 @@
-# Numista-App: Numismatics & Collectibles Project
+# Numista-App: Collectibles Management & Marketplace
 
-Numista-App is a modern, multi-tenant web application for managing numismatic and other collectible collections. It is built on the TALL stack and containerized with Docker, featuring a powerful admin panel and a fully responsive public marketplace, all structured following Domain-Driven Design (DDD) principles.
+Numista-App is a modern, multi-tenant web application designed for managing numismatic and other collectible collections. Built on the TALL stack (Tailwind, Alpine.js, Livewire, Laravel) and containerized with Docker, the application features a powerful admin panel and a fully responsive public marketplace, all structured following Domain-Driven Design (DDD) principles.
 
 ---
 
-## ✨ Visual Showcase
+## ✨ Image Gallery
 
 | Marketplace (Desktop) | Item Details (Desktop) |
 | :---: | :---: |
-| ![Marketplace Screenshot](docs/screenshots/marketplace.png) | ![Item Details Screenshot](docs/screenshots/item-details.png) |
+| <img src="docs/screenshots/marketplace.png" alt="Marketplace Screenshot" width="400"> | <img src="docs/screenshots/item-details.png" alt="Item Details Screenshot" width="400"> |
 
-| Cart Page (Desktop) | Mobile View |
+| Shopping Cart (Desktop) | Responsive View (Mobile) |
 | :---: | :---: |
-| ![Cart Screenshot](docs/screenshots/cart.png) | ![Mobile View Screenshot](docs/screenshots/mobile-view.png) |
+| <img src="docs/screenshots/cart.png" alt="Shopping Cart Screenshot" width="400"> | <img src="docs/screenshots/mobile-view.png" alt="Mobile View Screenshot" width="250"> |
 
 ---
 
 ## 🚀 Key Features
 
 ### Admin Panel (Filament)
-- **Multi-Tenant Architecture:** Each user manages their own isolated collection, with the ability to be part of multiple tenants.
-- **Dynamic EAV System:** A flexible Entity-Attribute-Value model allows admins to define custom attributes (e.g., "Year", "Grade") for different item types.
-- **Dynamic Forms:** Item forms are generated dynamically based on the selected "Item Type," displaying only relevant attributes.
-- **Complete CRUD Management:** Full create, read, update, and delete functionality for Items, Categories, Collections, and Attributes.
-- **Interactive Dashboard:** A real-time dashboard with widgets for key statistics, charts, and recently added items.
-- **Advanced Image Management:** Easy image uploads with reordering and the ability to set a "featured" image for items. Collections also support a primary image. All files are stored securely in tenant-specific private directories.
+- **Multi-Tenant Architecture:** Each user or entity manages their own isolated collection, with the ability to belong to multiple tenants.
+- **Dynamic Attribute System (EAV):** A flexible Entity-Attribute-Value model allows administrators to define custom attributes (e.g., "Year", "Grade", "Composition") for different item types.
+- **Dynamic Forms:** Item creation and editing forms are dynamically generated based on the selected "Item Type," displaying only relevant fields.
+- **Complete CRUD Management:** Full functionality to create, read, update, and delete Items, Categories, Collections, and Attributes.
+- **Interactive Dashboard:** A dashboard with widgets displaying key statistics, charts, and recently added items.
+- **Advanced Image Management:** Image uploads with an editor, reordering capabilities, and the ability to set a "featured" image. Files are securely stored in private, tenant-specific directories.
 
 ### Public Marketplace & E-commerce
-- **Dynamic Landing Page:** An attractive homepage that showcases featured collections and the latest items available for sale.
-- **Fully Responsive Design:** A modern interface built with Tailwind CSS that looks great on all devices.
-- **Advanced Filtering:** Users can filter items by search term, category, and any custom, filterable attribute.
-- **Full E-commerce Flow:** Includes a seamless shopping cart, a secure checkout process, and a user account section.
+- **Dynamic Landing Page:** An attractive homepage showcasing featured collections and the latest items for sale.
+- **Fully Responsive Design:** A modern interface built with Tailwind CSS that adapts to any device.
+- **"Load More" Pagination:** A smooth user experience for browsing the product catalog without full page reloads.
+- **Advanced Filtering:** Users can filter items by search term, category, and any custom attribute defined as "filterable."
+- **Complete E-commerce Flow:** Includes a shopping cart, a secure checkout process, and a comprehensive customer account area.
 - **User Accounts & Order History:** Customers can register, log in, manage addresses, update their profile, reset their password, and view their order history.
-- **Event-Driven Notifications:** Uses Domain Events (`OrderPlaced`) to asynchronously handle post-order logic like sending confirmation emails and updating item statuses.
+- **Asynchronous Notifications:** Utilizes Domain Events (`OrderPlaced`) to handle post-order tasks (confirmation emails, stock updates) asynchronously via queues.
 
 ---
 
@@ -43,9 +44,9 @@ Numista-App is a modern, multi-tenant web application for managing numismatic an
 - **UI/Styling**: Tailwind CSS
 - **Admin Panel**: Filament 3
 - **Database**: PostgreSQL 16
-- **Testing**: Pest (PHPUnit) with automated CI via GitHub Actions.
+- **Testing**: Pest (PHPUnit)
 - **Local Environment**: Docker & Docker Compose
-- **Local Email Testing**: Mailpit
+- **Email Testing**: Mailpit
 
 ---
 
@@ -54,7 +55,7 @@ Numista-App is a modern, multi-tenant web application for managing numismatic an
 ### Prerequisites
 
 - [Docker](https://www.docker.com/products/docker-desktop)
-- [Make](https://www.gnu.org/software/make/) (usually pre-installed on Linux/macOS, available for Windows via Chocolatey or WSL)
+- [Make](https://www.gnu.org/software/make/) (pre-installed on Linux/macOS, available on Windows via Chocolatey or WSL)
 
 ### 1. Clone the Repository
 
@@ -65,13 +66,13 @@ cd numista-app
 
 ### 2. Configure Environment Files
 
-First, copy the Laravel example environment file. The default values are already configured for Docker.
+First, copy the Laravel example environment file. The default values are pre-configured for Docker.
 ```bash
 cp .env.example .env
 ```
-*Note: Ensure `APP_URL=http://localhost:8080`, `DB_HOST=db`, and the Mailpit settings are correctly configured.*
+*Note: Ensure `APP_URL=http://localhost:8080`, `DB_HOST=db`, and the Mailpit settings are correct.*
 
-Second, to avoid file permission issues within Docker, create a `.env` file at the project root (this one is for Docker Compose, not Laravel) to set your local user ID.
+Second, to avoid file permission issues within Docker, create a `.env` file in the project root (this one is for Docker Compose, not Laravel) to set your local user ID.
 *On Linux/macOS:*
 ```bash
 echo "UID=$(id -u)" > .env
@@ -80,20 +81,21 @@ echo "UID=$(id -u)" > .env
 
 ### 3. Build and Run the Application
 
-The entire setup process is automated with `make`.
+The entire process is automated with `make`.
 
 ```bash
-# 1. Build and start all services (app, nginx, db, mailpit) in detached mode
+# 1. Build and start all services (app, nginx, db, mailpit) in the background.
 make up
 
-# 2. Run the automated setup script (installs dependencies, migrates & seeds DB)
+# 2. Run the automated setup script.
+# (Installs dependencies, generates the key, migrates & seeds the DB, and optimizes the app)
 make setup
 ```
 
 The application will be available at **[http://localhost:8080](http://localhost:8080)**.
 -   **Admin User:** `admin@numista.es`
 -   **Password:** `admin`
--   **Mailpit Web UI:** [http://localhost:8025](http://localhost:8025) (to view outgoing emails)
+-   **Mailpit Web UI:** [http://localhost:8025](http://localhost:8025) (for viewing outgoing emails)
 
 ---
 
@@ -102,33 +104,30 @@ The application will be available at **[http://localhost:8080](http://localhost:
 The project is structured following DDD principles to ensure a clear separation of concerns and a scalable codebase.
 
 -   **`src/Collection/Domain`**: The core of the application. Contains the business logic, entities (Eloquent Models), and **Domain Events** (e.g., `OrderPlaced`). This layer is framework-agnostic.
--   **`src/Collection/Application`**: Contains the **Application Services** that orchestrate the use cases (e.g., `PlaceOrderService`) and **Listeners** that react to domain events. This layer is the bridge between the UI and the Domain.
--   **`src/Collection/Infrastructure`**: Contains implementations of external concerns, such as sending emails (`Mailables`) or interacting with third-party APIs.
--   **`src/Collection/UI`**: The presentation layer. It includes Filament Resources, public-facing Controllers, and Blade components. Its role is to handle HTTP requests/responses and delegate actions to the Application layer.
+-   **`src/Collection/Application`**: Contains the **Application Services** that orchestrate use cases (e.g., `PlaceOrderService`) and **Listeners** that react to domain events. It bridges the UI and Domain layers.
+-   **`src/Collection/Infrastructure`**: Contains implementations of external services, such as sending emails (`Mailables`).
+-   **`src/Collection/UI`**: The presentation layer. It includes Filament Resources, public-facing Controllers, Form Requests, and Blade Components.
 
-This structure makes the application more modular, easier to test, and simpler to maintain as it grows.
+This structure makes the application more modular, testable, and maintainable.
 
 ---
 
-## ✅ Running Tests & CI
+## ✅ Testing and Code Quality
 
-The project uses Pest for testing and includes a GitHub Actions workflow for Continuous Integration.
+The project uses Pest for testing.
 
--   `make test`: Run the entire test suite (Unit & Feature).
--   `make fix`: Automatically fix code style issues using Pint.
-
-The CI pipeline automatically runs `pint --test` and `php artisan test` on every push and pull request to the `main` and `development` branches.
+-   `make test`: Runs the entire test suite (Unit & Feature).
+-   `make fix`: Automatically formats the code using Laravel Pint.
 
 ---
 
 ## 🧰 Useful Make Commands
 
 -   `make up`: Build and start all containers.
--   `make setup`: **Run this after `make up` on a fresh install.**
--   `make down`: Stop and remove all containers, networks, and volumes.
+-   `make setup`: **Run this after `up` on a fresh install.**
+-   `make down`: Stop and remove all containers and volumes.
 -   `make artisan a="<command>"`: Run any `php artisan` command (e.g., `make artisan a="list"`).
 -   `make composer a="<command>"`: Run any `composer` command.
--   `make db-shell`: Connect to the PostgreSQL database shell.
--   `make clear-all`: Clear all Laravel application caches.
--   `make fix-permissions`: Fix file permissions for `storage` and `bootstrap/cache`.
+-   `make db-shell`: Connect to the PostgreSQL console.
+-   `make clear-all`: Clear all application caches.
 -   `make help`: Show all available commands.
