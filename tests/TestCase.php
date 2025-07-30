@@ -18,11 +18,9 @@ abstract class TestCase extends BaseTestCase
     public function createApplication()
     {
         $app = require __DIR__.'/../bootstrap/app.php';
-
         $app->make(Kernel::class)->bootstrap();
 
-        $app['config']->set('app.env', 'testing');
-        $app['config']->set('app.debug', false);
+        // Esto es crucial para la consistencia
         $app['config']->set('app.url', 'http://localhost');
         $app['config']->set('app.name', 'Numista');
         $app['config']->set('app.locale', 'es');

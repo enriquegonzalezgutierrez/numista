@@ -1,5 +1,7 @@
 <?php
 
+// tests/Feature/Http/Public/BladeSnapshotTest.php
+
 namespace Tests\Feature\Http\Public;
 
 use Database\Seeders\SnapshotSeeder;
@@ -16,17 +18,12 @@ class BladeSnapshotTest extends TestCase
 {
     use MatchesSnapshots, RefreshDatabase;
 
-    /**
-     * Helper function to scrub all known dynamic CSRF tokens from HTML content.
-     */
     private function scrubCsrf(string $content): string
     {
         // 1. Scrub the meta tag
         $content = preg_replace('/<meta name="csrf-token" content=".*">/', '<meta name="csrf-token" content="[FILTERED]">', $content);
-
         // 2. Scrub the hidden input field in forms
         $content = preg_replace('/<input type="hidden" name="_token" value=".*" autocomplete="off">/', '<input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">', $content);
-
         // 3. Scrub the token in JavaScript fetch calls
         $content = preg_replace('/(\'X-CSRF-TOKEN\': \')([a-zA-Z0-9]+)(\',)/', '$1[FILTERED]$3', $content);
 
@@ -56,8 +53,6 @@ class BladeSnapshotTest extends TestCase
 
         $response = $this->get(route('public.items.show', $item));
         $response->assertOk();
-
-        // THE FIX: Use the comprehensive scrubber helper
         $this->assertMatchesSnapshot($this->scrubCsrf($response->content()));
     }
 
@@ -68,8 +63,6 @@ class BladeSnapshotTest extends TestCase
 
         $response = $this->get(route('public.items.index'));
         $response->assertOk();
-
-        // THE FIX: Use the comprehensive scrubber helper
         $this->assertMatchesSnapshot($this->scrubCsrf($response->content()));
     }
 }
