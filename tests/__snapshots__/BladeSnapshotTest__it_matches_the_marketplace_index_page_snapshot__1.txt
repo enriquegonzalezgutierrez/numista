@@ -174,7 +174,7 @@
                             <div 
     x-data="{
         addToCart() {
-            fetch('http://localhost/cart/add/1/async', {
+            fetch('http://localhost/cart/add/[id]/async', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '[FILTERED]',
@@ -199,7 +199,7 @@
     class="group relative block"
 >
     
-    <a href="http://localhost/items/item-0">
+    <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
                  alt="Item 0"
@@ -220,7 +220,7 @@
         <div class="flex items-start justify-between">
             <div>
                 <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/item-0">
+                    <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
                         Item 0
@@ -235,7 +235,7 @@
     <div 
     x-data="{
         addToCart() {
-            fetch('http://localhost/cart/add/2/async', {
+            fetch('http://localhost/cart/add/[id]/async', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '[FILTERED]',
@@ -260,7 +260,7 @@
     class="group relative block"
 >
     
-    <a href="http://localhost/items/item-1">
+    <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
                  alt="Item 1"
@@ -281,7 +281,7 @@
         <div class="flex items-start justify-between">
             <div>
                 <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/item-1">
+                    <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
                         Item 1
@@ -296,7 +296,7 @@
     <div 
     x-data="{
         addToCart() {
-            fetch('http://localhost/cart/add/3/async', {
+            fetch('http://localhost/cart/add/[id]/async', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '[FILTERED]',
@@ -321,7 +321,7 @@
     class="group relative block"
 >
     
-    <a href="http://localhost/items/item-2">
+    <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
                  alt="Item 2"
@@ -342,7 +342,7 @@
         <div class="flex items-start justify-between">
             <div>
                 <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/item-2">
+                    <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
                         Item 2
@@ -357,7 +357,7 @@
     <div 
     x-data="{
         addToCart() {
-            fetch('http://localhost/cart/add/4/async', {
+            fetch('http://localhost/cart/add/[id]/async', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '[FILTERED]',
@@ -382,7 +382,7 @@
     class="group relative block"
 >
     
-    <a href="http://localhost/items/item-3">
+    <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
                  alt="Item 3"
@@ -403,7 +403,7 @@
         <div class="flex items-start justify-between">
             <div>
                 <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/item-3">
+                    <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
                         Item 3
@@ -418,7 +418,7 @@
     <div 
     x-data="{
         addToCart() {
-            fetch('http://localhost/cart/add/5/async', {
+            fetch('http://localhost/cart/add/[id]/async', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '[FILTERED]',
@@ -443,7 +443,7 @@
     class="group relative block"
 >
     
-    <a href="http://localhost/items/item-4">
+    <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
                  alt="Item 4"
@@ -464,7 +464,7 @@
         <div class="flex items-start justify-between">
             <div>
                 <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/item-4">
+                    <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
                         Item 4
@@ -479,7 +479,7 @@
     <div 
     x-data="{
         addToCart() {
-            fetch('http://localhost/cart/add/6/async', {
+            fetch('http://localhost/cart/add/[id]/async', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '[FILTERED]',
@@ -504,7 +504,7 @@
     class="group relative block"
 >
     
-    <a href="http://localhost/items/item-5">
+    <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
                  alt="Item 5"
@@ -525,7 +525,7 @@
         <div class="flex items-start justify-between">
             <div>
                 <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/item-5">
+                    <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
                         Item 5
@@ -540,7 +540,7 @@
     <div 
     x-data="{
         addToCart() {
-            fetch('http://localhost/cart/add/7/async', {
+            fetch('http://localhost/cart/add/[id]/async', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '[FILTERED]',
@@ -565,7 +565,7 @@
     class="group relative block"
 >
     
-    <a href="http://localhost/items/item-6">
+    <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
                  alt="Item 6"
@@ -586,7 +586,7 @@
         <div class="flex items-start justify-between">
             <div>
                 <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/item-6">
+                    <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
                         Item 6
@@ -601,7 +601,7 @@
     <div 
     x-data="{
         addToCart() {
-            fetch('http://localhost/cart/add/8/async', {
+            fetch('http://localhost/cart/add/[id]/async', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '[FILTERED]',
@@ -626,7 +626,7 @@
     class="group relative block"
 >
     
-    <a href="http://localhost/items/item-7">
+    <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
                  alt="Item 7"
@@ -647,7 +647,7 @@
         <div class="flex items-start justify-between">
             <div>
                 <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/item-7">
+                    <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
                         Item 7
@@ -662,7 +662,7 @@
     <div 
     x-data="{
         addToCart() {
-            fetch('http://localhost/cart/add/9/async', {
+            fetch('http://localhost/cart/add/[id]/async', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '[FILTERED]',
@@ -687,7 +687,7 @@
     class="group relative block"
 >
     
-    <a href="http://localhost/items/item-8">
+    <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
                  alt="Item 8"
@@ -708,7 +708,7 @@
         <div class="flex items-start justify-between">
             <div>
                 <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/item-8">
+                    <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
                         Item 8
@@ -723,7 +723,7 @@
     <div 
     x-data="{
         addToCart() {
-            fetch('http://localhost/cart/add/10/async', {
+            fetch('http://localhost/cart/add/[id]/async', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '[FILTERED]',
@@ -748,7 +748,7 @@
     class="group relative block"
 >
     
-    <a href="http://localhost/items/item-9">
+    <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
                  alt="Item 9"
@@ -769,7 +769,7 @@
         <div class="flex items-start justify-between">
             <div>
                 <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/item-9">
+                    <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
                         Item 9
@@ -784,7 +784,7 @@
     <div 
     x-data="{
         addToCart() {
-            fetch('http://localhost/cart/add/11/async', {
+            fetch('http://localhost/cart/add/[id]/async', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '[FILTERED]',
@@ -809,7 +809,7 @@
     class="group relative block"
 >
     
-    <a href="http://localhost/items/item-10">
+    <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
                  alt="Item 10"
@@ -830,7 +830,7 @@
         <div class="flex items-start justify-between">
             <div>
                 <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/item-10">
+                    <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
                         Item 10
@@ -845,7 +845,7 @@
     <div 
     x-data="{
         addToCart() {
-            fetch('http://localhost/cart/add/12/async', {
+            fetch('http://localhost/cart/add/[id]/async', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '[FILTERED]',
@@ -870,7 +870,7 @@
     class="group relative block"
 >
     
-    <a href="http://localhost/items/item-11">
+    <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
                  alt="Item 11"
@@ -891,7 +891,7 @@
         <div class="flex items-start justify-between">
             <div>
                 <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/item-11">
+                    <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
                         Item 11

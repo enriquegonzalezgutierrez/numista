@@ -67,7 +67,7 @@
                     
 <div x-data="{
         isModalOpen: false,
-        mainImageUrl: 'http://localhost/images/1',
+        mainImageUrl: 'http://localhost/images/[id]',
         isLightboxOpen: false,
         activeTab: 'description'
     }">
@@ -112,7 +112,7 @@
 
                     
                     <div class="mt-10 hidden lg:block">
-                        <form action="http://localhost/cart/add/1" method="POST">
+                        <form action="http://localhost/cart/add/[id]" method="POST">
                             <input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">                            <button type="submit" class="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-600 px-8 py-3 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
                                 Añadir al Carrito
                             </button>
@@ -165,7 +165,7 @@
 
     
     <div class="fixed bottom-0 left-0 right-0 lg:hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 p-4">
-        <form action="http://localhost/cart/add/1" method="POST">
+        <form action="http://localhost/cart/add/[id]" method="POST">
             <input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">            <button type="submit" class="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-600 px-8 py-3 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
                 Añadir al Carrito - 10,00 €
             </button>

@@ -1,5 +1,7 @@
 <?php
 
+// tests/Feature/Http/Public/BladeSnapshotTest.php
+
 namespace Tests\Feature\Http\Public;
 
 use Database\Seeders\SnapshotSeeder;
@@ -9,7 +11,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Spatie\Snapshots\MatchesSnapshots;
 use Tests\TestCase;
 
-class AAABladeSnapshotTest extends TestCase
+class BladeSnapshotTest extends TestCase
 {
     use MatchesSnapshots, RefreshDatabase;
 
@@ -23,34 +25,18 @@ class AAABladeSnapshotTest extends TestCase
         $this->seed(SnapshotSeeder::class);
     }
 
-    /**
-     * Helper function to scrub all known dynamic CSRF tokens from HTML content.
-     */
-    private function scrubCsrf(string $content): string
-    {
-        // 1. Scrub the meta tag
-        $content = preg_replace('/<meta name="csrf-token" content=".*">/', '<meta name="csrf-token" content="[FILTERED]">', $content);
-
-        // 2. Scrub the hidden input field in forms
-        $content = preg_replace('/<input type="hidden" name="_token" value=".*" autocomplete="off">/', '<input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">', $content);
-
-        // 3. Scrub the token in JavaScript fetch calls
-        $content = preg_replace('/(\'X-CSRF-TOKEN\': \')([a-zA-Z0-9]+)(\',)/', '$1[FILTERED]$3', $content);
-
-        return $content;
-    }
-
     #[Test]
     public function it_matches_the_item_details_page_snapshot(): void
     {
-        // We get the first item created by the seeder, which will always have id=1.
-        $item = Item::find(1);
+        // Get the first item created by the seeder.
+        $item = Item::firstOrFail();
         $item->images()->create(['path' => 'test/image.jpg', 'alt_text' => 'Vista frontal de la moneda']);
 
         $response = $this->get(route('public.items.show', $item));
         $response->assertOk();
 
-        $this->assertMatchesSnapshot($this->scrubCsrf($response->content()));
+        // Use the scrubber from the parent TestCase before asserting.
+        $this->assertMatchesSnapshot($this->scrubSnapshot($response->content()));
     }
 
     #[Test]
@@ -60,6 +46,7 @@ class AAABladeSnapshotTest extends TestCase
         $response = $this->get(route('public.items.index'));
         $response->assertOk();
 
-        $this->assertMatchesSnapshot($this->scrubCsrf($response->content()));
+        // Use the scrubber from the parent TestCase before asserting.
+        $this->assertMatchesSnapshot($this->scrubSnapshot($response->content()));
     }
 }
