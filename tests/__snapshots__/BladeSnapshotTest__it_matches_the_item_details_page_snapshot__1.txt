@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Moneda de Plata de 1999</title>
+        <title>Item 0</title>
 
         <link rel="icon" href="http://localhost/storage/favicon.png" type-="image/png">
 
@@ -84,7 +84,7 @@
                         </div>
                     </li>
                     <li class="text-sm">
-                        <a href="#" aria-current="page" class="font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300">Moneda de Plata de 1999</a>
+                        <a href="#" aria-current="page" class="font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300">Item 0</a>
                     </li>
                 </ol>
             </nav>
@@ -96,18 +96,18 @@
                 <div class="lg:col-span-1">
                     <div class="aspect-[4/3] w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
                         <button @click="isLightboxOpen = true" class="w-full h-full">
-                            <img :src="mainImageUrl" alt="Moneda de Plata de 1999" class="h-full w-full object-cover object-center cursor-zoom-in">
+                            <img :src="mainImageUrl" alt="Item 0" class="h-full w-full object-cover object-center cursor-zoom-in">
                         </button>
                     </div>
                                     </div>
 
                 
                 <div class="mt-10 lg:col-span-1 lg:mt-0">
-                    <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">Moneda de Plata de 1999</h1>
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">De la colección de <strong>Colección de Prueba</strong></p>
+                    <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">Item 0</h1>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">De la colección de <strong>Marketplace Test Collection</strong></p>
                     
                     <div class="mt-4">
-                        <p class="text-3xl tracking-tight text-gray-900 dark:text-white">123,45 €</p>
+                        <p class="text-3xl tracking-tight text-gray-900 dark:text-white">10,00 €</p>
                     </div>
 
                     
@@ -124,47 +124,16 @@
                         <div class="border-b border-gray-200 dark:border-gray-700">
                             <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                                 <button @click="activeTab = 'description'" :class="{ 'border-teal-500 text-teal-600': activeTab === 'description', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab !== 'description' }" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">Descripción</button>
-                                                                <button @click="activeTab = 'details'" :class="{ 'border-teal-500 text-teal-600': activeTab === 'details', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab !== 'details' }" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">Detalles del Ítem</button>
-                                                                                                <button @click="activeTab = 'categories'" :class="{ 'border-teal-500 text-teal-600': activeTab === 'categories', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab !== 'categories' }" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">Categorías</button>
-                                                            </nav>
+                                                                                            </nav>
                         </div>
                         <div class="py-6">
                             <div x-show="activeTab === 'description'" x-cloak>
     <div class="prose prose-sm mt-4 text-gray-600 dark:text-gray-300">
-        <p>Una hermosa moneda de plata de prueba.</p>
+        <p>Non odio et deserunt sed rerum. Incidunt in deleniti ipsam maiores qui rerum culpa dolor.</p>
     </div>
 </div>
 
-<div x-show="activeTab === 'details'" x-cloak>
-    <div class="mt-4">
-        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                            <div>
-                    <dt class="font-medium text-gray-500 dark:text-gray-400">
-                                                Año
-                    </dt>
-                    <dd class="text-gray-900 dark:text-white mt-1">
-                                                    1999
-                                            </dd>
-                </div>
-                            <div>
-                    <dt class="font-medium text-gray-500 dark:text-gray-400">
-                                                Material
-                    </dt>
-                    <dd class="text-gray-900 dark:text-white mt-1">
-                                                    Plata
-                                            </dd>
-                </div>
-                    </dl>
-    </div>
-</div>
 
-<div x-show="activeTab === 'categories'" x-cloak>
-    <div class="mt-4 flex flex-wrap gap-2">
-                    <span class="inline-flex items-center rounded-md bg-gray-100 dark:bg-gray-700 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-200 dark:ring-gray-600">
-                Monedas de Plata
-            </span>
-            </div>
-</div>
                         </div>
                     </div>
                 </div>
@@ -182,61 +151,12 @@
     </h3>
     <div x-show="activeTab === 'description'" x-collapse>
         <div class="prose prose-sm pb-6 text-gray-600 dark:text-gray-300">
-            <p>Una hermosa moneda de plata de prueba.</p>
+            <p>Non odio et deserunt sed rerum. Incidunt in deleniti ipsam maiores qui rerum culpa dolor.</p>
         </div>
     </div>
 </div>
 
-<div>
-    <h3 class="border-b border-gray-200 dark:border-gray-700">
-        <button @click="activeTab = activeTab === 'details' ? null : 'details'" type="button" class="flex w-full items-center justify-between py-6 text-left text-gray-400">
-            <span class="text-base font-medium text-gray-900 dark:text-white">Detalles del Ítem</span>
-            <span class="ml-6 flex items-center">
-                <svg :class="{ 'rotate-180': activeTab === 'details', '-rotate-0': activeTab !== 'details' }" class="h-6 w-6 transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-            </span>
-        </button>
-    </h3>
-    <div x-show="activeTab === 'details'" x-collapse>
-        <div class="py-6">
-            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                                    <div>
-                        <dt class="font-medium text-gray-500 dark:text-gray-400">
-                                                        Año
-                        </dt>
-                        <dd class="text-gray-900 dark:text-white mt-1">
-                                                            1999
-                                                    </dd>
-                    </div>
-                                    <div>
-                        <dt class="font-medium text-gray-500 dark:text-gray-400">
-                                                        Material
-                        </dt>
-                        <dd class="text-gray-900 dark:text-white mt-1">
-                                                            Plata
-                                                    </dd>
-                    </div>
-                            </dl>
-        </div>
-    </div>
-</div>
 
-<div>
-    <h3 class="border-b border-gray-200 dark:border-gray-700">
-        <button @click="activeTab = activeTab === 'categories' ? null : 'categories'" type="button" class="flex w-full items-center justify-between py-6 text-left text-gray-400">
-            <span class="text-base font-medium text-gray-900 dark:text-white">Categorías</span>
-            <span class="ml-6 flex items-center">
-                <svg :class="{ 'rotate-180': activeTab === 'categories', '-rotate-0': activeTab !== 'categories' }" class="h-6 w-6 transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-            </span>
-        </button>
-    </h3>
-    <div x-show="activeTab === 'categories'" x-collapse>
-        <div class="py-6 flex flex-wrap gap-2">
-                            <span class="inline-flex items-center rounded-md bg-gray-100 dark:bg-gray-700 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-200 dark:ring-gray-600">
-                    Monedas de Plata
-                </span>
-                    </div>
-    </div>
-</div>
                 </div>
             </div>
 
@@ -247,7 +167,7 @@
     <div class="fixed bottom-0 left-0 right-0 lg:hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 p-4">
         <form action="http://localhost/cart/add/1" method="POST">
             <input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">            <button type="submit" class="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-600 px-8 py-3 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
-                Añadir al Carrito - 123,45 €
+                Añadir al Carrito - 10,00 €
             </button>
         </form>
     </div>
@@ -262,7 +182,7 @@
         @keydown.escape.window="isLightboxOpen = false"
     >
         <div @click.self="isLightboxOpen = false" class="relative w-full h-full flex items-center justify-center">
-            <img :src="mainImageUrl" alt="Moneda de Plata de 1999" class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl">
+            <img :src="mainImageUrl" alt="Item 0" class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl">
             <button @click="isLightboxOpen = false" class="absolute top-4 right-4 text-white hover:text-gray-300" aria-label="Cerrar">
                 <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
