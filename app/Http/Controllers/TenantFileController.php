@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class TenantFileController extends Controller
 {
     /**
-     * Serves an image after performing authorization checks.
+     * Serves an image after performing authorization checks based on its parent model.
      */
     public function showImage(Image $image): BinaryFileResponse
     {
@@ -26,15 +26,13 @@ class TenantFileController extends Controller
             abort(404);
         }
 
-        // --- THE FIX: Expanded Authorization Logic ---
-
-        // Condition 1: Is the resource publicly browsable?
+        // 1. Is the resource publicly browsable? (e.g., for sale item or any collection)
         $isPubliclyAccessible = ($parent instanceof Item && $parent->status === 'for_sale') || $parent instanceof Collection;
 
-        // Condition 2: Can the current authenticated user access the tenant (e.g., is an admin)?
+        // 2. Can the current authenticated user access the tenant? (e.g., is an admin)
         $canUserAccessTenant = $user && $user->canAccessTenant($parent->tenant);
 
-        // Condition 3: Has the current authenticated user purchased this item?
+        // 3. Has the current authenticated user purchased this item?
         $userHasPurchasedItem = false;
         if ($user && $parent instanceof Item) {
             $userHasPurchasedItem = $user->orders()->whereHas('items', function ($query) use ($parent) {
@@ -42,7 +40,7 @@ class TenantFileController extends Controller
             })->exists();
         }
 
-        // Deny access if NONE of the conditions are met.
+        // Deny access if NONE of the authorization conditions are met.
         if (! $isPubliclyAccessible && ! $canUserAccessTenant && ! $userHasPurchasedItem) {
             abort(403, 'You do not have permission to access this file.');
         }
@@ -51,7 +49,8 @@ class TenantFileController extends Controller
     }
 
     /**
-     * Serves a generic file from tenant storage (for authenticated users).
+     * Serves a generic file from tenant storage only for authenticated users who can access the tenant.
+     * This is used for admin panel previews where the file might not be an Image model.
      */
     public function showFile(string $path): BinaryFileResponse
     {
@@ -77,7 +76,7 @@ class TenantFileController extends Controller
     }
 
     /**
-     * Helper to stream the file from storage.
+     * Helper to stream the file from the 'tenants' disk.
      */
     private function serveFile(string $path): BinaryFileResponse
     {

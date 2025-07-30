@@ -46,7 +46,6 @@ return [
     'not_a_member' => '¿No eres miembro?',
 
     'header' => [
-        // THE FIX: Add the key for the new link
         'marketplace' => 'Marketplace',
         'cart_sr_text' => 'artículos en el carrito, ver cesta',
     ],
@@ -128,6 +127,16 @@ return [
         'state' => 'Provincia / Estado',
         'country' => 'País',
         'phone' => 'Teléfono (Opcional)',
+        // THE FIX: Updated placeholders for Seville
+        'placeholder' => [
+            'label' => 'Ej: Casa, Apartamento Triana',
+            'recipient_name' => 'Ej: María García',
+            'street_address' => 'Ej: Av. de la Constitución, 22, 1ºA',
+            'city' => 'Ej: Sevilla',
+            'postal_code' => 'Ej: 41004',
+            'state' => 'Ej: Sevilla',
+            'phone' => 'Ej: 954000000',
+        ],
     ],
     'auth' => [
         'forgot_password_desc' => 'No hay problema. Simplemente dinos tu dirección de correo y te enviaremos un enlace para restablecer tu clave de acceso.',
