@@ -9,13 +9,13 @@ use PHPUnit\Framework\Attributes\Test;
 use Spatie\Snapshots\MatchesSnapshots;
 use Tests\TestCase;
 
-class BladeSnapshotTest extends TestCase
+class AAABladeSnapshotTest extends TestCase
 {
     use MatchesSnapshots, RefreshDatabase;
 
     /**
-     * Este método se ejecuta una vez antes de todos los tests de esta clase.
-     * Carga los datos predecibles que usarán ambos tests.
+     * This method runs before each test in this class.
+     * It seeds the predictable data that both tests will use.
      */
     protected function setUp(): void
     {
@@ -43,10 +43,8 @@ class BladeSnapshotTest extends TestCase
     #[Test]
     public function it_matches_the_item_details_page_snapshot(): void
     {
-        // Obtenemos el primer ítem creado por el seeder, que siempre tendrá id=1.
+        // We get the first item created by the seeder, which will always have id=1.
         $item = Item::find(1);
-
-        // Añadimos relaciones adicionales que este test necesita
         $item->images()->create(['path' => 'test/image.jpg', 'alt_text' => 'Vista frontal de la moneda']);
 
         $response = $this->get(route('public.items.show', $item));
@@ -58,7 +56,7 @@ class BladeSnapshotTest extends TestCase
     #[Test]
     public function it_matches_the_marketplace_index_page_snapshot(): void
     {
-        // Los datos ya han sido creados en el método setUp().
+        // The data has already been created in the setUp() method.
         $response = $this->get(route('public.items.index'));
         $response->assertOk();
 
