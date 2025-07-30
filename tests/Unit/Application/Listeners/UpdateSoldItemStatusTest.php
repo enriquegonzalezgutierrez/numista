@@ -18,25 +18,24 @@ class UpdateSoldItemStatusTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function it_updates_the_item_status_to_sold_after_an_order_is_placed(): void
+    public function it_updates_the_item_status_to_sold_when_the_last_item_is_ordered(): void
     {
-        // Arrange: Create an item that is for sale with a specific quantity.
+        // Arrange: Create an item for sale with exactly one unit.
         $item = Item::factory()->create([
             'status' => 'for_sale',
-            'quantity' => 5,
+            'quantity' => 1,
         ]);
 
-        // Arrange: Create an order that includes this item.
+        // Arrange: Create an order that buys this last unit.
         $order = Order::factory()->create();
         OrderItem::factory()->create([
             'order_id' => $order->id,
             'item_id' => $item->id,
-            'quantity' => 1, // The user buys 1 unit.
+            'quantity' => 1,
         ]);
 
-        // The 'handle' method in PlaceOrderService already decrements the quantity,
-        // so we are just testing the status change here.
-        // If stock logic were moved *only* to a listener, we would test that here too.
+        // Manually simulate the stock decrement that the PlaceOrderService would perform.
+        $item->decrement('quantity', 1);
 
         $event = new OrderPlaced($order->load('items.item'));
         $listener = new UpdateSoldItemStatus;
@@ -48,6 +47,7 @@ class UpdateSoldItemStatusTest extends TestCase
         $this->assertDatabaseHas('items', [
             'id' => $item->id,
             'status' => 'sold',
+            'quantity' => 0,
         ]);
     }
 
@@ -60,8 +60,7 @@ class UpdateSoldItemStatusTest extends TestCase
             'quantity' => 5, // Initially has 5.
         ]);
 
-        // The order service would have already decremented the quantity.
-        // Let's simulate that here.
+        // Simulate the stock decrement that the PlaceOrderService would do.
         $item->decrement('quantity', 2); // User buys 2.
 
         $order = Order::factory()->create();
@@ -82,39 +81,6 @@ class UpdateSoldItemStatusTest extends TestCase
             'id' => $item->id,
             'status' => 'for_sale',
             'quantity' => 3, // 5 - 2 = 3
-        ]);
-    }
-
-    #[Test]
-    public function it_changes_status_to_sold_only_when_last_item_is_sold(): void
-    {
-        // Arrange: Item has only 1 unit left.
-        $item = Item::factory()->create([
-            'status' => 'for_sale',
-            'quantity' => 1,
-        ]);
-
-        // The order service decrements the quantity to 0.
-        $item->decrement('quantity', 1);
-
-        $order = Order::factory()->create();
-        OrderItem::factory()->create([
-            'order_id' => $order->id,
-            'item_id' => $item->id,
-            'quantity' => 1,
-        ]);
-
-        $event = new OrderPlaced($order->load('items.item'));
-        $listener = new UpdateSoldItemStatus;
-
-        // Act
-        $listener->handle($event);
-
-        // Assert: Now the status should change to 'sold'.
-        $this->assertDatabaseHas('items', [
-            'id' => $item->id,
-            'status' => 'sold',
-            'quantity' => 0,
         ]);
     }
 }

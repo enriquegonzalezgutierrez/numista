@@ -14,11 +14,12 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\DB; // Import DB facade for the subquery
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use Numista\Collection\Domain\Models\Attribute;
 use Numista\Collection\Domain\Models\Item;
@@ -91,7 +92,6 @@ class ItemResource extends Resource
                                     ];
                                 }
 
-                                // THE FIX: Use a whereIn subquery to get attributes linked to the item type
                                 $attributes = Attribute::query()
                                     ->whereIn('id', function ($query) use ($itemType) {
                                         $query->select('attribute_id')
@@ -109,7 +109,6 @@ class ItemResource extends Resource
                                 return $attributes->map(function (Attribute $attribute) {
                                     if ($attribute->type === 'select') {
                                         $options = $attribute->values->pluck('value', 'id');
-
                                         $attributeKey = strtolower(str_replace(' ', '_', $attribute->name));
                                         $translationPrefix = "item.options.{$attributeKey}.";
                                         $translatedOptions = $options->mapWithKeys(function ($value, $id) use ($translationPrefix) {
@@ -117,7 +116,6 @@ class ItemResource extends Resource
 
                                             return [$id => trans()->has($key) ? __($key) : $value];
                                         });
-
                                         $field = Select::make("attributes.{$attribute->id}.attribute_value_id")->options($translatedOptions);
                                     } else {
                                         $field = match ($attribute->type) {
@@ -126,7 +124,6 @@ class ItemResource extends Resource
                                             default => TextInput::make("attributes.{$attribute->id}.value"),
                                         };
                                     }
-
                                     $key = 'panel.attribute_name_'.strtolower(str_replace(' ', '_', $attribute->name));
 
                                     return $field->label(trans()->has($key) ? __($key) : $attribute->name);
@@ -150,7 +147,6 @@ class ItemResource extends Resource
             ])->columns(3);
     }
 
-    // ... (El resto del fichero ItemResource.php no cambia)
     public static function table(Table $table): Table
     {
         return $table
@@ -174,6 +170,23 @@ class ItemResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    // --- INICIO DE LA MODIFICACIÓN ---
+                    BulkAction::make('change_status')
+                        ->label(__('panel.action_bulk_change_status'))
+                        ->icon('heroicon-o-check-badge')
+                        ->requiresConfirmation()
+                        ->form([
+                            Select::make('status')
+                                ->label(__('panel.field_new_status'))
+                                ->options(fn (ItemStatusManager $manager): array => $manager->getStatusesForSelect())
+                                ->required(),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            $records->each->update(['status' => $data['status']]);
+                        })
+                        ->successNotificationTitle(__('panel.notification_status_updated'))
+                        ->deselectRecordsAfterCompletion(),
+                    // --- FIN DE LA MODIFICACIÓN ---
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);

@@ -95,11 +95,11 @@
 
             <div class="mt-4 sm:mt-0 sm:pr-9">
                 
-                <form action="http://localhost/cart/update/1" method="POST"
+                <form action="http://localhost/cart/update/[id]" method="POST"
                       x-data="{ quantity: 1 }"
                       x-ref="updateForm" class="flex items-center">
                     <input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">                    <input type="hidden" name="_method" value="PATCH">                    
-                    <label for="quantity-1" class="sr-only">Cantidad, First Test Item</label>
+                    <label for="quantity-[id]" class="sr-only">Cantidad, First Test Item</label>
                     <div class="flex items-center rounded-md border border-gray-300 dark:border-gray-600">
                         <button
                             type="button"
@@ -110,7 +110,7 @@
                             −
                         </button>
 
-                        <input type="text" name="quantity" id="quantity-1" :value="quantity" class="w-12 border-x border-y-0 text-center text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white" readonly>
+                        <input type="text" name="quantity" id="quantity-[id]" :value="quantity" class="w-12 border-x border-y-0 text-center text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white" readonly>
                         
                         <button
                             type="button"
@@ -125,7 +125,7 @@
 
                 
                 <div class="absolute top-0 right-0">
-                    <form action="http://localhost/cart/remove/1" method="POST">
+                    <form action="http://localhost/cart/remove/[id]" method="POST">
                         <input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">                        <input type="hidden" name="_method" value="DELETE">                        <button type="submit" class="-m-2 inline-flex p-2 text-gray-400 hover:text-gray-500">
                             <span class="sr-only">Eliminar</span>
                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" /></svg>
@@ -161,11 +161,11 @@
 
             <div class="mt-4 sm:mt-0 sm:pr-9">
                 
-                <form action="http://localhost/cart/update/2" method="POST"
+                <form action="http://localhost/cart/update/[id]" method="POST"
                       x-data="{ quantity: 2 }"
                       x-ref="updateForm" class="flex items-center">
                     <input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">                    <input type="hidden" name="_method" value="PATCH">                    
-                    <label for="quantity-2" class="sr-only">Cantidad, Second Test Item</label>
+                    <label for="quantity-[id]" class="sr-only">Cantidad, Second Test Item</label>
                     <div class="flex items-center rounded-md border border-gray-300 dark:border-gray-600">
                         <button
                             type="button"
@@ -176,7 +176,7 @@
                             −
                         </button>
 
-                        <input type="text" name="quantity" id="quantity-2" :value="quantity" class="w-12 border-x border-y-0 text-center text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white" readonly>
+                        <input type="text" name="quantity" id="quantity-[id]" :value="quantity" class="w-12 border-x border-y-0 text-center text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white" readonly>
                         
                         <button
                             type="button"
@@ -191,7 +191,7 @@
 
                 
                 <div class="absolute top-0 right-0">
-                    <form action="http://localhost/cart/remove/2" method="POST">
+                    <form action="http://localhost/cart/remove/[id]" method="POST">
                         <input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">                        <input type="hidden" name="_method" value="DELETE">                        <button type="submit" class="-m-2 inline-flex p-2 text-gray-400 hover:text-gray-500">
                             <span class="sr-only">Eliminar</span>
                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" /></svg>

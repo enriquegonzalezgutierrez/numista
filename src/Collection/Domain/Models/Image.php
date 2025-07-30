@@ -14,6 +14,7 @@ class Image extends Model
 {
     use HasFactory;
 
+    // THE FIX: Add 'is_featured' to the fillable array.
     protected $fillable = ['imageable_id', 'imageable_type', 'path', 'alt_text', 'order_column', 'is_featured'];
 
     protected $casts = [
@@ -29,7 +30,7 @@ class Image extends Model
     }
 
     /**
-     * THE FIX: Create a new factory instance for the model.
+     * Create a new factory instance for the model.
      */
     protected static function newFactory(): ImageFactory
     {
