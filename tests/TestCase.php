@@ -1,5 +1,7 @@
 <?php
 
+// tests/TestCase.php
+
 namespace Tests;
 
 use Illuminate\Contracts\Console\Kernel;
@@ -19,6 +21,10 @@ abstract class TestCase extends BaseTestCase
 
         $app->make(Kernel::class)->bootstrap();
 
+        $app['config']->set('app.env', 'testing');
+        $app['config']->set('app.debug', false);
+        $app['config']->set('app.url', 'http://localhost');
+        $app['config']->set('app.name', 'Numista');
         $app['config']->set('app.locale', 'es');
 
         return $app;
