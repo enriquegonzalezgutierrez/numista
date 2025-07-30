@@ -117,6 +117,10 @@ test-unit: ## Run only Unit tests
 test-coverage: ## Run tests and generate a code coverage report
 	@make artisan a="test --coverage"
 
+test-snapshots-update: ## Update all Blade/HTML snapshots
+	@echo "--- Updating Blade/HTML snapshots ---"
+	@make artisan a="test --update-snapshots"
+
 lint: ## Check for code style issues using Pint
 	@echo "--- Checking code style ---"
 	@docker-compose exec app ./vendor/bin/pint --test

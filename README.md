@@ -119,6 +119,17 @@ The project uses Pest for testing.
 -   `make test`: Runs the entire test suite (Unit & Feature).
 -   `make fix`: Automatically formats the code using Laravel Pint.
 
+### Snapshot Testing
+
+This project uses snapshot tests to verify the HTML structure of the public-facing Blade views. These tests ensure that UI changes are intentional.
+
+-   **If a snapshot test fails:** This usually means you have intentionally changed a Blade view. This is expected.
+-   **How to update snapshots:** After verifying your changes are correct, run the following command to update the saved snapshots with the new version:
+    ```bash
+    make test-snapshots-update
+    ```
+-   **Important:** After updating, you must commit the changed snapshot files (located in `tests/__snapshots__/`) along with your other code changes.
+
 ---
 
 ## 🧰 Useful Make Commands
