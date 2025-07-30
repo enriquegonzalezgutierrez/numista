@@ -16,7 +16,8 @@
             {{-- Desktop Filters Sidebar --}}
             <aside class="hidden lg:block bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm h-fit sticky top-24">
                 <form action="{{ route('public.items.index') }}" method="GET" id="desktop-filter-form">
-                    <x-public.items.filter-form 
+                    {{-- THE FIX: Update component path --}}
+                    <x-public.filter-form 
                         :categories="$categories" 
                         :filterableAttributes="$filterableAttributes" 
                     />
@@ -39,7 +40,8 @@
                         
                         <form action="{{ route('public.items.index') }}" method="GET" class="flex flex-col h-full">
                             <div class="mt-4 border-t border-gray-200 dark:border-gray-700 px-4 py-6 overflow-y-auto">
-                                <x-public.items.filter-form :categories="$categories" :filterableAttributes="$filterableAttributes" :is-mobile="true" />
+                                {{-- THE FIX: Update component path --}}
+                                <x-public.filter-form :categories="$categories" :filterableAttributes="$filterableAttributes" :is-mobile="true" />
                             </div>
                             <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-4 mt-auto space-y-3">
                                 <button type="submit" class="w-full rounded-md bg-teal-600 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:bg-teal-700">{{ __('public.filter_apply_button') }}</button>

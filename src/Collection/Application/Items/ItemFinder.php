@@ -13,13 +13,14 @@ class ItemFinder
 
     public function forMarketplace(array $filters = []): Paginator
     {
+        // THE FIX: Ensure that 'images' and 'tenant' are always eager-loaded.
+        // This prevents the N+1 query problem on the marketplace page.
         $query = Item::query()
             ->where('status', 'for_sale')
-            ->with(['images', 'tenant', 'attributes']);
+            ->with(['images', 'tenant']);
 
         $this->applyFilters($query, $filters);
 
-        // THE FIX: Change to simplePaginate for "Load More" functionality.
         return $query->latest('created_at')->simplePaginate($this->perPage)->withQueryString();
     }
 
@@ -40,7 +41,7 @@ class ItemFinder
             });
         });
 
-        // THE FIX: Add the logic for the collections filter
+        // Collection filter
         $query->when($filters['collections'] ?? null, function ($query, $collections) {
             if (! is_array($collections)) {
                 return;

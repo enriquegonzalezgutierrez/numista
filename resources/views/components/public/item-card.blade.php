@@ -13,11 +13,9 @@
             .then(response => response.json())
             .then(data => {
                 if(data.message) {
-                    // Dispatch a global browser event for the notification
                     window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
                 }
                 if(data.cartCount !== undefined) {
-                    // Dispatch a global event to update the cart count in the header
                     window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
                 }
             })

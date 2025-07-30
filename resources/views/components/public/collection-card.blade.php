@@ -12,7 +12,6 @@
              class="h-full w-full object-cover object-center">
     </div>
     <h3 class="mt-4 text-base font-semibold text-gray-900 dark:text-white">
-        {{-- THE FIX: The href now points to the marketplace, filtered by the collection ID --}}
         <a href="{{ route('public.items.index', ['collections' => [$collection->id]]) }}">
             <span class="absolute inset-0"></span>
             {{ $collection->name }}

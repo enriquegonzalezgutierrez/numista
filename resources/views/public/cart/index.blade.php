@@ -14,7 +14,8 @@
                 
                 <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($items as $item)
-                        <x-public.cart.cart-item :item="$item" :quantity="$cart[$item->id]['quantity']" />
+                        {{-- THE FIX: Update component tag --}}
+                        <x-public.cart-item :item="$item" :quantity="$cart[$item->id]['quantity']" />
                     @empty
                         <li class="text-center py-16 px-6">
                             <p class="text-gray-500 dark:text-gray-400 text-lg">{{ __('public.cart_empty') }}</p>

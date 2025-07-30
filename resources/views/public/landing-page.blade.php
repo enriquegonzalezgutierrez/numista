@@ -28,7 +28,8 @@
                 </div>
                 <div class="mt-6 grid grid-cols-1 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 sm:gap-x-6 lg:gap-x-8">
                     @foreach($featuredCollections as $collection)
-                        <x-public.collections.collection-card :collection="$collection" />
+                        {{-- THE FIX: Update component tag --}}
+                        <x-public.collection-card :collection="$collection" />
                     @endforeach
                 </div>
             </div>
@@ -44,7 +45,8 @@
 
                 <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
                     @foreach($latestItems as $item)
-                        <x-public.items.item-card :item="$item" />
+                        {{-- THE FIX: Update component tag --}}
+                        <x-public.item-card :item="$item" />
                     @endforeach
                 </div>
             </div>

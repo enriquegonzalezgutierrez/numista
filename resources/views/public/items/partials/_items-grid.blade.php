@@ -1,3 +1,4 @@
 @foreach($items as $item)
-    <x-public.items.item-card :item="$item" />
+    {{-- THE FIX: Update component tag --}}
+    <x-public.item-card :item="$item" />
 @endforeach
