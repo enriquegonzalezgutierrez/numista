@@ -10,26 +10,18 @@ use Numista\Collection\Domain\Models\Country;
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\Tenant;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Numista\Collection\Domain\Models\Item>
- */
 class ItemFactory extends Factory
 {
     protected $model = Item::class;
 
-    /**
-     * Define the model's default state.
-     * Contains only the fields that exist in the 'items' table.
-     */
     public function definition(): array
     {
-        // THE FIX: Use a closure for slug to ensure it's generated from the final 'name' attribute.
         return [
             'tenant_id' => Tenant::factory(),
             'name' => ucfirst(fake()->words(3, true)),
             'slug' => fn (array $attributes) => Str::slug($attributes['name']),
             'description' => fake()->paragraph(2),
-            'type' => 'object', // A generic default
+            'type' => 'object',
             'quantity' => fake()->numberBetween(1, 5),
             'purchase_price' => fake()->randomFloat(2, 5, 100),
             'purchase_date' => fake()->date(),
@@ -37,10 +29,10 @@ class ItemFactory extends Factory
         ];
     }
 
-    // A helper function to get the Spanish Country ID consistently
+    // THE FIX: The configure() method has been removed entirely to avoid conflicts.
+
     private function getSpainCountryId(): ?int
     {
-        // Find or create Spain to ensure it exists for tests
         return Country::firstOrCreate(['iso_code' => 'ES'], ['name' => 'España'])->id;
     }
 
@@ -82,8 +74,6 @@ class ItemFactory extends Factory
             'face_value' => fake()->randomElement(['5c', '10p', '1.00€']),
         ]);
     }
-
-    // ... (the other states like comic, watch, etc., don't have a country_id and don't need changes)
 
     public function comic(): static
     {

@@ -140,6 +140,17 @@ return [
     'widget_stats_categories_desc' => 'Total de categorías para organizar ítems',
     'widget_stats_collections_desc' => 'Agrupaciones temáticas de ítems',
 
+    'widget_sales_revenue' => 'Ingresos (30d)',
+    'widget_sales_revenue_desc' => 'Ingresos totales de los últimos 30 días',
+    'widget_sales_orders' => 'Pedidos (30d)',
+    'widget_sales_orders_desc' => 'Número de pedidos en los últimos 30 días',
+    'widget_sales_avg_value' => 'Valor Medio Pedido (30d)',
+    'widget_sales_avg_value_desc' => 'Valor medio de cada pedido en los últimos 30 días',
+    'widget_chart_sales_by_month' => 'Ventas por Mes',
+    'widget_chart_sales_dataset_label' => 'Ingresos',
+    'widget_table_top_selling' => 'Ítems Más Vendidos',
+    'widget_table_column_units_sold' => 'Unidades Vendidas',
+
     'My Orders' => 'Mis Pedidos',
     'Order Number' => 'Nº de Pedido',
     'Date' => 'Fecha',

@@ -4,6 +4,7 @@
 
 namespace Numista\Collection\Domain\Models;
 
+use Database\Factories\ImageFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,8 +29,15 @@ class Image extends Model
     }
 
     /**
-     * THE FIX: The URL accessor now points to a route that uses the Image ID.
-     * This allows for proper authorization checks in the controller.
+     * THE FIX: Create a new factory instance for the model.
+     */
+    protected static function newFactory(): ImageFactory
+    {
+        return ImageFactory::new();
+    }
+
+    /**
+     * Get the full URL to the image.
      */
     protected function url(): Attribute
     {

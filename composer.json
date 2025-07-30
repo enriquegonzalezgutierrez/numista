@@ -35,7 +35,9 @@
         "pestphp/pest": "^3.8",
         "pestphp/pest-plugin-laravel": "^3.0",
         "phpunit/phpunit": "^11.5.3",
-        "spatie/laravel-ignition": "dev-main as 3.0.0"
+        "spatie/laravel-ignition": "dev-main as 3.0.0",
+        "spatie/pest-plugin-snapshots": "^2.2",
+        "spatie/phpunit-snapshot-assertions": "^5.0"
     },
     "autoload": {
         "psr-4": {

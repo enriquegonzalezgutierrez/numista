@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -18,10 +19,6 @@ abstract class TestCase extends BaseTestCase
 
         $app->make(Kernel::class)->bootstrap();
 
-        // THE DEFINITIVE FIX:
-        // Force the application's locale to 'es' for the entire test suite.
-        // This is done during the application's creation, ensuring all
-        // subsequent service providers and components use the correct locale.
         $app['config']->set('app.locale', 'es');
 
         return $app;
@@ -34,7 +31,11 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        // This disables Vite's manifest lookup during tests
+        // THE FIX: Disable CSRF protection middleware for all tests.
+        // This prevents the CSRF token from changing on every request,
+        // which would cause snapshot tests to fail constantly.
+        $this->withoutMiddleware(VerifyCsrfToken::class);
+
         $this->withoutVite();
     }
 }
