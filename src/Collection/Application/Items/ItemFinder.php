@@ -22,7 +22,9 @@ class ItemFinder
 
         $this->applyFilters($query, $filters);
 
-        return $query->latest('created_at')->simplePaginate($this->perPage)->withQueryString();
+        // THE FIX: Add a secondary, stable sort key (`id`) to ensure a deterministic order
+        // across all database engines (local PostgreSQL vs. GitHub's SQLite).
+        return $query->latest('created_at')->orderBy('id', 'desc')->simplePaginate($this->perPage)->withQueryString();
     }
 
     public function applyFilters(Builder $query, array $filters): void

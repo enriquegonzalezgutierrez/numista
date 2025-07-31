@@ -214,7 +214,7 @@
     <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
-                 alt="Item 0"
+                 alt="Item 14"
                  class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
                  loading="lazy">
         </div>
@@ -235,12 +235,12 @@
                     <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
-                        Item 0
+                        Item 14
                     </a>
                 </h3>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
             </div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">10,00 €</p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">24,00 €</p>
                     </div>
     </div>
 </div>    
@@ -275,7 +275,7 @@
     <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
-                 alt="Item 1"
+                 alt="Item 13"
                  class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
                  loading="lazy">
         </div>
@@ -296,12 +296,12 @@
                     <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
-                        Item 1
+                        Item 13
                     </a>
                 </h3>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
             </div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">11,00 €</p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">23,00 €</p>
                     </div>
     </div>
 </div>    
@@ -336,7 +336,7 @@
     <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
-                 alt="Item 2"
+                 alt="Item 12"
                  class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
                  loading="lazy">
         </div>
@@ -357,12 +357,12 @@
                     <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
-                        Item 2
+                        Item 12
                     </a>
                 </h3>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
             </div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">12,00 €</p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">22,00 €</p>
                     </div>
     </div>
 </div>    
@@ -397,7 +397,7 @@
     <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
-                 alt="Item 3"
+                 alt="Item 11"
                  class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
                  loading="lazy">
         </div>
@@ -418,378 +418,12 @@
                     <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
-                        Item 3
+                        Item 11
                     </a>
                 </h3>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
             </div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">13,00 €</p>
-                    </div>
-    </div>
-</div>    
-    <div 
-    x-data="{
-        addToCart() {
-            fetch('http://localhost/cart/add/[id]/async', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '[FILTERED]',
-                    'Accept': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.message) {
-                    window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
-                }
-                if(data.cartCount !== undefined) {
-                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: 'Could not add item to cart.' } }));
-            });
-        }
-    }"
-    class="group relative block"
->
-    
-    <a href="http://localhost/items/[slug]">
-        <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
-            <img src="/images/placeholder.svg"
-                 alt="Item 4"
-                 class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
-                 loading="lazy">
-        </div>
-    </a>
-
-    
-    <div class="absolute inset-x-0 bottom-24 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <button @click.prevent="addToCart()" type="button" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
-            Añadir al Carrito
-        </button>
-    </div>
-
-    
-    <div class="relative mt-4">
-        <div class="flex items-start justify-between">
-            <div>
-                <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/[slug]">
-                        
-                        <span aria-hidden="true" class="absolute inset-0"></span>
-                        Item 4
-                    </a>
-                </h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
-            </div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">14,00 €</p>
-                    </div>
-    </div>
-</div>    
-    <div 
-    x-data="{
-        addToCart() {
-            fetch('http://localhost/cart/add/[id]/async', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '[FILTERED]',
-                    'Accept': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.message) {
-                    window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
-                }
-                if(data.cartCount !== undefined) {
-                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: 'Could not add item to cart.' } }));
-            });
-        }
-    }"
-    class="group relative block"
->
-    
-    <a href="http://localhost/items/[slug]">
-        <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
-            <img src="/images/placeholder.svg"
-                 alt="Item 5"
-                 class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
-                 loading="lazy">
-        </div>
-    </a>
-
-    
-    <div class="absolute inset-x-0 bottom-24 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <button @click.prevent="addToCart()" type="button" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
-            Añadir al Carrito
-        </button>
-    </div>
-
-    
-    <div class="relative mt-4">
-        <div class="flex items-start justify-between">
-            <div>
-                <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/[slug]">
-                        
-                        <span aria-hidden="true" class="absolute inset-0"></span>
-                        Item 5
-                    </a>
-                </h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
-            </div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">15,00 €</p>
-                    </div>
-    </div>
-</div>    
-    <div 
-    x-data="{
-        addToCart() {
-            fetch('http://localhost/cart/add/[id]/async', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '[FILTERED]',
-                    'Accept': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.message) {
-                    window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
-                }
-                if(data.cartCount !== undefined) {
-                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: 'Could not add item to cart.' } }));
-            });
-        }
-    }"
-    class="group relative block"
->
-    
-    <a href="http://localhost/items/[slug]">
-        <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
-            <img src="/images/placeholder.svg"
-                 alt="Item 6"
-                 class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
-                 loading="lazy">
-        </div>
-    </a>
-
-    
-    <div class="absolute inset-x-0 bottom-24 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <button @click.prevent="addToCart()" type="button" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
-            Añadir al Carrito
-        </button>
-    </div>
-
-    
-    <div class="relative mt-4">
-        <div class="flex items-start justify-between">
-            <div>
-                <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/[slug]">
-                        
-                        <span aria-hidden="true" class="absolute inset-0"></span>
-                        Item 6
-                    </a>
-                </h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
-            </div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">16,00 €</p>
-                    </div>
-    </div>
-</div>    
-    <div 
-    x-data="{
-        addToCart() {
-            fetch('http://localhost/cart/add/[id]/async', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '[FILTERED]',
-                    'Accept': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.message) {
-                    window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
-                }
-                if(data.cartCount !== undefined) {
-                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: 'Could not add item to cart.' } }));
-            });
-        }
-    }"
-    class="group relative block"
->
-    
-    <a href="http://localhost/items/[slug]">
-        <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
-            <img src="/images/placeholder.svg"
-                 alt="Item 7"
-                 class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
-                 loading="lazy">
-        </div>
-    </a>
-
-    
-    <div class="absolute inset-x-0 bottom-24 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <button @click.prevent="addToCart()" type="button" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
-            Añadir al Carrito
-        </button>
-    </div>
-
-    
-    <div class="relative mt-4">
-        <div class="flex items-start justify-between">
-            <div>
-                <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/[slug]">
-                        
-                        <span aria-hidden="true" class="absolute inset-0"></span>
-                        Item 7
-                    </a>
-                </h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
-            </div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">17,00 €</p>
-                    </div>
-    </div>
-</div>    
-    <div 
-    x-data="{
-        addToCart() {
-            fetch('http://localhost/cart/add/[id]/async', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '[FILTERED]',
-                    'Accept': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.message) {
-                    window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
-                }
-                if(data.cartCount !== undefined) {
-                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: 'Could not add item to cart.' } }));
-            });
-        }
-    }"
-    class="group relative block"
->
-    
-    <a href="http://localhost/items/[slug]">
-        <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
-            <img src="/images/placeholder.svg"
-                 alt="Item 8"
-                 class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
-                 loading="lazy">
-        </div>
-    </a>
-
-    
-    <div class="absolute inset-x-0 bottom-24 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <button @click.prevent="addToCart()" type="button" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
-            Añadir al Carrito
-        </button>
-    </div>
-
-    
-    <div class="relative mt-4">
-        <div class="flex items-start justify-between">
-            <div>
-                <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/[slug]">
-                        
-                        <span aria-hidden="true" class="absolute inset-0"></span>
-                        Item 8
-                    </a>
-                </h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
-            </div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">18,00 €</p>
-                    </div>
-    </div>
-</div>    
-    <div 
-    x-data="{
-        addToCart() {
-            fetch('http://localhost/cart/add/[id]/async', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '[FILTERED]',
-                    'Accept': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.message) {
-                    window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
-                }
-                if(data.cartCount !== undefined) {
-                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: 'Could not add item to cart.' } }));
-            });
-        }
-    }"
-    class="group relative block"
->
-    
-    <a href="http://localhost/items/[slug]">
-        <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
-            <img src="/images/placeholder.svg"
-                 alt="Item 9"
-                 class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
-                 loading="lazy">
-        </div>
-    </a>
-
-    
-    <div class="absolute inset-x-0 bottom-24 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <button @click.prevent="addToCart()" type="button" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
-            Añadir al Carrito
-        </button>
-    </div>
-
-    
-    <div class="relative mt-4">
-        <div class="flex items-start justify-between">
-            <div>
-                <h3 class="text-sm text-gray-700 dark:text-gray-300">
-                    <a href="http://localhost/items/[slug]">
-                        
-                        <span aria-hidden="true" class="absolute inset-0"></span>
-                        Item 9
-                    </a>
-                </h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
-            </div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">19,00 €</p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">21,00 €</p>
                     </div>
     </div>
 </div>    
@@ -885,7 +519,7 @@
     <a href="http://localhost/items/[slug]">
         <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
             <img src="/images/placeholder.svg"
-                 alt="Item 11"
+                 alt="Item 9"
                  class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
                  loading="lazy">
         </div>
@@ -906,12 +540,378 @@
                     <a href="http://localhost/items/[slug]">
                         
                         <span aria-hidden="true" class="absolute inset-0"></span>
-                        Item 11
+                        Item 9
                     </a>
                 </h3>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
             </div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">21,00 €</p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">19,00 €</p>
+                    </div>
+    </div>
+</div>    
+    <div 
+    x-data="{
+        addToCart() {
+            fetch('http://localhost/cart/add/[id]/async', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '[FILTERED]',
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.message) {
+                    window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
+                }
+                if(data.cartCount !== undefined) {
+                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: 'Could not add item to cart.' } }));
+            });
+        }
+    }"
+    class="group relative block"
+>
+    
+    <a href="http://localhost/items/[slug]">
+        <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
+            <img src="/images/placeholder.svg"
+                 alt="Item 8"
+                 class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
+                 loading="lazy">
+        </div>
+    </a>
+
+    
+    <div class="absolute inset-x-0 bottom-24 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button @click.prevent="addToCart()" type="button" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+            Añadir al Carrito
+        </button>
+    </div>
+
+    
+    <div class="relative mt-4">
+        <div class="flex items-start justify-between">
+            <div>
+                <h3 class="text-sm text-gray-700 dark:text-gray-300">
+                    <a href="http://localhost/items/[slug]">
+                        
+                        <span aria-hidden="true" class="absolute inset-0"></span>
+                        Item 8
+                    </a>
+                </h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
+            </div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">18,00 €</p>
+                    </div>
+    </div>
+</div>    
+    <div 
+    x-data="{
+        addToCart() {
+            fetch('http://localhost/cart/add/[id]/async', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '[FILTERED]',
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.message) {
+                    window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
+                }
+                if(data.cartCount !== undefined) {
+                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: 'Could not add item to cart.' } }));
+            });
+        }
+    }"
+    class="group relative block"
+>
+    
+    <a href="http://localhost/items/[slug]">
+        <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
+            <img src="/images/placeholder.svg"
+                 alt="Item 7"
+                 class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
+                 loading="lazy">
+        </div>
+    </a>
+
+    
+    <div class="absolute inset-x-0 bottom-24 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button @click.prevent="addToCart()" type="button" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+            Añadir al Carrito
+        </button>
+    </div>
+
+    
+    <div class="relative mt-4">
+        <div class="flex items-start justify-between">
+            <div>
+                <h3 class="text-sm text-gray-700 dark:text-gray-300">
+                    <a href="http://localhost/items/[slug]">
+                        
+                        <span aria-hidden="true" class="absolute inset-0"></span>
+                        Item 7
+                    </a>
+                </h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
+            </div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">17,00 €</p>
+                    </div>
+    </div>
+</div>    
+    <div 
+    x-data="{
+        addToCart() {
+            fetch('http://localhost/cart/add/[id]/async', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '[FILTERED]',
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.message) {
+                    window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
+                }
+                if(data.cartCount !== undefined) {
+                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: 'Could not add item to cart.' } }));
+            });
+        }
+    }"
+    class="group relative block"
+>
+    
+    <a href="http://localhost/items/[slug]">
+        <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
+            <img src="/images/placeholder.svg"
+                 alt="Item 6"
+                 class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
+                 loading="lazy">
+        </div>
+    </a>
+
+    
+    <div class="absolute inset-x-0 bottom-24 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button @click.prevent="addToCart()" type="button" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+            Añadir al Carrito
+        </button>
+    </div>
+
+    
+    <div class="relative mt-4">
+        <div class="flex items-start justify-between">
+            <div>
+                <h3 class="text-sm text-gray-700 dark:text-gray-300">
+                    <a href="http://localhost/items/[slug]">
+                        
+                        <span aria-hidden="true" class="absolute inset-0"></span>
+                        Item 6
+                    </a>
+                </h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
+            </div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">16,00 €</p>
+                    </div>
+    </div>
+</div>    
+    <div 
+    x-data="{
+        addToCart() {
+            fetch('http://localhost/cart/add/[id]/async', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '[FILTERED]',
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.message) {
+                    window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
+                }
+                if(data.cartCount !== undefined) {
+                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: 'Could not add item to cart.' } }));
+            });
+        }
+    }"
+    class="group relative block"
+>
+    
+    <a href="http://localhost/items/[slug]">
+        <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
+            <img src="/images/placeholder.svg"
+                 alt="Item 5"
+                 class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
+                 loading="lazy">
+        </div>
+    </a>
+
+    
+    <div class="absolute inset-x-0 bottom-24 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button @click.prevent="addToCart()" type="button" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+            Añadir al Carrito
+        </button>
+    </div>
+
+    
+    <div class="relative mt-4">
+        <div class="flex items-start justify-between">
+            <div>
+                <h3 class="text-sm text-gray-700 dark:text-gray-300">
+                    <a href="http://localhost/items/[slug]">
+                        
+                        <span aria-hidden="true" class="absolute inset-0"></span>
+                        Item 5
+                    </a>
+                </h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
+            </div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">15,00 €</p>
+                    </div>
+    </div>
+</div>    
+    <div 
+    x-data="{
+        addToCart() {
+            fetch('http://localhost/cart/add/[id]/async', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '[FILTERED]',
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.message) {
+                    window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
+                }
+                if(data.cartCount !== undefined) {
+                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: 'Could not add item to cart.' } }));
+            });
+        }
+    }"
+    class="group relative block"
+>
+    
+    <a href="http://localhost/items/[slug]">
+        <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
+            <img src="/images/placeholder.svg"
+                 alt="Item 4"
+                 class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
+                 loading="lazy">
+        </div>
+    </a>
+
+    
+    <div class="absolute inset-x-0 bottom-24 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button @click.prevent="addToCart()" type="button" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+            Añadir al Carrito
+        </button>
+    </div>
+
+    
+    <div class="relative mt-4">
+        <div class="flex items-start justify-between">
+            <div>
+                <h3 class="text-sm text-gray-700 dark:text-gray-300">
+                    <a href="http://localhost/items/[slug]">
+                        
+                        <span aria-hidden="true" class="absolute inset-0"></span>
+                        Item 4
+                    </a>
+                </h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
+            </div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">14,00 €</p>
+                    </div>
+    </div>
+</div>    
+    <div 
+    x-data="{
+        addToCart() {
+            fetch('http://localhost/cart/add/[id]/async', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '[FILTERED]',
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.message) {
+                    window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
+                }
+                if(data.cartCount !== undefined) {
+                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: 'Could not add item to cart.' } }));
+            });
+        }
+    }"
+    class="group relative block"
+>
+    
+    <a href="http://localhost/items/[slug]">
+        <div class="relative h-72 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 group-hover:opacity-75 transition-opacity">
+            <img src="/images/placeholder.svg"
+                 alt="Item 3"
+                 class="h-full w-full object-cover object-center transition-transform duration-300 ease-in-out group-hover:scale-105"
+                 loading="lazy">
+        </div>
+    </a>
+
+    
+    <div class="absolute inset-x-0 bottom-24 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button @click.prevent="addToCart()" type="button" class="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+            Añadir al Carrito
+        </button>
+    </div>
+
+    
+    <div class="relative mt-4">
+        <div class="flex items-start justify-between">
+            <div>
+                <h3 class="text-sm text-gray-700 dark:text-gray-300">
+                    <a href="http://localhost/items/[slug]">
+                        
+                        <span aria-hidden="true" class="absolute inset-0"></span>
+                        Item 3
+                    </a>
+                </h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Marketplace Test Collection</p>
+            </div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">13,00 €</p>
                     </div>
     </div>
 </div>                        </div>
