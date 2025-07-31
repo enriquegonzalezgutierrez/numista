@@ -24,8 +24,9 @@ class OrderConfirmationMail extends Mailable implements ShouldQueue
      */
     public function envelope(): Envelope
     {
+        // THE FIX: Use the translation key for the subject.
         return new Envelope(
-            subject: 'Confirmación de tu pedido #'.$this->order->order_number,
+            subject: __('mail.order_confirmation_subject', ['orderNumber' => $this->order->order_number]),
         );
     }
 

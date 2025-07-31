@@ -17,6 +17,7 @@ class OrderControllerTest extends TestCase
     #[Test]
     public function a_user_can_view_their_own_order_details(): void
     {
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
         $order = Order::factory()->create(['user_id' => $user->id]);
 
@@ -30,6 +31,7 @@ class OrderControllerTest extends TestCase
     #[Test]
     public function a_user_cannot_view_another_users_order_details(): void
     {
+        /** @var \App\Models\User $userOne */
         $userOne = User::factory()->create();
         $userTwo = User::factory()->create();
         $orderForUserTwo = Order::factory()->create(['user_id' => $userTwo->id]);
@@ -42,7 +44,8 @@ class OrderControllerTest extends TestCase
     #[Test]
     public function a_guest_cannot_view_any_order_details(): void
     {
-        $order = Order::factory()->create();
+        $user = User::factory()->create();
+        $order = Order::factory()->create(['user_id' => $user->id]);
 
         $response = $this->get(route('orders.show', $order));
 

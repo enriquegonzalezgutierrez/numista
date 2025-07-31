@@ -4,6 +4,7 @@
 
 namespace Tests\Unit\Application\Listeners;
 
+use App\Models\User; // <-- IMPORTANTE: Añadir este `use`
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Numista\Collection\Application\Listeners\UpdateSoldItemStatus;
 use Numista\Collection\Domain\Events\OrderPlaced;
@@ -20,6 +21,9 @@ class UpdateSoldItemStatusTest extends TestCase
     #[Test]
     public function it_updates_the_item_status_to_sold_when_the_last_item_is_ordered(): void
     {
+        // Arrange: Create a user to associate with the order.
+        $user = User::factory()->create();
+
         // Arrange: Create an item for sale with exactly one unit.
         $item = Item::factory()->create([
             'status' => 'for_sale',
@@ -27,7 +31,10 @@ class UpdateSoldItemStatusTest extends TestCase
         ]);
 
         // Arrange: Create an order that buys this last unit.
-        $order = Order::factory()->create();
+        $order = Order::factory()->create([
+            'user_id' => $user->id, // THE FIX: Assign the user to the order.
+            'tenant_id' => $item->tenant_id,
+        ]);
         OrderItem::factory()->create([
             'order_id' => $order->id,
             'item_id' => $item->id,
@@ -54,6 +61,9 @@ class UpdateSoldItemStatusTest extends TestCase
     #[Test]
     public function it_does_not_change_status_if_stock_remains(): void
     {
+        // Arrange: Create a user to associate with the order.
+        $user = User::factory()->create();
+
         // Arrange: Create an item for sale with more than one unit.
         $item = Item::factory()->create([
             'status' => 'for_sale',
@@ -63,7 +73,10 @@ class UpdateSoldItemStatusTest extends TestCase
         // Simulate the stock decrement that the PlaceOrderService would do.
         $item->decrement('quantity', 2); // User buys 2.
 
-        $order = Order::factory()->create();
+        $order = Order::factory()->create([
+            'user_id' => $user->id, // THE FIX: Assign the user to the order.
+            'tenant_id' => $item->tenant_id,
+        ]);
         OrderItem::factory()->create([
             'order_id' => $order->id,
             'item_id' => $item->id,

@@ -14,6 +14,8 @@ class SendOrderConfirmationEmail implements ShouldQueue
      */
     public function handle(OrderPlaced $event): void
     {
+        // THE FIX: Use the correct relationship name `customer` which points to the User model.
+        // This was the source of the error in the CheckoutControllerTest.
         $order = $event->order->load('customer', 'items.item');
 
         Mail::to($order->customer->email)->send(

@@ -4,8 +4,8 @@
 
 namespace Numista\Collection\UI\Filament\Resources\CustomerResource\Pages;
 
+use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Database\Eloquent\Model;
 use Numista\Collection\UI\Filament\Resources\CustomerResource;
 
 class ViewCustomer extends ViewRecord
@@ -13,16 +13,20 @@ class ViewCustomer extends ViewRecord
     protected static string $resource = CustomerResource::class;
 
     /**
-     * This hook is reliably called on the view page.
-     * We use it to ensure all necessary relationships are loaded.
+     * THE FIX: Use fillForm() to ensure the `user` relationship is loaded
+     * before the form is populated on the dedicated view page.
      */
-    protected function mutateRecord(Model $record): Model
+    protected function fillForm(): void
     {
-        return $record->load('user');
+        $this->record->loadMissing('user');
+        $data = $this->record->toArray();
+        $this->form->fill($data);
     }
 
     protected function getHeaderActions(): array
     {
-        return [];
+        return [
+            Actions\EditAction::make(),
+        ];
     }
 }

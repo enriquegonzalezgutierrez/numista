@@ -76,6 +76,7 @@ class CustomerResource extends Resource
         return $table
             ->query(
                 Customer::query()
+                    ->with('user')
                     ->whereHas('orders', function (Builder $query) {
                         $query->where('tenant_id', Filament::getTenant()->id);
                     })

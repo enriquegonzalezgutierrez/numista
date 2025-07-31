@@ -22,6 +22,7 @@ class MyAccountControllerTest extends TestCase
     #[Test]
     public function an_authenticated_user_can_view_the_account_dashboard(): void
     {
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
 
         $this->actingAs($user)
@@ -35,6 +36,7 @@ class MyAccountControllerTest extends TestCase
     #[Test]
     public function an_authenticated_user_can_see_their_own_orders_on_orders_page(): void
     {
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
         $orderForUser = Order::factory()->create(['user_id' => $user->id]);
 
@@ -47,6 +49,7 @@ class MyAccountControllerTest extends TestCase
     #[Test]
     public function an_authenticated_user_cannot_see_orders_from_other_users_on_orders_page(): void
     {
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
         $orderForOtherUser = Order::factory()->create(['user_id' => $otherUser->id]);

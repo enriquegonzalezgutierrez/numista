@@ -46,6 +46,8 @@ class OrderSeeder extends Seeder
         $tenant = $items->first()->tenant;
         $total = $items->sum('sale_price');
 
+        // THE FIX: The factory is now called without a default user, so we pass it explicitly.
+        // This ensures the correct user is always assigned.
         $order = Order::factory()->create([
             'tenant_id' => $tenant->id, 'user_id' => $customer->id, 'total_amount' => $total,
         ]);

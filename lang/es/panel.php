@@ -27,6 +27,7 @@ return [
     'nav_attributes' => 'Atributos',
     'label_attribute' => 'Atributo',
     'label_attributes' => 'Atributos',
+    'label_addresses' => 'Direcciones',
 
     // --- General Field & Column Labels ---
     'field_name' => 'Nombre',
@@ -59,6 +60,14 @@ return [
     'field_is_filterable' => 'Es filtrable',
     'field_value' => 'Valor',
     'label_predefined_options' => 'Opciones Predefinidas',
+
+    // THE FIX: Add translations for the Address table columns
+    'field_address_label' => 'Etiqueta',
+    'field_recipient_name' => 'Destinatario',
+    'field_street_address' => 'Dirección',
+    'field_city' => 'Ciudad',
+    'field_postal_code' => 'C. Postal',
+    'field_is_default' => 'Por Defecto',
 
     // --- Attribute Name Translations ---
     'attribute_name_artist' => 'Artista',

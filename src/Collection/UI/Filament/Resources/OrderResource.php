@@ -15,6 +15,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Numista\Collection\Domain\Models\Order;
 use Numista\Collection\UI\Filament\Resources\OrderResource\Pages;
@@ -79,6 +80,7 @@ class OrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with('customer'))
             ->columns([
                 TextColumn::make('order_number')->label(__('panel.field_order_number'))->searchable()->sortable(),
                 TextColumn::make('customer.name')->label(__('panel.field_customer'))->searchable()->sortable(),

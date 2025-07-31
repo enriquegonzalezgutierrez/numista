@@ -1,28 +1,28 @@
 <x-mail::message>
-# ¡Gracias por tu pedido!
+# {{ __('mail.order_confirmation_title') }}
 
-Hola {{ $order->customer->name }},
+{{ __('mail.hello') }} {{ $order->customer->name }},
 
-Hemos recibido tu pedido **#{{ $order->order_number }}** y ya lo estamos preparando.
+{{ __('mail.order_confirmation_intro', ['orderNumber' => $order->order_number]) }}
 
-## Resumen del Pedido
+## {{ __('mail.order_summary') }}
 
 <x-mail::table>
-| Producto | Cantidad | Precio |
+| {{ __('mail.product') }} | {{ __('mail.quantity') }} | {{ __('mail.price') }} |
 |:---------|:--------:|-------:|
 @foreach($order->items as $item)
 | {{ $item->item->name }} | {{ $item->quantity }} | {{ number_format($item->price, 2, ',', '.') }} € |
 @endforeach
 </x-mail::table>
 
-**Total: {{ number_format($order->total_amount, 2, ',', '.') }} €**
+**{{ __('mail.total') }}: {{ number_format($order->total_amount, 2, ',', '.') }} €**
 
-Puedes ver los detalles completos de tu pedido en tu cuenta.
+{{ __('mail.order_confirmation_cta') }}
 
 <x-mail::button :url="route('orders.show', $order)">
-Ver Mi Pedido
+{{ __('mail.view_order') }}
 </x-mail::button>
 
-Gracias,<br>
+{{ __('mail.thanks') }}<br>
 {{ config('app.name') }}
 </x-mail::message>

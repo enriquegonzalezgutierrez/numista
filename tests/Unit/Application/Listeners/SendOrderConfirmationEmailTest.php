@@ -4,6 +4,7 @@
 
 namespace Tests\Unit\Application\Listeners;
 
+use App\Models\User; // <-- IMPORTANTE: Añadir este `use`
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Numista\Collection\Application\Listeners\SendOrderConfirmationEmail;
@@ -23,8 +24,11 @@ class SendOrderConfirmationEmailTest extends TestCase
         // Arrange: Fake the Mail facade to capture outgoing emails.
         Mail::fake();
 
-        // Arrange: Create an order with a customer.
-        $order = Order::factory()->create();
+        // Arrange: Create a user to associate with the order.
+        $user = User::factory()->create();
+
+        // Arrange: Create an order and explicitly assign the user to it.
+        $order = Order::factory()->create(['user_id' => $user->id]);
         $order->load('customer'); // Eager load the customer relationship.
 
         $event = new OrderPlaced($order);

@@ -24,4 +24,17 @@ return [
     'contact_message' => 'Mensaje',
     'contact_view_item' => 'Ver Artículo',
     'contact_thanks' => 'Gracias,',
+
+    // THE FIX: Added translations for the order confirmation email
+    'order_confirmation_subject' => 'Confirmación de tu pedido #:orderNumber',
+    'order_confirmation_title' => '¡Gracias por tu pedido!',
+    'order_confirmation_intro' => 'Hemos recibido tu pedido **#:orderNumber** y ya lo estamos preparando.',
+    'order_summary' => 'Resumen del Pedido',
+    'product' => 'Producto',
+    'quantity' => 'Cantidad',
+    'price' => 'Precio',
+    'total' => 'Total',
+    'view_order' => 'Ver Mi Pedido',
+    'order_confirmation_cta' => 'Puedes ver los detalles completos de tu pedido en tu cuenta.',
+
 ];
