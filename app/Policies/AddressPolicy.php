@@ -21,27 +21,18 @@ class AddressPolicy
         return true;
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
     public function view(User $user, Address $address): bool
     {
         // THE FIX: Check if the customer relationship exists before accessing its id.
         return $user->customer && $user->customer->id === $address->customer_id;
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
     public function update(User $user, Address $address): bool
     {
         // THE FIX: Check if the customer relationship exists.
         return $user->customer && $user->customer->id === $address->customer_id;
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
     public function delete(User $user, Address $address): bool
     {
         // THE FIX: Check if the customer relationship exists.

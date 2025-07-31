@@ -12,7 +12,6 @@ class CountrySeeder extends Seeder
      */
     public function run(): void
     {
-        // Clear the table to avoid duplicates on re-seeding
         DB::table('countries')->delete();
 
         // THE FIX: Restore multiple countries to test the dynamic select

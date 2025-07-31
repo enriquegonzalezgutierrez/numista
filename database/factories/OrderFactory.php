@@ -15,8 +15,9 @@ class OrderFactory extends Factory
     {
         return [
             'tenant_id' => Tenant::factory(),
-            // THE FIX: Remove the default User creation. The seeder will now be responsible for assigning it.
-            // 'user_id' => User::factory(), // Creates a new customer for each order
+            // THE FIX: Restore the default user creation. This makes the factory self-sufficient
+            // for tests, while seeders can easily override it.
+            'user_id' => User::factory(), // Creates a new customer for each order
             'order_number' => 'ORD-'.strtoupper(uniqid()),
             'total_amount' => fake()->randomFloat(2, 20, 500),
             'status' => fake()->randomElement(['pending', 'paid', 'shipped', 'completed', 'cancelled']),

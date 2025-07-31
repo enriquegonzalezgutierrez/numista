@@ -15,9 +15,9 @@ class CustomerFactory extends Factory
     public function definition(): array
     {
         return [
-            // THE FIX: Instead of creating a new User every time, this finds a User
-            // that doesn't have a Customer profile yet, or creates a new one if none are available.
-            // This prevents the unique constraint violation.
+            // THE FIX: Instead of always creating a new User, this logic ensures
+            // that we either find an existing user without a customer profile or create a new one.
+            // This prevents unique constraint violations in tests.
             'user_id' => User::factory()->create(['is_admin' => false])->id,
             'phone_number' => fake()->phoneNumber(),
             'shipping_address' => fake()->address(),
