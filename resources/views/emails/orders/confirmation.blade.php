@@ -5,17 +5,26 @@
 
 {{ __('mail.order_confirmation_intro', ['orderNumber' => $order->order_number]) }}
 
-## {{ __('mail.order_summary') }}
+---
+
+### {{ __('mail.order_summary') }}
 
 <x-mail::table>
 | {{ __('mail.product') }} | {{ __('mail.quantity') }} | {{ __('mail.price') }} |
-|:---------|:--------:|-------:|
+|:-------------------------|:----------------:|--------------:|
 @foreach($order->items as $item)
 | {{ $item->item->name }} | {{ $item->quantity }} | {{ number_format($item->price, 2, ',', '.') }} € |
 @endforeach
+
+{{-- THE FIX: This new structure for the total row aligns correctly --}}
+|                     | **{{ __('mail.total') }}** | **{{ number_format($order->total_amount, 2, ',', '.') }} €** |
 </x-mail::table>
 
-**{{ __('mail.total') }}: {{ number_format($order->total_amount, 2, ',', '.') }} €**
+### {{ __('mail.seller_notification_shipping_address') }}
+
+<x-mail::panel>
+{!! nl2br(e($order->shipping_address)) !!}
+</x-mail::panel>
 
 {{ __('mail.order_confirmation_cta') }}
 
@@ -23,6 +32,6 @@
 {{ __('mail.view_order') }}
 </x-mail::button>
 
-{{ __('mail.thanks') }}<br>
-{{ config('app.name') }}
+{{ __('mail.regards') }},<br>
+{{ __('mail.seller_notification_team', ['appName' => config('app.name')]) }}
 </x-mail::message>

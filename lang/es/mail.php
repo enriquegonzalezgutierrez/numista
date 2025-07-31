@@ -25,7 +25,7 @@ return [
     'contact_view_item' => 'Ver Artículo',
     'contact_thanks' => 'Gracias,',
 
-    // --- Order Confirmation Email ---
+    // --- Order Confirmation Email (for Customer) ---
     'order_confirmation_subject' => 'Confirmación de tu pedido #:orderNumber',
     'order_confirmation_title' => '¡Gracias por tu pedido!',
     'order_confirmation_intro' => 'Hemos recibido tu pedido **#:orderNumber** y ya lo estamos preparando.',
@@ -36,4 +36,19 @@ return [
     'total' => 'Total',
     'view_order' => 'Ver Mi Pedido',
     'order_confirmation_cta' => 'Puedes ver los detalles completos de tu pedido en tu cuenta.',
+
+    // THE FIX: Add new translations for the seller notification email
+    'seller_notification_subject' => '¡Nuevo Pedido Recibido! #:orderNumber',
+    'seller_notification_title' => 'Has Recibido un Nuevo Pedido',
+    'seller_notification_intro' => '¡Buenas noticias! Has recibido un nuevo pedido en :appName.',
+    'seller_notification_order_details' => 'Detalles del Pedido',
+    'seller_notification_order_number' => 'Número de Pedido',
+    'seller_notification_customer' => 'Cliente',
+    'seller_notification_date' => 'Fecha',
+    'seller_notification_items_sold' => 'Artículos Vendidos',
+    'seller_notification_total_order' => 'Total del Pedido',
+    'seller_notification_shipping_address' => 'Dirección de Envío',
+    'seller_notification_manage_order' => 'Puedes gestionar este pedido desde tu panel de control.',
+    'seller_notification_cta' => 'Ir al Panel de Control',
+    'seller_notification_team' => 'El equipo de :appName',
 ];

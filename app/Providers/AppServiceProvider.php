@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate; // THE FIX: Import the Gate facade
 use Illuminate\Support\ServiceProvider;
+use Numista\Collection\Application\Listeners\SendNewOrderNotificationToSeller;
 use Numista\Collection\Application\Listeners\SendOrderConfirmationEmail;
 use Numista\Collection\Application\Listeners\UpdateSoldItemStatus;
 use Numista\Collection\Domain\Events\OrderPlaced;
@@ -60,6 +61,12 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(
             OrderPlaced::class,
             UpdateSoldItemStatus::class
+        );
+
+        // THE FIX: Register the new listener for the seller notification
+        Event::listen(
+            OrderPlaced::class,
+            SendNewOrderNotificationToSeller::class
         );
     }
 }

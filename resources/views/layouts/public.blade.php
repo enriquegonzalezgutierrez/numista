@@ -25,6 +25,9 @@
                 --c-700: {{ $primaryColor[700] }};
             }
         </style>
+
+        {{-- This stack allows child views to push scripts into the <head> --}}
+        @stack('head-scripts')
     </head>
     <body class="antialiased font-sans flex flex-col min-h-screen">
         <div class="flex-grow">

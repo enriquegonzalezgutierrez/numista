@@ -1,5 +1,7 @@
 <?php
 
+// tests/Feature/Http/Public/CheckoutControllerTest.php
+
 namespace Tests\Feature\Http\Public;
 
 use App\Models\User;
@@ -24,7 +26,7 @@ class CheckoutControllerTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->has(Customer::factory())->create();
-        $this->item = Item::factory()->create(['status' => 'for_sale', 'sale_price' => 100]);
+        $this->item = Item::factory()->create(['status' => 'for_sale', 'sale_price' => 100, 'quantity' => 1]);
         Country::factory()->create(['iso_code' => 'ES']);
     }
 
@@ -79,7 +81,7 @@ class CheckoutControllerTest extends TestCase
         $this->addItemToCart();
         $response = $this->actingAs($this->user)->post(route('checkout.store'), [
             'address_option' => 'existing',
-            'selected_address_id' => 999,
+            'selected_address_id' => 999, // Non-existent address
         ]);
 
         $response->assertSessionHasErrors('selected_address_id');
@@ -109,7 +111,9 @@ class CheckoutControllerTest extends TestCase
         $this->assertEquals(1, Order::count());
         $order = Order::first();
 
-        $response->assertRedirect(route('checkout.success', $order));
+        // THE FIX: Construct the expected redirect URL with the query parameter.
+        $response->assertRedirect(route('checkout.success', ['orders' => $order->id]));
+
         $this->assertDatabaseHas('orders', ['user_id' => $this->user->id]);
         $this->assertDatabaseHas('addresses', array_merge($newAddressData, ['customer_id' => $this->user->customer->id]));
         $this->assertEmpty(session('cart'));
@@ -129,7 +133,9 @@ class CheckoutControllerTest extends TestCase
         $this->assertEquals(1, Order::count());
         $order = Order::first();
 
-        $response->assertRedirect(route('checkout.success', $order));
+        // THE FIX: Construct the expected redirect URL with the query parameter.
+        $response->assertRedirect(route('checkout.success', ['orders' => $order->id]));
+
         $this->assertDatabaseHas('orders', [
             'user_id' => $this->user->id,
             'address_id' => $existingAddress->id,

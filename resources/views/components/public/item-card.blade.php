@@ -10,18 +10,26 @@
                     'Accept': 'application/json',
                 },
             })
-            .then(response => response.json())
-            .then(data => {
-                if(data.message) {
-                    window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
+            .then(response => {
+                // THE FIX: Check if the response was successful before processing
+                if (!response.ok) {
+                    // Get the error message from the JSON body
+                    return response.json().then(data => Promise.reject(data));
                 }
-                if(data.cartCount !== undefined) {
+                return response.json();
+            })
+            .then(data => {
+                // This block now only runs on success (status 200)
+                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'success', message: data.message } }));
+                if (data.cartCount !== undefined) {
                     window.dispatchEvent(new CustomEvent('cart-updated', { detail: { cartCount: data.cartCount } }));
                 }
             })
             .catch(error => {
+                // This block now handles both network errors and application errors (like 409 Conflict)
                 console.error('Error:', error);
-                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: 'Could not add item to cart.' } }));
+                const errorMessage = error.message || 'No se pudo añadir el ítem al carrito.';
+                window.dispatchEvent(new CustomEvent('notify', { detail: { type: 'error', message: errorMessage } }));
             });
         }
     }"

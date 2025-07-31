@@ -1,5 +1,7 @@
 <?php
 
+// routes/web.php
+
 use App\Http\Controllers\TenantFileController;
 use Illuminate\Support\Facades\Route;
 use Numista\Collection\UI\Public\Controllers\AddressController;
@@ -15,16 +17,39 @@ use Numista\Collection\UI\Public\Controllers\MyAccountController;
 use Numista\Collection\UI\Public\Controllers\OrderController;
 use Numista\Collection\UI\Public\Controllers\ProfileController;
 use Numista\Collection\UI\Public\Controllers\PublicItemController;
-use Numista\Collection\UI\Public\Controllers\TenantProfileController; // THE FIX: Add import
+use Numista\Collection\UI\Public\Controllers\TenantProfileController;
+
+/*
+|--------------------------------------------------------------------------
+| Publicly Accessible Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', LandingPageController::class)->name('landing');
 
+// Marketplace & Item Browsing
 Route::get('/marketplace', [PublicItemController::class, 'index'])->name('public.items.index');
 Route::get('/items/{item:slug}', [PublicItemController::class, 'show'])->name('public.items.show');
 Route::post('/items/{item:slug}/contact', ContactSellerController::class)->name('public.items.contact');
 
+// File Serving
 Route::get('/images/{image}', [TenantFileController::class, 'showImage'])->name('images.show');
 Route::get('/tenant-files/{path}', [TenantFileController::class, 'showFile'])->where('path', '.*')->name('tenant.files');
+
+// Shopping Cart
+Route::prefix('cart')->name('cart.')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('index');
+    Route::post('/add/{item}', [CartController::class, 'add'])->name('add');
+    Route::post('/add/{item}/async', [CartController::class, 'addAsync'])->name('add.async');
+    Route::patch('/update/{item}', [CartController::class, 'update'])->name('update');
+    Route::delete('/remove/{item}', [CartController::class, 'remove'])->name('remove');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Guest-Only Routes (Authentication)
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
@@ -37,9 +62,16 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Authenticated User Routes
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
+    // Customer Account Area
     Route::prefix('my-account')->name('my-account.')->group(function () {
         Route::get('/', [MyAccountController::class, 'dashboard'])->name('dashboard');
         Route::get('/orders', [MyAccountController::class, 'orders'])->name('orders');
@@ -50,20 +82,19 @@ Route::middleware('auth')->group(function () {
         Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
     });
 
+    // Order & Checkout Flow
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('checkout', [CheckoutController::class, 'create'])->name('checkout.create');
     Route::post('checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-    Route::get('checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+    // THE FIX: The success route no longer expects an {order} parameter.
+    Route::get('checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
 });
 
-Route::prefix('cart')->name('cart.')->group(function () {
-    Route::get('/', [CartController::class, 'index'])->name('index');
-    Route::post('/add/{item}', [CartController::class, 'add'])->name('add');
-    Route::post('/add/{item}/async', [CartController::class, 'addAsync'])->name('add.async');
-    Route::patch('/update/{item}', [CartController::class, 'update'])->name('update');
-    Route::delete('/remove/{item}', [CartController::class, 'remove'])->name('remove');
-});
-
-// THE FIX: Add the new tenant profile route.
-// It uses Route Model Binding on the 'slug' field of the Tenant model.
+/*
+|--------------------------------------------------------------------------
+| Catch-All Routes (Must be last)
+|--------------------------------------------------------------------------
+*/
+// This route is for tenant public profiles and must be last to avoid
+// capturing other top-level routes like /login or /marketplace.
 Route::get('/{tenant:slug}', TenantProfileController::class)->name('public.tenants.show');

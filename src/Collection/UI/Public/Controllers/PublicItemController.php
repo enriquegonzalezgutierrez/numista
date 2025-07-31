@@ -50,7 +50,8 @@ class PublicItemController extends Controller
 
     public function show(Item $item): View
     {
-        if ($item->status !== 'for_sale') {
+        // THE FIX: Check both status AND quantity before showing the page.
+        if ($item->status !== 'for_sale' || $item->quantity <= 0) {
             abort(404);
         }
 

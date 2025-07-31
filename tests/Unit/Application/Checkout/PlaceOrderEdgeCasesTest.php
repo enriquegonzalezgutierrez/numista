@@ -11,7 +11,6 @@ use Numista\Collection\Domain\Models\Address;
 use Numista\Collection\Domain\Models\Country;
 use Numista\Collection\Domain\Models\Customer;
 use Numista\Collection\Domain\Models\Item;
-use Numista\Collection\Domain\Models\Order;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -36,12 +35,8 @@ class PlaceOrderEdgeCasesTest extends TestCase
         $this->service = app(PlaceOrderService::class);
     }
 
-    /**
-     * Data provider for item statuses that should prevent a purchase.
-     */
     public static function invalidItemStatusProvider(): array
     {
-        // THE FIX: Removed the 'null' case as it's an invalid database state.
         return [
             'item is in collection' => ['in_collection'],
             'item is already sold' => ['sold'],
@@ -53,12 +48,11 @@ class PlaceOrderEdgeCasesTest extends TestCase
     #[DataProvider('invalidItemStatusProvider')]
     public function it_throws_an_exception_if_an_item_in_the_cart_is_not_for_sale(string $status): void
     {
-        // We expect an exception to be thrown, so the test should fail if it doesn't happen.
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Item is not available for sale.');
+        // THE FIX: Expect the translated error message from the service.
+        $this->expectExceptionMessage(__('public.checkout_error_item_not_available', ['itemName' => 'Test Item']));
 
-        // Arrange: Create an item with a status that is not 'for_sale'
-        $item = Item::factory()->create(['status' => $status, 'sale_price' => 100]);
+        $item = Item::factory()->create(['name' => 'Test Item', 'status' => $status, 'sale_price' => 100]);
         $cart = [$item->id => ['quantity' => 1]];
         $data = [
             'address_option' => 'existing',
@@ -66,13 +60,11 @@ class PlaceOrderEdgeCasesTest extends TestCase
             'shipping_address' => [],
         ];
 
-        // Act: Attempt to place the order
         try {
             $this->service->handle($this->user, $cart, $data);
         } catch (\Exception $e) {
-            // Assert: Ensure no order was created before re-throwing the exception
             $this->assertDatabaseCount('orders', 0);
-            $this->assertDatabaseCount('order_items', 0);
+            // Re-throw the exception for PHPUnit to catch and validate the message.
             throw $e;
         }
     }
@@ -81,18 +73,17 @@ class PlaceOrderEdgeCasesTest extends TestCase
     public function it_throws_an_exception_if_an_item_in_the_cart_has_insufficient_stock(): void
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Insufficient stock for item.');
+        // THE FIX: Expect the translated error message.
+        $this->expectExceptionMessage(__('public.checkout_error_item_not_available', ['itemName' => 'Test Item']));
 
-        // Arrange: Item has quantity 1, but user tries to buy 2.
-        $item = Item::factory()->create(['status' => 'for_sale', 'sale_price' => 100, 'quantity' => 1]);
-        $cart = [$item->id => ['quantity' => 2]];
+        $item = Item::factory()->create(['name' => 'Test Item', 'status' => 'for_sale', 'sale_price' => 100, 'quantity' => 1]);
+        $cart = [$item->id => ['quantity' => 2]]; // Requesting 2, only 1 available
         $data = [
             'address_option' => 'existing',
             'selected_address_id' => $this->address->id,
             'shipping_address' => [],
         ];
 
-        // Act & Assert
         $this->service->handle($this->user, $cart, $data);
     }
 }

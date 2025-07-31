@@ -15,13 +15,11 @@ class ItemFinder
 {
     public function __construct(private int $perPage = 12) {}
 
-    /**
-     * Finds and paginates items for the main marketplace view, applying filters.
-     */
     public function forMarketplace(array $filters = []): Paginator
     {
         $query = Item::query()
             ->where('status', 'for_sale')
+            ->where('quantity', '>', 0) // THE FIX: Only show items with stock available
             ->with(['images', 'tenant']);
 
         $this->applyFilters($query, $filters);
@@ -29,19 +27,13 @@ class ItemFinder
         return $query->latest('created_at')->orderBy('id', 'desc')->simplePaginate($this->perPage)->withQueryString();
     }
 
-    /**
-     * Finds and paginates items for a specific tenant's profile page.
-     * This method now accepts and applies filters.
-     */
     public function forTenantProfile(Tenant $tenant, array $filters = []): Paginator
     {
-        // THE FIX: Start with the relationship, but then get its underlying query builder.
-        // The `getQuery()` method on a relationship returns a Builder instance, satisfying the type hint.
         $query = $tenant->items()->getQuery()
             ->where('status', 'for_sale')
-            ->with('images'); // Eager load images for performance
+            ->where('quantity', '>', 0) // THE FIX: Only show items with stock available
+            ->with('images');
 
-        // Now we are passing a valid Builder object to applyFilters.
         $this->applyFilters($query, $filters);
 
         return $query->latest()->simplePaginate($this->perPage)->withQueryString();

@@ -145,4 +145,12 @@ return [
     'auth' => [
         'forgot_password_desc' => 'No hay problema. Simplemente dinos tu dirección de correo y te enviaremos un enlace para restablecer tu clave de acceso.',
     ],
+    'payment_details' => 'Detalles del Pago',
+    'pay_amount' => 'Pagar :amount',
+    'processing' => 'Procesando...',
+    'payment_error_unexpected' => 'Ocurrió un error inesperado.',
+    'cart_is_empty' => 'Tu carrito está vacío.',
+    'checkout_error_items_not_found' => 'Uno o más ítems en tu carrito ya no existen. Por favor, revisa tu carrito.',
+    'checkout_error_item_not_available' => 'El ítem \':itemName\' ya no está disponible en la cantidad solicitada. Por favor, revisa tu carrito.',
+    'cart_add_error_no_stock' => 'No hay suficiente stock para el ítem \':itemName\'.',
 ];

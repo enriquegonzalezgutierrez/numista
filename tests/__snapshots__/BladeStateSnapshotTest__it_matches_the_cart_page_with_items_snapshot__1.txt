@@ -21,7 +21,9 @@
                 --c-700: 15, 118, 110;
             }
         </style>
-    </head>
+
+        
+            </head>
     <body class="antialiased font-sans flex flex-col min-h-screen">
         <div class="flex-grow">
             <header class="bg-white dark:bg-gray-800/50 backdrop-blur-sm shadow-sm sticky top-0 z-10">

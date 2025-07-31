@@ -5,6 +5,7 @@
 namespace Numista\Collection\Application\Checkout;
 
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Numista\Collection\Domain\Events\OrderPlaced;
 use Numista\Collection\Domain\Models\Address;
@@ -15,80 +16,83 @@ class PlaceOrderService
 {
     /**
      * Handles the entire process of placing an order.
+     * This method now returns a collection of Orders, as one cart
+     * can result in multiple orders if items from different tenants are present.
      *
-     * @param  \App\Models\User  $user  The user placing the order.
-     * @param  array  $cart  The contents of the shopping cart.
-     * @param  array  $data  The validated data from the checkout request.
-     * @return \Numista\Collection\Domain\Models\Order The created order.
+     * @return \Illuminate\Support\Collection<int, \Numista\Collection\Domain\Models\Order>
      *
-     * @throws \Exception If any item in the cart is invalid or out of stock.
+     * @throws \Exception
      */
-    public function handle(User $user, array $cart, array $data): Order
+    public function handle(User $user, array $cart, array $data): Collection
     {
-        $order = DB::transaction(function () use ($user, $cart, $data) {
-            $address = $this->getAddress($user, $data);
+        $itemIds = array_keys($cart);
 
+        // First, validate ALL items BEFORE starting the transaction.
+        // We lock them here to ensure data consistency from this point forward.
+        $itemsInCart = Item::whereIn('id', $itemIds)->lockForUpdate()->get();
+
+        // Check if any item from the cart has been deleted from the database.
+        if ($itemsInCart->count() !== count($itemIds)) {
+            throw new \Exception(__('public.checkout_error_items_not_found'));
+        }
+
+        // Check the status and quantity of each item.
+        foreach ($itemsInCart as $item) {
+            if ($item->status !== 'for_sale' || $item->quantity < $cart[$item->id]['quantity']) {
+                throw new \Exception(__('public.checkout_error_item_not_available', ['itemName' => $item->name]));
+            }
+        }
+
+        // If all validations pass, proceed with the transaction.
+        $orders = DB::transaction(function () use ($user, $cart, $data, $itemsInCart) {
+            $address = $this->getAddress($user, $data);
             $shippingAddressText = "{$address->recipient_name}\n{$address->street_address}\n{$address->postal_code} {$address->city}, {$address->country_code}";
 
-            $itemIds = array_keys($cart);
-            // Lock the items to prevent race conditions where two users buy the last item at the same time.
-            $itemsInCart = Item::whereIn('id', $itemIds)->lockForUpdate()->get()->keyBy('id');
+            $itemsByTenant = $itemsInCart->groupBy('tenant_id');
+            $createdOrders = new Collection;
 
-            // Validate all items in the cart before proceeding.
-            foreach ($itemIds as $itemId) {
-                if (! isset($itemsInCart[$itemId])) {
-                    throw new \Exception("Item with ID {$itemId} not found.");
-                }
+            foreach ($itemsByTenant as $tenantId => $tenantItems) {
+                $totalForTenant = $tenantItems->sum(fn ($item) => $item->sale_price * $cart[$item->id]['quantity']);
 
-                $item = $itemsInCart[$itemId];
-
-                if ($item->status !== 'for_sale') {
-                    throw new \Exception('Item is not available for sale.');
-                }
-
-                if ($item->quantity < $cart[$itemId]['quantity']) {
-                    throw new \Exception('Insufficient stock for item.');
-                }
-            }
-
-            $total = $itemsInCart->sum(fn ($item) => $item->sale_price * $cart[$item->id]['quantity']);
-
-            $order = Order::create([
-                'tenant_id' => $itemsInCart->first()->tenant_id,
-                'user_id' => $user->id,
-                'address_id' => $address->id,
-                'order_number' => 'ORD-'.strtoupper(uniqid()),
-                'total_amount' => $total,
-                'status' => 'paid', // Assuming immediate payment success
-                'shipping_address' => $shippingAddressText,
-                'payment_method' => 'Placeholder',
-                'payment_status' => 'successful',
-            ]);
-
-            foreach ($itemsInCart as $item) {
-                $order->items()->create([
-                    'item_id' => $item->id,
-                    'quantity' => $cart[$item->id]['quantity'],
-                    'price' => $item->sale_price,
+                $order = Order::create([
+                    'tenant_id' => $tenantId,
+                    'user_id' => $user->id,
+                    'address_id' => $address->id,
+                    'order_number' => 'ORD-'.strtoupper(uniqid()),
+                    'total_amount' => $totalForTenant,
+                    'status' => 'paid',
+                    'shipping_address' => $shippingAddressText,
+                    'payment_method' => 'Stripe (Placeholder)',
+                    'payment_status' => 'successful',
                 ]);
 
-                // Optional: Decrement stock. The 'UpdateSoldItemStatus' listener handles changing status.
-                $item->decrement('quantity', $cart[$item->id]['quantity']);
+                foreach ($tenantItems as $item) {
+                    $order->items()->create([
+                        'item_id' => $item->id,
+                        'quantity' => $cart[$item->id]['quantity'],
+                        'price' => $item->sale_price,
+                    ]);
+                    $item->decrement('quantity', $cart[$item->id]['quantity']);
+                }
+
+                $createdOrders->push($order);
             }
 
             session()->forget('cart');
 
-            return $order;
+            return $createdOrders;
         });
 
-        // Dispatch the event after the transaction has been successfully committed.
-        OrderPlaced::dispatch($order);
+        // Dispatch an event for each order that was created after the transaction was successful.
+        foreach ($orders as $order) {
+            OrderPlaced::dispatch($order);
+        }
 
-        return $order;
+        return $orders;
     }
 
     /**
-     * Retrieves or creates the shipping address for the order based on user input.
+     * Retrieve an existing address or create a new one based on user input.
      */
     private function getAddress(User $user, array $data): Address
     {

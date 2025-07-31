@@ -1,5 +1,7 @@
 <?php
 
+// tests/Unit/Application/Checkout/PlaceOrderServiceTest.php
+
 namespace Tests\Unit\Application\Checkout;
 
 use App\Models\User;
@@ -49,7 +51,11 @@ class PlaceOrderServiceTest extends TestCase
             'shipping_address' => [],
         ];
 
-        $order = $service->handle($this->user, $this->cart, $data);
+        $orders = $service->handle($this->user, $this->cart, $data);
+
+        // THE FIX: The service returns a collection, so we get the first order from it.
+        $this->assertCount(1, $orders);
+        $order = $orders->first();
 
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
@@ -67,10 +73,7 @@ class PlaceOrderServiceTest extends TestCase
     #[Test]
     public function it_dispatches_the_order_placed_event_after_creating_an_order(): void
     {
-        // 1. Fake the event bus
         Event::fake();
-
-        // 2. Arrange the service and data
         $service = app(PlaceOrderService::class);
         $data = [
             'address_option' => 'existing',
@@ -78,12 +81,12 @@ class PlaceOrderServiceTest extends TestCase
             'shipping_address' => [],
         ];
 
-        // 3. Act by calling the service
-        $order = $service->handle($this->user, $this->cart, $data);
+        $orders = $service->handle($this->user, $this->cart, $data);
 
-        // 4. Assert that the OrderPlaced event was dispatched with the correct order
-        Event::assertDispatched(OrderPlaced::class, function ($event) use ($order) {
-            return $event->order->id === $order->id;
+        // THE FIX: The service dispatches one event per order. Since we only have one tenant,
+        // it should dispatch the event once for the single order created.
+        Event::assertDispatched(OrderPlaced::class, function ($event) use ($orders) {
+            return $event->order->id === $orders->first()->id;
         });
     }
 
@@ -92,7 +95,6 @@ class PlaceOrderServiceTest extends TestCase
     {
         Event::fake();
         session(['cart' => $this->cart]);
-
         $this->assertNotEmpty(session('cart'));
 
         $service = app(PlaceOrderService::class);
