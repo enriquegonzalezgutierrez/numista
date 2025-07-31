@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    {{-- Page Header --}}
+    {{-- ... (Cabecera de la página se mantiene igual) --}}
     <div class="py-12 border-b border-gray-200 dark:border-gray-700">
         <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">{{ __('public.marketplace_title') }}</h1>
         <p class="mt-4 text-base text-gray-500 dark:text-gray-400">{{ __('public.marketplace_subtitle') }}</p>
@@ -13,10 +13,11 @@
     <div class="pt-12" x-data="{ mobileFiltersOpen: false }">
         <div class="lg:grid lg:grid-cols-4 lg:gap-x-8">
             
-            {{-- Desktop Filters Sidebar --}}
             <aside class="hidden lg:block bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm h-fit sticky top-24">
                 <form action="{{ route('public.items.index') }}" method="GET" id="desktop-filter-form">
+                    {{-- THE FIX: Pass the categories collection to the component --}}
                     <x-public.filter-form 
+                        :categories="$categories"
                         :filterableAttributes="$filterableAttributes" 
                     />
                     <div class="mt-8 border-t dark:border-gray-700 pt-6 space-y-3">
@@ -38,7 +39,8 @@
                         
                         <form action="{{ route('public.items.index') }}" method="GET" class="flex flex-col h-full">
                             <div class="mt-4 border-t border-gray-200 dark:border-gray-700 px-4 py-6 overflow-y-auto">
-                                <x-public.filter-form :filterableAttributes="$filterableAttributes" :is-mobile="true" />
+                                {{-- THE FIX: Pass the categories collection to the mobile component call --}}
+                                <x-public.filter-form :categories="$categories" :filterableAttributes="$filterableAttributes" :is-mobile="true" />
                             </div>
                             <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-4 mt-auto space-y-3">
                                 <button type="submit" class="w-full rounded-md bg-teal-600 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:bg-teal-700">{{ __('public.filter_apply_button') }}</button>
@@ -49,7 +51,7 @@
                 </div>
             </div>
 
-            {{-- Product grid --}}
+            {{-- ... (El resto de la vista del product grid se mantiene igual) --}}
             <div class="lg:col-span-3" x-data="{
                 nextPageUrl: '{{ $items->nextPageUrl() }}',
                 loading: false,

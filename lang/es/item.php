@@ -57,9 +57,9 @@ return [
     'status_completed' => 'Completado',
     'status_cancelled' => 'Cancelado',
 
-    // THE FIX: Define translations for selectable attribute options
+    // --- Translations for selectable attribute options ---
     'options' => [
-        'grade' => [ // This key should match the attribute name in lowercase: 'grado' -> 'grade'
+        'grade' => [ // This key should match the attribute name in lowercase: 'Grado' -> 'grade'
             'unc' => 'UNC (Sin Circular)',
             'au' => 'AU (Casi Sin Circular)',
             'xf' => 'XF (Excelentemente Conservado)',
@@ -69,38 +69,10 @@ return [
         ],
     ],
 
-    // --- Attribute Names ---
+    /* THE FIX: This entire section is removed as it's now centralized in lang/es/panel.php
     'attribute_name_artist' => 'Artista',
     'attribute_name_author' => 'Autor',
-    'attribute_name_brand' => 'Marca',
-    'attribute_name_character' => 'Personaje',
-    'attribute_name_chassis_number' => 'Número de Bastidor',
-    'attribute_name_composition' => 'Composición',
-    'attribute_name_conflict' => 'Conflicto',
-    'attribute_name_country' => 'País',
-    'attribute_name_cover_date' => 'Fecha de Portada',
-    'attribute_name_denomination' => 'Denominación',
-    'attribute_name_dimensions' => 'Dimensiones',
-    'attribute_name_event' => 'Evento',
-    'attribute_name_face_value' => 'Valor Facial',
-    'attribute_name_gemstone' => 'Gema',
-    'attribute_name_grade' => 'Grado',
-    'attribute_name_isbn' => 'ISBN',
-    'attribute_name_issue_number' => 'Número de Ejemplar',
-    'attribute_name_license_plate' => 'Matrícula',
-    'attribute_name_location' => 'Ubicación',
-    'attribute_name_material' => 'Material',
-    'attribute_name_mint_mark' => 'Marca de Ceca',
-    'attribute_name_model' => 'Modelo',
-    'attribute_name_movie_title' => 'Título de Película',
-    'attribute_name_photographer' => 'Fotógrafo',
-    'attribute_name_player' => 'Jugador',
-    'attribute_name_publisher' => 'Editorial',
-    'attribute_name_record_label' => 'Sello Discográfico',
-    'attribute_name_serial_number' => 'Número de Serie',
-    'attribute_name_sport' => 'Deporte',
-    'attribute_name_team' => 'Equipo',
-    'attribute_name_technique' => 'Técnica',
-    'attribute_name_weight' => 'Peso',
+    ...
     'attribute_name_year' => 'Año',
+    */
 ];

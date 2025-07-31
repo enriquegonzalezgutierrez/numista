@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Numista\Collection\Domain\Models\Category;
 use Numista\Collection\Domain\Models\Collection;
 use Numista\Collection\Domain\Models\Item;
-use Numista\Collection\Domain\Models\SharedAttribute; // THE FIX: Use the new model
+use Numista\Collection\Domain\Models\SharedAttribute;
 use Numista\Collection\Domain\Models\Tenant;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -21,8 +21,9 @@ class ModelRelationshipsTest extends TestCase
     public function an_item_can_have_categories_attached(): void
     {
         $item = Item::factory()->create();
-        $category1 = Category::factory()->create(['tenant_id' => $item->tenant_id]);
-        $category2 = Category::factory()->create(['tenant_id' => $item->tenant_id]);
+        // THE FIX: Categories are now global and don't need a tenant_id.
+        $category1 = Category::factory()->create();
+        $category2 = Category::factory()->create();
 
         $item->categories()->attach([$category1->id, $category2->id]);
 
@@ -69,9 +70,8 @@ class ModelRelationshipsTest extends TestCase
     #[Test]
     public function an_item_can_have_attributes_with_values(): void
     {
-        // THE FIX: Updated test logic for the new attribute structure
         $item = Item::factory()->create();
-        $attribute = SharedAttribute::factory()->create(); // No tenant needed
+        $attribute = SharedAttribute::factory()->create();
         $value = '1984';
 
         $item->attributes()->attach($attribute->id, ['value' => $value]);

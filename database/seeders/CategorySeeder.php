@@ -6,7 +6,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Numista\Collection\Domain\Models\Category;
-use Numista\Collection\Domain\Models\Tenant;
 
 class CategorySeeder extends Seeder
 {
@@ -14,41 +13,36 @@ class CategorySeeder extends Seeder
     {
         Category::truncate();
         $this->command->info('Cleaned previous categories.');
+        $this->command->info('Seeding global categories...');
 
-        $tenants = Tenant::all();
-        if ($tenants->isEmpty()) {
-            $this->command->warn('No tenants found. Skipping CategorySeeder.');
-
-            return;
-        }
-
-        foreach ($tenants as $tenant) {
-            $this->command->info("Seeding categories for tenant: {$tenant->name}");
-            $this->seedCategoriesForTenant($tenant);
-        }
+        $this->seedCategories();
     }
 
-    private function seedCategoriesForTenant(Tenant $tenant): void
+    private function seedCategories(): void
     {
-        $numismatica = $this->createCategory($tenant, 'Numismática y Filatelia');
-        $monedas = $this->createCategory($tenant, 'Monedas', $numismatica->id);
-        $this->createCategory($tenant, 'Moneda Española', $monedas->id);
-        $this->createCategory($tenant, 'Sellos', $numismatica->id);
+        // THE FIX: Logic no longer loops through tenants. It creates one global tree.
+        $numismatica = $this->createCategory('Numismática y Filatelia');
+        $monedas = $this->createCategory('Monedas', $numismatica->id);
+        $this->createCategory('Moneda Española', $monedas->id);
+        $this->createCategory('Sellos', $numismatica->id);
 
-        $culturaPop = $this->createCategory($tenant, 'Cultura Pop y Juguetes');
-        $comics = $this->createCategory($tenant, 'Cómics y Tebeos', $culturaPop->id);
-        $this->createCategory($tenant, 'Marvel', $comics->id);
+        $culturaPop = $this->createCategory('Cultura Pop y Juguetes');
+        $comics = $this->createCategory('Cómics y Tebeos', $culturaPop->id);
+        $this->createCategory('Marvel', $comics->id);
 
-        $lujoVintage = $this->createCategory($tenant, 'Lujo y Vintage');
-        $relojes = $this->createCategory($tenant, 'Relojes', $lujoVintage->id);
-        $this->createCategory($tenant, 'Relojes de Pulsera', $relojes->id);
+        $lujoVintage = $this->createCategory('Lujo y Vintage');
+        $relojes = $this->createCategory('Relojes', $lujoVintage->id);
+        $this->createCategory('Relojes de Pulsera', $relojes->id);
     }
 
-    private function createCategory(Tenant $tenant, string $name, ?int $parentId = null): Category
+    private function createCategory(string $name, ?int $parentId = null): Category
     {
+        // THE FIX: Removed the tenant_id assignment.
         return Category::create([
-            'tenant_id' => $tenant->id, 'parent_id' => $parentId, 'name' => $name,
-            'description' => fake()->paragraph(1), 'is_visible' => true,
+            'parent_id' => $parentId,
+            'name' => $name,
+            'description' => fake()->paragraph(1),
+            'is_visible' => true,
         ]);
     }
 }

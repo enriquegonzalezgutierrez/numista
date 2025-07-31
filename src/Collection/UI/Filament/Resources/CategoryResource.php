@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/UI/Filament/Resources/CategoryResource.php
+
 namespace Numista\Collection\UI\Filament\Resources;
 
 use Filament\Forms\Components\Select;
@@ -25,39 +27,37 @@ class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static ?string $tenantOwnershipRelationshipName = 'tenant';
+    // THE FIX: These two properties make the resource global.
+    protected static bool $isScopedToTenant = false;
+
+    protected static ?string $tenantOwnershipRelationshipName = null;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     protected static ?int $navigationSort = 2;
 
-    /**
-     * Defines the navigation label for this resource.
-     */
+    // THE FIX: Move categories to the "Settings" group to reflect their new global nature.
+    public static function getNavigationGroup(): string
+    {
+        return __('panel.nav_group_settings');
+    }
+
+    // ... (El resto de la clase: labels, form, table, etc., no necesita cambios)
     public static function getNavigationLabel(): string
     {
         return __('panel.nav_categories');
     }
 
-    /**
-     * Defines the singular model label for this resource.
-     */
     public static function getModelLabel(): string
     {
         return __('panel.label_category');
     }
 
-    /**
-     * Defines the plural model label for this resource.
-     */
     public static function getPluralModelLabel(): string
     {
         return __('panel.label_categories');
     }
 
-    /**
-     * Defines the resource form schema.
-     */
     public static function form(Form $form): Form
     {
         return $form
@@ -104,9 +104,6 @@ class CategoryResource extends Resource
             ]);
     }
 
-    /**
-     * Defines the resource table schema.
-     */
     public static function table(Table $table): Table
     {
         return $table
@@ -160,9 +157,7 @@ class CategoryResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

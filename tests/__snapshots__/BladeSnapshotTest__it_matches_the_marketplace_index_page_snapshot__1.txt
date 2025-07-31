@@ -74,9 +74,9 @@
     <div class="pt-12" x-data="{ mobileFiltersOpen: false }">
         <div class="lg:grid lg:grid-cols-4 lg:gap-x-8">
             
-            
             <aside class="hidden lg:block bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm h-fit sticky top-24">
                 <form action="http://localhost/marketplace" method="GET" id="desktop-filter-form">
+                    
                     <div x-data>
     <!-- Search Filter -->
     <div class="mb-6">
@@ -92,6 +92,8 @@
         >
     </div>
 
+    <!-- THE FIX: Re-add the category filter block. It's now safe because categories are global. -->
+    
     <!-- Dynamic Attribute Filters -->
     </div>                    <div class="mt-8 border-t dark:border-gray-700 pt-6 space-y-3">
                         <button type="submit" class="sr-only">Aplicar Filtros</button>
@@ -112,6 +114,7 @@
                         
                         <form action="http://localhost/marketplace" method="GET" class="flex flex-col h-full">
                             <div class="mt-4 border-t border-gray-200 dark:border-gray-700 px-4 py-6 overflow-y-auto">
+                                
                                 <div x-data>
     <!-- Search Filter -->
     <div class="mb-6">
@@ -127,6 +130,8 @@
         >
     </div>
 
+    <!-- THE FIX: Re-add the category filter block. It's now safe because categories are global. -->
+    
     <!-- Dynamic Attribute Filters -->
     </div>                            </div>
                             <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-4 mt-auto space-y-3">

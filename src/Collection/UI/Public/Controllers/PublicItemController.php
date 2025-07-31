@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Numista\Collection\Application\Items\ItemFinder;
+use Numista\Collection\Domain\Models\Category; // THE FIX: Re-add the Category model import
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\SharedAttribute;
 
@@ -31,13 +32,20 @@ class PublicItemController extends Controller
             return response($html)->header('X-Next-Page-Url', $items->nextPageUrl());
         }
 
+        // THE FIX: Query for global categories that have at least one item for sale.
+        $categories = Category::query()
+            ->whereHas('items', fn ($q) => $q->where('status', 'for_sale'))
+            ->orderBy('name')
+            ->get();
+
         $filterableAttributes = SharedAttribute::query()
             ->where('is_filterable', true)
             ->with('options')
             ->orderBy('name')
             ->get();
 
-        return view('public.items.index', compact('items', 'filterableAttributes'));
+        // THE FIX: Pass the 'categories' variable back to the view.
+        return view('public.items.index', compact('items', 'categories', 'filterableAttributes'));
     }
 
     public function show(Item $item): View

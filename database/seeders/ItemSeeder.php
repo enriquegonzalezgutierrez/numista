@@ -17,14 +17,8 @@ use Numista\Collection\Domain\Models\Tenant;
 
 class ItemSeeder extends Seeder
 {
-    /**
-     * A collection of all shared attributes available in the system.
-     */
     private EloquentCollection $attributes;
 
-    /**
-     * A collection of all attribute options for 'select' type attributes.
-     */
     private EloquentCollection $attributeOptions;
 
     public function run(): void
@@ -32,7 +26,6 @@ class ItemSeeder extends Seeder
         Item::truncate();
         $this->command->info('Cleaned previous items.');
 
-        // --- NEW LOGIC: Fetch all shared attributes and options once globally ---
         $this->attributes = SharedAttribute::all()->keyBy(fn ($attr) => strtolower(str_replace(' ', '_', $attr->name)));
         $this->attributeOptions = AttributeOption::all()->groupBy('shared_attribute_id');
 
@@ -71,8 +64,10 @@ class ItemSeeder extends Seeder
 
     private function createItemsForCategory(Tenant $tenant, string $categoryName, string $itemType, int $count, bool $isForSale): void
     {
-        $category = Category::where('name', $categoryName)->where('tenant_id', $tenant->id)->first();
+        $category = Category::where('name', $categoryName)->first();
         if (! $category) {
+            $this->command->warn("Global category '{$categoryName}' not found. Skipping item creation for this category.");
+
             return;
         }
 
@@ -99,6 +94,7 @@ class ItemSeeder extends Seeder
 
             if ($imagePath) {
                 $item->images()->create([
+                    // THE FIX: Removed the 'public/' prefix.
                     'path' => $imagePath,
                     'alt_text' => 'Image for '.$item->name,
                     'order_column' => 1,
@@ -107,12 +103,8 @@ class ItemSeeder extends Seeder
         }
     }
 
-    /**
-     * Attaches attributes to an item based on the new shared attribute structure.
-     */
     private function attachAttributesForItem(Item $item, array $itemData): void
     {
-        // This map links the temporary data from the factory to the attribute name in the database.
         $map = [
             'Year' => $itemData['year'] ?? null,
             'Country' => $itemData['country'] ?? null,
@@ -149,10 +141,8 @@ class ItemSeeder extends Seeder
                 continue;
             }
 
-            // --- NEW LOGIC for syncing attributes ---
             $pivotData = ['value' => $value, 'attribute_option_id' => null];
 
-            // If the attribute is a 'select' type, we find the corresponding option ID.
             if ($attribute->type === 'select') {
                 $option = $this->attributeOptions->get($attribute->id, collect())->firstWhere('value', $value);
                 if ($option) {
