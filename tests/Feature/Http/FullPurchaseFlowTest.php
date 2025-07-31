@@ -7,6 +7,7 @@ namespace Tests\Feature\Http;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Mockery\MockInterface;
 use Numista\Collection\Domain\Events\OrderPlaced;
 use Numista\Collection\Domain\Models\Country;
 use Numista\Collection\Domain\Models\Customer;
@@ -14,33 +15,51 @@ use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\Order;
 use Numista\Collection\Domain\Models\Tenant;
 use PHPUnit\Framework\Attributes\Test;
+use Stripe\PaymentIntent; // THE FIX: Import the class we are going to mock
 use Tests\TestCase;
 
 class FullPurchaseFlowTest extends TestCase
 {
     use RefreshDatabase;
 
-    // NOTE: This test is commented out because it cannot be reliably tested without a full, complex
-    // mock of the Stripe client-side payment confirmation flow. The `checkout.store` route now
-    // implicitly depends on a successful payment being confirmed on the frontend.
-    /*
+    /**
+     * Helper method to set up the Stripe API mock.
+     * This prevents code duplication across tests.
+     */
+    protected function mockStripeApi(): void
+    {
+        // Create an "alias" mock for the PaymentIntent class.
+        // This will intercept any static call to `\Stripe\PaymentIntent::class`.
+        $this->mock('alias:'.PaymentIntent::class, function (MockInterface $mock) {
+            // We tell the mock that when the `create` method is called,
+            // it should return a simple object that simulates the Stripe API response.
+            $mock->shouldReceive('create')->andReturn((object) [
+                'id' => 'pi_fake_id_12345',
+                'client_secret' => 'pi_fake_id_12345_secret_67890',
+            ]);
+        });
+    }
+
+    private function addItemToCart(Item $item): void
+    {
+        session(['cart' => [$item->id => ['quantity' => 1]]]);
+    }
+
     #[Test]
     public function a_registered_user_can_complete_a_purchase_with_a_new_address(): void
     {
         Event::fake();
-        $this->withoutExceptionHandling(); // To see potential Stripe errors
+        $this->mockStripeApi(); // Activate the mock for this test
 
+        /** @var User $user */
         $user = User::factory()->has(Customer::factory())->create();
         $item = Item::factory()->create(['status' => 'for_sale', 'sale_price' => 120.50, 'quantity' => 1]);
         Country::factory()->create(['iso_code' => 'ES']);
 
         $this->addItemToCart($item);
 
-        try {
-            $this->actingAs($user)->get(route('checkout.create'));
-        } catch (\Stripe\Exception\AuthenticationException $e) {
-            // This is expected and confirms the checkout page tries to contact Stripe
-        }
+        // This GET request will now succeed because the Stripe API call is mocked.
+        $this->actingAs($user)->get(route('checkout.create'))->assertOk();
 
         $newAddressData = [
             'label' => 'Casa Principal',
@@ -51,6 +70,7 @@ class FullPurchaseFlowTest extends TestCase
             'country_code' => 'ES',
         ];
 
+        // This POST request will trigger the PlaceOrderService, which runs without Stripe interaction.
         $response = $this->actingAs($user)->withSession(['cart' => [$item->id => ['quantity' => 1]]])
             ->post(route('checkout.store'), [
                 'address_option' => 'new',
@@ -61,16 +81,10 @@ class FullPurchaseFlowTest extends TestCase
         $order = Order::first();
 
         $response->assertRedirect(route('checkout.success', ['orders' => $order->id]));
-        $this->assertDatabaseHas('orders', ['user_id' => $user->id]);
+        $this->assertDatabaseHas('orders', ['user_id' => $user->id, 'total_amount' => 120.50]);
         $this->assertDatabaseHas('addresses', array_merge($newAddressData, ['customer_id' => $user->customer->id]));
         $this->assertEmpty(session('cart'));
         Event::assertDispatched(OrderPlaced::class);
-    }
-    */
-
-    private function addItemToCart(Item $item): void
-    {
-        session(['cart' => [$item->id => ['quantity' => 1]]]);
     }
 
     #[Test]
@@ -78,7 +92,6 @@ class FullPurchaseFlowTest extends TestCase
     {
         $this->withoutExceptionHandling();
         Event::fake();
-
         /** @var User $user */
         $user = User::factory()->has(Customer::factory())->create();
         Country::factory()->create(['iso_code' => 'ES']);
@@ -124,7 +137,6 @@ class FullPurchaseFlowTest extends TestCase
     public function checkout_fails_if_stock_changes_after_item_was_added_to_cart(): void
     {
         $this->withoutExceptionHandling();
-
         /** @var User $user */
         $user = User::factory()->has(Customer::factory())->create();
         $address = $user->customer->addresses()->create(\Numista\Collection\Domain\Models\Address::factory()->raw());
