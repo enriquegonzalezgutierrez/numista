@@ -25,7 +25,7 @@ return [
     'contact_view_item' => 'Ver Artículo',
     'contact_thanks' => 'Gracias,',
 
-    // THE FIX: Added translations for the order confirmation email
+    // --- Order Confirmation Email ---
     'order_confirmation_subject' => 'Confirmación de tu pedido #:orderNumber',
     'order_confirmation_title' => '¡Gracias por tu pedido!',
     'order_confirmation_intro' => 'Hemos recibido tu pedido **#:orderNumber** y ya lo estamos preparando.',
@@ -36,5 +36,4 @@ return [
     'total' => 'Total',
     'view_order' => 'Ver Mi Pedido',
     'order_confirmation_cta' => 'Puedes ver los detalles completos de tu pedido en tu cuenta.',
-
 ];

@@ -74,6 +74,11 @@ return [
     'contact_seller' => 'Contactar al Vendedor',
     'back_to_marketplace' => 'Volver al Marketplace',
     'no_items_found' => 'No se encontraron ítems a la venta en este momento.',
+    // THE FIX: Add the new translation key
+    'tenant_no_items' => 'Este vendedor no tiene ítems a la venta en este momento.',
+    // THE FIX: Add keys for the "Load More" button
+    'load_more' => 'Cargar más',
+    'loading' => 'Cargando...',
     'lightbox' => [
         'close' => 'Cerrar',
     ],
@@ -127,7 +132,6 @@ return [
         'state' => 'Provincia / Estado',
         'country' => 'País',
         'phone' => 'Teléfono (Opcional)',
-        // THE FIX: Updated placeholders for Seville
         'placeholder' => [
             'label' => 'Ej: Casa, Apartamento Triana',
             'recipient_name' => 'Ej: María García',

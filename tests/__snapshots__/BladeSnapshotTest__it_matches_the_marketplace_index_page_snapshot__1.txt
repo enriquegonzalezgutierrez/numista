@@ -905,6 +905,7 @@
 </div>                        </div>
                         <div class="mt-12 text-center" x-show="nextPageUrl">
                             <button @click="loadMore" :disabled="loading" class="rounded-md bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 disabled:opacity-50">
+                                
                                 <span x-show="!loading">Cargar más</span>
                                 <span x-show="loading">Cargando...</span>
                             </button>

@@ -9,12 +9,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\SharedAttribute;
+use Numista\Collection\Domain\Models\Tenant;
 
 class ItemFinder
 {
-    // ... (constructor y método forMarketplace se mantienen igual)
     public function __construct(private int $perPage = 12) {}
 
+    /**
+     * Finds and paginates items for the main marketplace view, applying filters.
+     */
     public function forMarketplace(array $filters = []): Paginator
     {
         $query = Item::query()
@@ -26,9 +29,29 @@ class ItemFinder
         return $query->latest('created_at')->orderBy('id', 'desc')->simplePaginate($this->perPage)->withQueryString();
     }
 
+    /**
+     * Finds and paginates items for a specific tenant's profile page.
+     * This method now accepts and applies filters.
+     */
+    public function forTenantProfile(Tenant $tenant, array $filters = []): Paginator
+    {
+        // THE FIX: Start with the relationship, but then get its underlying query builder.
+        // The `getQuery()` method on a relationship returns a Builder instance, satisfying the type hint.
+        $query = $tenant->items()->getQuery()
+            ->where('status', 'for_sale')
+            ->with('images'); // Eager load images for performance
+
+        // Now we are passing a valid Builder object to applyFilters.
+        $this->applyFilters($query, $filters);
+
+        return $query->latest()->simplePaginate($this->perPage)->withQueryString();
+    }
+
+    /**
+     * Applies a set of filters to the item query builder.
+     */
     public function applyFilters(Builder $query, array $filters): void
     {
-        // ... (filtros de search, categories, collections se mantienen igual)
         $query->when($filters['search'] ?? null, function ($query, $search) {
             if (DB::getDriverName() === 'pgsql') {
                 $searchQuery = implode(' & ', explode(' ', trim($search)));
@@ -62,7 +85,6 @@ class ItemFinder
             });
         });
 
-        // THE FIX: Updated logic for dynamic attribute filtering
         $query->when($filters['attributes'] ?? null, function ($query, $attributes) {
             foreach ($attributes as $attributeId => $value) {
                 if (empty($value)) {
@@ -78,11 +100,8 @@ class ItemFinder
                     $q->where('shared_attribute_id', $attribute->id);
 
                     if ($attribute->type === 'select') {
-                        // For 'select' types, we filter by the attribute_option_id
                         $q->where('attribute_option_id', $value);
                     } else {
-                        // For other types (text, number, date), we now filter for an exact match.
-                        // This is more precise for values like 'Year' or 'Brand'.
                         $q->where('value', $value);
                     }
                 });

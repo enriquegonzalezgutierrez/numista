@@ -1,28 +1,31 @@
 @extends('layouts.public')
 
-@section('title', __('public.marketplace_title'))
+@section('title', $tenant->name)
 
 @section('content')
 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    {{-- ... (Cabecera de la página se mantiene igual) --}}
+    {{-- Page Header --}}
     <div class="py-12 border-b border-gray-200 dark:border-gray-700">
-        <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">{{ __('public.marketplace_title') }}</h1>
-        <p class="mt-4 text-base text-gray-500 dark:text-gray-400">{{ __('public.marketplace_subtitle') }}</p>
+        <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">{{ $tenant->name }}</h1>
+        {{-- You could add a description for the tenant here in the future from a new `description` column --}}
+        {{-- <p class="mt-4 text-base text-gray-500">{{ $tenant->description }}</p> --}}
     </div>
 
+    {{-- Filter and Product Grid Layout --}}
     <div class="pt-12" x-data="{ mobileFiltersOpen: false }">
         <div class="lg:grid lg:grid-cols-4 lg:gap-x-8">
             
+            {{-- Desktop Filters Sidebar --}}
             <aside class="hidden lg:block bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm h-fit sticky top-24">
-                <form action="{{ route('public.items.index') }}" method="GET" id="desktop-filter-form">
-                    {{-- THE FIX: Pass the categories collection to the component --}}
+                <form action="{{ route('public.tenants.show', $tenant) }}" method="GET" id="desktop-filter-form">
+                    {{-- Note: We pass an empty collection for categories as they are not used on this page --}}
                     <x-public.filter-form 
-                        :categories="$categories"
+                        :categories="collect()" 
                         :filterableAttributes="$filterableAttributes" 
                     />
                     <div class="mt-8 border-t dark:border-gray-700 pt-6 space-y-3">
                         <button type="submit" class="sr-only">{{ __('public.filter_apply_button') }}</button>
-                        <a href="{{ route('public.items.index') }}" class="w-full block text-center rounded-md border border-slate-300 bg-white dark:bg-slate-700 dark:border-slate-600 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50">{{ __('public.filter_clear_button') }}</a>
+                        <a href="{{ route('public.tenants.show', $tenant) }}" class="w-full block text-center rounded-md border border-slate-300 bg-white dark:bg-slate-700 dark:border-slate-600 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50">{{ __('public.filter_clear_button') }}</a>
                     </div>
                 </form>
             </aside>
@@ -37,31 +40,39 @@
                             <button @click="mobileFiltersOpen = false" type="button" class="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white dark:bg-gray-800 p-2 text-gray-400"><span class="sr-only">Close menu</span><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
                         </div>
                         
-                        <form action="{{ route('public.items.index') }}" method="GET" class="flex flex-col h-full">
+                        <form action="{{ route('public.tenants.show', $tenant) }}" method="GET" class="flex flex-col h-full">
                             <div class="mt-4 border-t border-gray-200 dark:border-gray-700 px-4 py-6 overflow-y-auto">
-                                {{-- THE FIX: Pass the categories collection to the mobile component call --}}
-                                <x-public.filter-form :categories="$categories" :filterableAttributes="$filterableAttributes" :is-mobile="true" />
+                                <x-public.filter-form :categories="collect()" :filterableAttributes="$filterableAttributes" :is-mobile="true" />
                             </div>
                             <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-4 mt-auto space-y-3">
                                 <button type="submit" class="w-full rounded-md bg-teal-600 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:bg-teal-700">{{ __('public.filter_apply_button') }}</button>
-                                <a href="{{ route('public.items.index') }}" class="block w-full rounded-md bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 px-4 py-2 text-center text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-600">{{ __('public.filter_clear_button') }}</a>
+                                <a href="{{ route('public.tenants.show', $tenant) }}" class="block w-full rounded-md bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 px-4 py-2 text-center text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-600">{{ __('public.filter_clear_button') }}</a>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
 
-            {{-- ... (El resto de la vista del product grid se mantiene igual) --}}
+            {{-- Product grid and Load More logic --}}
             <div class="lg:col-span-3" x-data="{
                 nextPageUrl: '{{ $items->nextPageUrl() }}',
                 loading: false,
                 loadMore() {
                     if (!this.nextPageUrl) return;
                     this.loading = true;
-                    fetch(this.nextPageUrl, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+                    // Preserve existing query parameters when fetching the next page
+                    const url = new URL(this.nextPageUrl);
+                    const currentParams = new URLSearchParams(window.location.search);
+                    currentParams.forEach((value, key) => {
+                        if (key !== 'page') {
+                            url.searchParams.set(key, value);
+                        }
+                    });
+                    
+                    fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
                         .then(response => {
-                            const nextUrl = response.headers.get('X-Next-Page-Url');
-                            this.nextPageUrl = nextUrl ? nextUrl : null;
+                            const nextUrlHeader = response.headers.get('X-Next-Page-Url');
+                            this.nextPageUrl = nextUrlHeader ? nextUrlHeader : null;
                             return response.text();
                         })
                         .then(html => {
@@ -79,20 +90,21 @@
                     </div>
                     
                     @if($items->isNotEmpty())
-                        <div x-ref="itemsContainer" class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
+                        <div x-ref="itemsContainer" class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
                             @include('public.items.partials._items-grid', ['items' => $items])
                         </div>
                         <div class="mt-12 text-center" x-show="nextPageUrl">
                             <button @click="loadMore" :disabled="loading" class="rounded-md bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 disabled:opacity-50">
-                                {{-- THE FIX: Use translation keys --}}
                                 <span x-show="!loading">{{ __('public.load_more') }}</span>
                                 <span x-show="loading">{{ __('public.loading') }}</span>
                             </button>
                         </div>
                     @else
                         <div class="rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 p-12 text-center">
-                            <p class="text-lg font-medium text-gray-700 dark:text-gray-300">{{ __('public.no_items_found_filtered') }}</p>
-                            <a href="{{ route('public.items.index') }}" class="mt-4 inline-block rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700">{{ __('public.clear_filters_link') }}</a>
+                            <p class="text-lg font-medium text-gray-700 dark:text-gray-300">
+                                {{ __('public.no_items_found_filtered') }}
+                            </p>
+                            <a href="{{ route('public.tenants.show', $tenant) }}" class="mt-4 inline-block rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700">{{ __('public.filter_clear_button') }}</a>
                         </div>
                     @endif
                 </div>

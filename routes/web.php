@@ -15,6 +15,7 @@ use Numista\Collection\UI\Public\Controllers\MyAccountController;
 use Numista\Collection\UI\Public\Controllers\OrderController;
 use Numista\Collection\UI\Public\Controllers\ProfileController;
 use Numista\Collection\UI\Public\Controllers\PublicItemController;
+use Numista\Collection\UI\Public\Controllers\TenantProfileController; // THE FIX: Add import
 
 Route::get('/', LandingPageController::class)->name('landing');
 
@@ -22,7 +23,6 @@ Route::get('/marketplace', [PublicItemController::class, 'index'])->name('public
 Route::get('/items/{item:slug}', [PublicItemController::class, 'show'])->name('public.items.show');
 Route::post('/items/{item:slug}/contact', ContactSellerController::class)->name('public.items.contact');
 
-// THE FIX: Unified file routes
 Route::get('/images/{image}', [TenantFileController::class, 'showImage'])->name('images.show');
 Route::get('/tenant-files/{path}', [TenantFileController::class, 'showFile'])->where('path', '.*')->name('tenant.files');
 
@@ -63,3 +63,7 @@ Route::prefix('cart')->name('cart.')->group(function () {
     Route::patch('/update/{item}', [CartController::class, 'update'])->name('update');
     Route::delete('/remove/{item}', [CartController::class, 'remove'])->name('remove');
 });
+
+// THE FIX: Add the new tenant profile route.
+// It uses Route Model Binding on the 'slug' field of the Tenant model.
+Route::get('/{tenant:slug}', TenantProfileController::class)->name('public.tenants.show');
