@@ -1,6 +1,6 @@
 <?php
 
-// src/Collection/Domain/Models/AttributeValue.php
+// src/Collection/Domain/Models/AttributeOption.php
 
 namespace Numista\Collection\Domain\Models;
 
@@ -8,25 +8,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class AttributeValue extends Model
+class AttributeOption extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'attribute_id',
+        'shared_attribute_id',
         'value',
     ];
 
     /**
-     * Get the attribute that this value belongs to.
+     * Get the attribute that this option belongs to.
      */
     public function attribute(): BelongsTo
     {
-        return $this->belongsTo(Attribute::class);
+        return $this->belongsTo(SharedAttribute::class, 'shared_attribute_id');
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/Domain/Models/Item.php
+
 namespace Numista\Collection\Domain\Models;
 
 use Database\Factories\ItemFactory;
@@ -14,7 +16,6 @@ class Item extends Model
 {
     use HasFactory;
 
-    // THE FIX: Add 'tenant_id' to the fillable array.
     protected $fillable = [
         'tenant_id', 'name', 'slug', 'description', 'type', 'quantity',
         'purchase_price', 'purchase_date', 'status', 'sale_price',
@@ -54,10 +55,14 @@ class Item extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    /**
+     * The attributes that belong to the item.
+     * This is the updated relationship pointing to the new shared attributes structure.
+     */
     public function attributes(): BelongsToMany
     {
-        return $this->belongsToMany(Attribute::class, 'item_attribute_value')
-            ->withPivot('value', 'attribute_value_id')
+        return $this->belongsToMany(SharedAttribute::class, 'item_attribute')
+            ->withPivot('value', 'attribute_option_id') // We now store the value directly in this pivot table.
             ->withTimestamps();
     }
 

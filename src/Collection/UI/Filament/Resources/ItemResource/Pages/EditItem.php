@@ -25,9 +25,10 @@ class EditItem extends EditRecord
 
         $data['attributes'] = $this->getRecord()->attributes->mapWithKeys(function ($attribute) {
             $pivot = $attribute->pivot;
+
             $payload = [
                 'value' => $pivot->value,
-                'attribute_value_id' => $pivot->attribute_value_id,
+                'attribute_option_id' => $pivot->attribute_option_id,
             ];
 
             return [$attribute->id => $payload];

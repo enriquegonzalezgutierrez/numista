@@ -1,12 +1,7 @@
-@props(['categories', 'filterableAttributes', 'isMobile' => false])
+@props(['filterableAttributes', 'isMobile' => false])
 
-<!--
-    THE FIX: The entire div is now an Alpine component.
-    - We add `@change="$el.closest('form').submit()"`
-    - This tells Alpine: "whenever any input inside this div changes,
-      find the closest parent <form> element and submit it."
--->
-<div @change.debounce.500ms="$el.closest('form').submit()">
+{{-- THE FIX: We listen to the `input` event on text fields, and `change` on selects/checkboxes --}}
+<div x-data>
     <!-- Search Filter -->
     <div class="mb-6">
         <label for="search-{{ $isMobile ? 'mobile' : 'desktop' }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('public.filter_search_label') }}</label>
@@ -15,25 +10,11 @@
             name="search" 
             id="search-{{ $isMobile ? 'mobile' : 'desktop' }}" 
             value="{{ request('search') }}" 
-            placeholder="{{ __('public.filter_search_placeholder') }}" 
+            placeholder="{{ __('public.filter_search_placeholder') }}"
+            @input.debounce.500ms="$el.closest('form').submit()"
             class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         >
     </div>
-
-    <!-- Category Filter -->
-    @if($categories->isNotEmpty())
-    <div class="mb-6 border-t border-gray-200 dark:border-gray-700 pt-6">
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">{{ __('public.filter_categories_title') }}</h3>
-        <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
-            @foreach($categories as $category)
-                <div class="flex items-center">
-                    <input id="category-{{ $category->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}" name="categories[]" value="{{ $category->id }}" type="checkbox" @checked(in_array($category->id, request('categories', []))) class="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500">
-                    <label for="category-{{ $category->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}" class="ml-3 text-sm text-gray-600 dark:text-gray-400">{{ $category->name }}</label>
-                </div>
-            @endforeach
-        </div>
-    </div>
-    @endif
 
     <!-- Dynamic Attribute Filters -->
     @if($filterableAttributes->isNotEmpty())
@@ -46,10 +27,15 @@
                     {{ trans()->has($labelKey) ? __($labelKey) : $attribute->name }}
                 </label>
                 
-                @if($attribute->type === 'select' && $attribute->values->isNotEmpty())
-                    <select name="attributes[{{ $attribute->id }}]" id="attribute-{{ $attribute->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}" class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                @if($attribute->type === 'select' && $attribute->options->isNotEmpty())
+                    <select 
+                        name="attributes[{{ $attribute->id }}]" 
+                        id="attribute-{{ $attribute->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}"
+                        @change="$el.closest('form').submit()"
+                        class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
                         <option value="">{{ __('public.filter_all_option') }}</option>
-                        @foreach($attribute->values as $option)
+                        @foreach($attribute->options as $option)
                             @php
                                 $attributeKey = strtolower(str_replace(' ', '_', $attribute->name));
                                 $translationKey = "item.options.{$attributeKey}.{$option->value}";
@@ -60,7 +46,14 @@
                         @endforeach
                     </select>
                 @else
-                    <input type="text" name="attributes[{{ $attribute->id }}]" id="attribute-{{ $attribute->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}" value="{{ request('attributes.'.$attribute->id) }}" class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <input 
+                        type="text" 
+                        name="attributes[{{ $attribute->id }}]" 
+                        id="attribute-{{ $attribute->id }}-{{ $isMobile ? 'mobile' : 'desktop' }}" 
+                        value="{{ request('attributes.'.$attribute->id) }}"
+                        @input.debounce.500ms="$el.closest('form').submit()"
+                        class="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
                 @endif
             </div>
         @endforeach

@@ -12,15 +12,27 @@
             @foreach($item->attributes->sortBy('name') as $attribute)
                 <div>
                     <dt class="font-medium text-gray-500 dark:text-gray-400">
-                        @php($key = 'panel.attribute_name_' . strtolower(str_replace(' ', '_', $attribute->name)))
-                        {{ trans()->has($key) ? __($key) : $attribute->name }}
+                        @php
+                            $labelKey = 'panel.attribute_name_' . strtolower(str_replace(' ', '_', $attribute->name));
+                            echo trans()->has($labelKey) ? __($labelKey) : $attribute->name;
+                        @endphp
                     </dt>
                     <dd class="text-gray-900 dark:text-white mt-1">
-                        @if($attribute->type === 'select' && strtolower($attribute->name) === 'grade')
-                            {{ __("item.options.grade.{$attribute->pivot->value}") ?? $attribute->pivot->value }}
-                        @else
-                            {{ $attribute->pivot->value }}
-                        @endif
+                        @php
+                            $displayValue = $attribute->pivot->value; // Default value
+
+                            if ($attribute->type === 'select' && $attribute->pivot->attribute_option_id) {
+                                $option = $attribute->options->firstWhere('id', $attribute->pivot->attribute_option_id);
+                                
+                                if ($option) {
+                                    $attributeKey = strtolower(str_replace(' ', '_', $attribute->name));
+                                    $translationKey = "item.options.{$attributeKey}.{$option->value}";
+                                    $displayValue = trans()->has($translationKey) ? __($translationKey) : $option->value;
+                                }
+                            }
+                            
+                            echo e($displayValue); // THE FIX: Use echo and escape the output
+                        @endphp
                     </dd>
                 </div>
             @endforeach

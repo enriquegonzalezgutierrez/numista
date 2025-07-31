@@ -17,10 +17,8 @@
             <aside class="hidden lg:block bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm h-fit sticky top-24">
                 <form action="{{ route('public.items.index') }}" method="GET" id="desktop-filter-form">
                     <x-public.filter-form 
-                        :categories="$categories" 
                         :filterableAttributes="$filterableAttributes" 
                     />
-                    <!-- THE FIX: The submit button is now hidden, but still exists for accessibility -->
                     <div class="mt-8 border-t dark:border-gray-700 pt-6 space-y-3">
                         <button type="submit" class="sr-only">{{ __('public.filter_apply_button') }}</button>
                         <a href="{{ route('public.items.index') }}" class="w-full block text-center rounded-md border border-slate-300 bg-white dark:bg-slate-700 dark:border-slate-600 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50">{{ __('public.filter_clear_button') }}</a>
@@ -40,8 +38,7 @@
                         
                         <form action="{{ route('public.items.index') }}" method="GET" class="flex flex-col h-full">
                             <div class="mt-4 border-t border-gray-200 dark:border-gray-700 px-4 py-6 overflow-y-auto">
-                                {{-- THE FIX: Update component path --}}
-                                <x-public.filter-form :categories="$categories" :filterableAttributes="$filterableAttributes" :is-mobile="true" />
+                                <x-public.filter-form :filterableAttributes="$filterableAttributes" :is-mobile="true" />
                             </div>
                             <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-4 mt-auto space-y-3">
                                 <button type="submit" class="w-full rounded-md bg-teal-600 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:bg-teal-700">{{ __('public.filter_apply_button') }}</button>
@@ -73,7 +70,6 @@
             }">
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
                     <div class="flex items-center justify-between mb-4">
-                        {{-- THE FIX: Remove the results count as simplePaginate doesn't provide it --}}
                         <div></div>
                         <div class="lg:hidden">
                             <button @click="mobileFiltersOpen = true" class="inline-flex items-center rounded-md bg-white dark:bg-slate-700 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-600 hover:bg-slate-50">{{ __('public.filter_show_button') }}<svg class="ml-2 h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 01.628.74v2.288a2.25 2.25 0 01-.659 1.59l-4.682 4.683a2.25 2.25 0 00-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 018 18.25v-5.757a2.25 2.25 0 00-.659-1.59L2.659 6.22A2.25 2.25 0 012 4.629V2.34a.75.75 0 01.628-.74z" clip-rule="evenodd" /></svg></button>

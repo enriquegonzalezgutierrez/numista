@@ -1,11 +1,13 @@
 <?php
 
+// tests/Unit/Application/Items/CreateItemServiceTest.php
+
 namespace Tests\Unit\Application\Items;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Numista\Collection\Application\Items\CreateItemService;
-use Numista\Collection\Domain\Models\Attribute;
 use Numista\Collection\Domain\Models\Item;
+use Numista\Collection\Domain\Models\SharedAttribute; // THE FIX: Use the new model
 use Numista\Collection\Domain\Models\Tenant;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -49,7 +51,9 @@ class CreateItemServiceTest extends TestCase
     #[Test]
     public function it_creates_an_item_and_syncs_its_text_attributes(): void
     {
-        $attribute = Attribute::factory()->create(['tenant_id' => $this->tenant->id, 'type' => 'text']);
+        // THE FIX: Use the new SharedAttribute model and factory
+        $attribute = SharedAttribute::factory()->create(['type' => 'text']);
+
         $data = [
             'tenant_id' => $this->tenant->id,
             'name' => 'Test Coin with Attributes',
@@ -61,9 +65,10 @@ class CreateItemServiceTest extends TestCase
 
         $item = $this->service->handle($data);
 
-        $this->assertDatabaseHas('item_attribute_value', [
+        // THE FIX: Check the new pivot table 'item_attribute'
+        $this->assertDatabaseHas('item_attribute', [
             'item_id' => $item->id,
-            'attribute_id' => $attribute->id,
+            'shared_attribute_id' => $attribute->id,
             'value' => 'Silver',
         ]);
         $this->assertCount(1, $item->attributes);
@@ -72,24 +77,26 @@ class CreateItemServiceTest extends TestCase
     #[Test]
     public function it_creates_an_item_and_syncs_its_select_attributes(): void
     {
-        $attribute = Attribute::factory()->create(['tenant_id' => $this->tenant->id, 'type' => 'select']);
-        $attributeValue = $attribute->values()->create(['value' => 'UNC']);
+        // THE FIX: Use the new models and factories
+        $attribute = SharedAttribute::factory()->create(['type' => 'select']);
+        $attributeValue = $attribute->options()->create(['value' => 'UNC']);
 
         $data = [
             'tenant_id' => $this->tenant->id,
             'name' => 'Graded Coin',
             'type' => 'coin',
             'attributes' => [
-                $attribute->id => ['attribute_value_id' => $attributeValue->id],
+                $attribute->id => ['attribute_option_id' => $attributeValue->id],
             ],
         ];
 
         $item = $this->service->handle($data);
 
-        $this->assertDatabaseHas('item_attribute_value', [
+        // THE FIX: Check the new pivot table with the correct column names
+        $this->assertDatabaseHas('item_attribute', [
             'item_id' => $item->id,
-            'attribute_id' => $attribute->id,
-            'attribute_value_id' => $attributeValue->id,
+            'shared_attribute_id' => $attribute->id,
+            'attribute_option_id' => $attributeValue->id,
             'value' => 'UNC',
         ]);
     }

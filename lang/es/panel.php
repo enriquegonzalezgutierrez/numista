@@ -60,8 +60,14 @@ return [
     'field_is_filterable' => 'Es filtrable',
     'field_value' => 'Valor',
     'label_predefined_options' => 'Opciones Predefinidas',
+    'label_applicable_item_types' => 'Tipos de Ítem Aplicables', // THE FIX: New translation key
 
-    // THE FIX: Add translations for the Address table columns
+    // --- Attribute Type Options ---
+    'attribute_type_text' => 'Texto',
+    'attribute_type_number' => 'Número',
+    'attribute_type_date' => 'Fecha',
+    'attribute_type_select' => 'Opciones Seleccionables', // THE FIX: New translation key
+
     'field_address_label' => 'Etiqueta',
     'field_recipient_name' => 'Destinatario',
     'field_street_address' => 'Dirección',
@@ -69,7 +75,7 @@ return [
     'field_postal_code' => 'C. Postal',
     'field_is_default' => 'Por Defecto',
 
-    // --- Attribute Name Translations ---
+    // ... (el resto del fichero se mantiene igual)
     'attribute_name_artist' => 'Artista',
     'attribute_name_author' => 'Autor',
     'attribute_name_brand' => 'Marca',
@@ -108,6 +114,7 @@ return [
     'placeholder_none' => 'Ninguna',
     'helper_alt_text' => 'Describe la imagen para accesibilidad y SEO.',
     'helper_is_filterable' => 'Permitir filtrar por este atributo en el marketplace público.',
+    'helper_options_info' => 'Para añadir opciones, por favor, guarda primero el atributo con el tipo "Opciones Seleccionables". La tabla de opciones aparecerá en la página de edición.', // THE FIX: New key added
     'search_placeholder' => 'Buscar...',
 
     // --- Table Filters ---
@@ -125,6 +132,7 @@ return [
     'action_create_image' => 'Añadir Imagen',
     'action_create_attribute' => 'Crear Atributo',
     'action_create_option' => 'Añadir Opción',
+    'label_options' => 'Opciones',
     'action_bulk_change_status' => 'Cambiar estado',
     'action_bulk_attach_category' => 'Asignar categoría',
     'action_bulk_change_visibility' => 'Cambiar visibilidad',

@@ -5,10 +5,10 @@
 namespace Tests\Feature\Domain;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Numista\Collection\Domain\Models\Attribute;
 use Numista\Collection\Domain\Models\Category;
 use Numista\Collection\Domain\Models\Collection;
 use Numista\Collection\Domain\Models\Item;
+use Numista\Collection\Domain\Models\SharedAttribute; // THE FIX: Use the new model
 use Numista\Collection\Domain\Models\Tenant;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -35,7 +35,7 @@ class ModelRelationshipsTest extends TestCase
     {
         $item = Item::factory()->create();
 
-        $image = $item->images()->create([
+        $item->images()->create([
             'path' => 'path/to/image.jpg',
             'order_column' => 1,
         ]);
@@ -69,8 +69,9 @@ class ModelRelationshipsTest extends TestCase
     #[Test]
     public function an_item_can_have_attributes_with_values(): void
     {
+        // THE FIX: Updated test logic for the new attribute structure
         $item = Item::factory()->create();
-        $attribute = Attribute::factory()->create(['tenant_id' => $item->tenant_id]);
+        $attribute = SharedAttribute::factory()->create(); // No tenant needed
         $value = '1984';
 
         $item->attributes()->attach($attribute->id, ['value' => $value]);

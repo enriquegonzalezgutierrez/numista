@@ -13,8 +13,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DevelopmentSeeder::class,
             CountrySeeder::class,
-            AttributeSeeder::class,
-            AttributeValueSeeder::class,
+            ItemTypeSeeder::class, // THE FIX: Add the new seeder here
+            SharedAttributeSeeder::class,
             CategorySeeder::class,
             CollectionSeeder::class,
             ItemSeeder::class,

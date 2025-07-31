@@ -4,7 +4,6 @@
 
 namespace Numista\Collection\UI\Filament\Resources;
 
-use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -21,10 +20,10 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Numista\Collection\Domain\Models\Attribute;
 use Numista\Collection\Domain\Models\Item;
+use Numista\Collection\Domain\Models\ItemType;
+use Numista\Collection\Domain\Models\SharedAttribute;
 use Numista\Collection\UI\Filament\ItemStatusManager;
 use Numista\Collection\UI\Filament\ItemTypeManager;
 use Numista\Collection\UI\Filament\Resources\ItemResource\Pages;
@@ -65,28 +64,37 @@ class ItemResource extends Resource
                             ->schema([
                                 TextInput::make('name')->label(__('item.field_name'))->required()->maxLength(255)->live(onBlur: true)->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
                                 TextInput::make('slug')->label(__('panel.field_slug'))->required()->unique(Item::class, 'slug', ignoreRecord: true)->disabled()->dehydrated(),
-                                Select::make('type')->label(__('item.field_type'))->options(fn (ItemTypeManager $manager): array => $manager->getTypesForSelect())->required()->live()->afterStateUpdated(fn (Set $set) => $set('attributes', [])),
+                                Select::make('type')
+                                    ->label(__('item.field_type'))
+                                    ->options(fn (ItemTypeManager $manager): array => $manager->getTypesForSelect())
+                                    ->required()
+                                    ->live()
+                                    // THE FIX: Do not reset the 'attributes' state when the type changes.
+                                    // This preserves the data if the user switches back and forth.
+                                    ->afterStateUpdated(fn (Set $set) => $set('attributes', $form->getRawState()['attributes'] ?? [])),
                                 Textarea::make('description')->label(__('panel.field_description'))->columnSpanFull(),
                             ])->columns(2),
 
                         Forms\Components\Section::make(__('panel.label_attributes'))
                             ->schema(function (Get $get): array {
-                                $itemType = $get('type');
-                                if (empty($itemType)) {
+                                $itemTypeName = $get('type');
+                                if (empty($itemTypeName)) {
                                     return [];
                                 }
 
-                                // This is the final, correct query. It uses a subquery to filter attributes
-                                // based on the pivot table `attribute_item_type` without needing a direct Eloquent relationship.
-                                $attributes = Attribute::query()
-                                    ->where('tenant_id', Filament::getTenant()->id)
-                                    ->whereExists(function ($query) use ($itemType) {
-                                        $query->select(DB::raw(1))
-                                            ->from('attribute_item_type')
-                                            ->whereColumn('attribute_item_type.attribute_id', 'attributes.id')
-                                            ->where('item_type', $itemType);
+                                // Find the ItemType model by its name
+                                $itemType = ItemType::where('name', $itemTypeName)->first();
+                                if (! $itemType) {
+                                    return [];
+                                }
+
+                                // THE FIX: This is the correct query. It joins on the pivot table
+                                // and filters by the correct `item_type_id`.
+                                $attributes = SharedAttribute::query()
+                                    ->whereHas('itemTypes', function ($query) use ($itemType) {
+                                        $query->where('item_type_id', $itemType->id);
                                     })
-                                    ->with('values')
+                                    ->with('options')
                                     ->orderBy('name')
                                     ->get();
 
@@ -94,24 +102,15 @@ class ItemResource extends Resource
                                     return [];
                                 }
 
-                                return $attributes->map(function (Attribute $attribute) {
-                                    if ($attribute->type === 'select') {
-                                        $options = $attribute->values->pluck('value', 'id');
-                                        $attributeKey = strtolower(str_replace(' ', '_', $attribute->name));
-                                        $translationPrefix = "item.options.{$attributeKey}.";
-                                        $translatedOptions = $options->mapWithKeys(function ($value, $id) use ($translationPrefix) {
-                                            $key = $translationPrefix.$value;
+                                return $attributes->map(function (SharedAttribute $attribute) {
+                                    $field = match ($attribute->type) {
+                                        'select' => Forms\Components\Select::make("attributes.{$attribute->id}.attribute_option_id")
+                                            ->options($attribute->options->pluck('value', 'id')),
+                                        'number' => Forms\Components\TextInput::make("attributes.{$attribute->id}.value")->numeric(),
+                                        'date' => Forms\Components\DatePicker::make("attributes.{$attribute->id}.value"),
+                                        default => Forms\Components\TextInput::make("attributes.{$attribute->id}.value"),
+                                    };
 
-                                            return [$id => trans()->has($key) ? __($key) : $value];
-                                        });
-                                        $field = Select::make("attributes.{$attribute->id}.attribute_value_id")->options($translatedOptions);
-                                    } else {
-                                        $field = match ($attribute->type) {
-                                            'number' => TextInput::make("attributes.{$attribute->id}.value")->numeric(),
-                                            'date' => DatePicker::make("attributes.{$attribute->id}.value"),
-                                            default => TextInput::make("attributes.{$attribute->id}.value"),
-                                        };
-                                    }
                                     $key = 'panel.attribute_name_'.strtolower(str_replace(' ', '_', $attribute->name));
 
                                     return $field->label(trans()->has($key) ? __($key) : $attribute->name);
@@ -127,7 +126,7 @@ class ItemResource extends Resource
                                 TextInput::make('purchase_price')->numeric()->prefix('€')->label(__('item.field_purchase_price')),
                                 DatePicker::make('purchase_date')->label(__('item.field_purchase_date')),
                                 Select::make('status')->options(fn (ItemStatusManager $manager) => $manager->getStatusesForSelect())->default('in_collection')->required()->live()->label(__('item.field_status')),
-                                TextInput::make('sale_price')->numeric()->prefix('€')->visible(fn (Get $get): bool => $get('status') === 'for_sale')->label(__('item.field_sale_price')),
+                                TextInput::make('sale_price')->numeric()->prefix('€')->visible(fn (Get $get): bool => in_array($get('status'), ['for_sale', 'sold']))->label(__('item.field_sale_price')),
                             ]),
                     ])->columnSpan(['lg' => 1]),
             ])->columns(3);

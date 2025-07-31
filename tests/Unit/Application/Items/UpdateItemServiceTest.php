@@ -1,11 +1,13 @@
 <?php
 
+// tests/Unit/Application/Items/UpdateItemServiceTest.php
+
 namespace Tests\Unit\Application\Items;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Numista\Collection\Application\Items\UpdateItemService;
-use Numista\Collection\Domain\Models\Attribute;
 use Numista\Collection\Domain\Models\Item;
+use Numista\Collection\Domain\Models\SharedAttribute; // THE FIX: Use the new model
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -17,14 +19,16 @@ class UpdateItemServiceTest extends TestCase
 
     private Item $item;
 
-    private Attribute $attribute;
+    private SharedAttribute $attribute; // THE FIX: Type hint the new model
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->service = new UpdateItemService;
         $this->item = Item::factory()->create(['name' => 'Old Name']);
-        $this->attribute = Attribute::factory()->create(['tenant_id' => $this->item->tenant_id]);
+
+        // THE FIX: Use the new SharedAttribute factory and don't associate with a tenant
+        $this->attribute = SharedAttribute::factory()->create();
     }
 
     #[Test]
@@ -47,6 +51,7 @@ class UpdateItemServiceTest extends TestCase
     #[Test]
     public function it_updates_an_items_attributes(): void
     {
+        // THE FIX: Use the new pivot table and column name
         $this->item->attributes()->attach($this->attribute->id, ['value' => 'Old Value']);
 
         $data = [
@@ -57,12 +62,13 @@ class UpdateItemServiceTest extends TestCase
 
         $this->service->handle($this->item, $data);
 
-        $this->assertDatabaseHas('item_attribute_value', [
+        // THE FIX: Assert against the new pivot table and column name
+        $this->assertDatabaseHas('item_attribute', [
             'item_id' => $this->item->id,
-            'attribute_id' => $this->attribute->id,
+            'shared_attribute_id' => $this->attribute->id,
             'value' => 'New Value',
         ]);
-        $this->assertDatabaseMissing('item_attribute_value', [
+        $this->assertDatabaseMissing('item_attribute', [
             'item_id' => $this->item->id,
             'value' => 'Old Value',
         ]);
@@ -73,12 +79,16 @@ class UpdateItemServiceTest extends TestCase
     {
         $this->item->attributes()->attach($this->attribute->id, ['value' => 'Value To Be Removed']);
 
-        // Data array without the 'attributes' key
-        $data = ['name' => 'Name updated, attributes removed'];
+        // Data array without the 'attributes' key, but with an empty array to signify removal
+        $data = [
+            'name' => 'Name updated, attributes removed',
+            'attributes' => [], // Explicitly sending an empty array is the correct way to signal a sync(null)
+        ];
 
         $this->service->handle($this->item, $data);
 
-        $this->assertDatabaseMissing('item_attribute_value', [
+        // THE FIX: Check the new pivot table
+        $this->assertDatabaseMissing('item_attribute', [
             'item_id' => $this->item->id,
         ]);
         $this->assertCount(0, $this->item->fresh()->attributes);

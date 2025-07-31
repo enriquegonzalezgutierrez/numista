@@ -1,14 +1,16 @@
 <?php
 
+// tests/Feature/Filament/ItemResourceTest.php
+
 namespace Tests\Feature\Filament;
 
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
-use Numista\Collection\Domain\Models\Attribute;
 use Numista\Collection\Domain\Models\Item;
+use Numista\Collection\Domain\Models\ItemType;         // THE FIX: Import ItemType
+use Numista\Collection\Domain\Models\SharedAttribute; // THE FIX: Use SharedAttribute
 use Numista\Collection\Domain\Models\Tenant;
 use Numista\Collection\UI\Filament\Resources\ItemResource;
 use Numista\Collection\UI\Filament\Resources\ItemResource\Pages\ListItems;
@@ -43,7 +45,6 @@ class ItemResourceTest extends TestCase
     public function it_can_list_items_belonging_to_the_current_tenant(): void
     {
         $itemInTenant = Item::factory()->create(['tenant_id' => $this->tenant->id]);
-
         Livewire::test(ListItems::class)
             ->assertCanSeeTableRecords([$itemInTenant]);
     }
@@ -53,7 +54,6 @@ class ItemResourceTest extends TestCase
     {
         $otherTenant = Tenant::factory()->create();
         $itemInOtherTenant = Item::factory()->create(['tenant_id' => $otherTenant->id]);
-
         Livewire::test(ListItems::class)
             ->assertCanNotSeeTableRecords([$itemInOtherTenant]);
     }
@@ -67,20 +67,20 @@ class ItemResourceTest extends TestCase
     #[Test]
     public function it_can_create_an_item_with_attributes(): void
     {
-        $attribute = Attribute::factory()->create(['tenant_id' => $this->tenant->id, 'type' => 'text', 'name' => 'Material']);
+        // THE FIX: Setup with the new global structure
+        $coinType = ItemType::factory()->create(['name' => 'coin']);
+        $attribute = SharedAttribute::factory()->create(['type' => 'text', 'name' => 'Material']);
+        $attribute->itemTypes()->attach($coinType); // Link attribute to the item type
 
-        DB::table('attribute_item_type')->insert([
-            'attribute_id' => $attribute->id,
-            'item_type' => 'coin',
+        $newItemData = Item::factory()->raw([
+            'type' => 'coin', // Use the name of the item type
         ]);
+        unset($newItemData['tenant_id'], $newItemData['slug']); // These are handled automatically
 
-        // THE FIX: Generate raw data without tenant_id, as the CreateItem page now handles it.
-        $newItemData = Item::factory()->raw();
-        $newItemData['type'] = 'coin';
+        // Add attribute data to the form payload
         $newItemData['attributes'] = [
             $attribute->id => ['value' => 'Silver'],
         ];
-        unset($newItemData['tenant_id'], $newItemData['slug']);
 
         Livewire::test(ItemResource\Pages\CreateItem::class)
             ->fillForm($newItemData)
@@ -93,9 +93,9 @@ class ItemResourceTest extends TestCase
         ]);
 
         $item = Item::where('name', $newItemData['name'])->first();
-        $this->assertDatabaseHas('item_attribute_value', [
+        $this->assertDatabaseHas('item_attribute', [
             'item_id' => $item->id,
-            'attribute_id' => $attribute->id,
+            'shared_attribute_id' => $attribute->id,
             'value' => 'Silver',
         ]);
     }
