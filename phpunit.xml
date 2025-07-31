@@ -35,5 +35,8 @@
 
         <env name="APP_URL" value="http://localhost"/>
         <env name="APP_NAME" value="Numista"/>
+
+        <env name="STRIPE_KEY" value="pk_test_dummykey1234567890"/>
+        <env name="STRIPE_SECRET" value="sk_test_dummysecret1234567890"/>
     </php>
 </phpunit>
