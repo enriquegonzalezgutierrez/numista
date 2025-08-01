@@ -32,11 +32,14 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email', 'exists:users,email'],
         ]);
 
+        /** @var User $user */
         $user = User::where('email', $request->email)->first();
 
+        // This line is functionally correct.
         $token = Password::broker()->createToken($user);
 
-        Mail::to($user)->send(new ResetPasswordMail($token, $user->email));
+        // We should still use the queue for sending emails.
+        Mail::to($user)->queue(new ResetPasswordMail($token, $user->email));
 
         return back()->with('status', __(Password::RESET_LINK_SENT));
     }

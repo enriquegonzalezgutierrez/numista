@@ -9,8 +9,8 @@ use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Numista\Collection\Domain\Models\Item;
-use Numista\Collection\Domain\Models\ItemType;         // THE FIX: Import ItemType
-use Numista\Collection\Domain\Models\SharedAttribute; // THE FIX: Use SharedAttribute
+use Numista\Collection\Domain\Models\ItemType;
+use Numista\Collection\Domain\Models\SharedAttribute;
 use Numista\Collection\Domain\Models\Tenant;
 use Numista\Collection\UI\Filament\Resources\ItemResource;
 use Numista\Collection\UI\Filament\Resources\ItemResource\Pages\ListItems;
@@ -28,7 +28,13 @@ class ItemResourceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->tenant = Tenant::factory()->create();
+
+        // THE FIX: Create a tenant that has an active subscription.
+        // This will satisfy the CheckSubscriptionStatus middleware.
+        $this->tenant = Tenant::factory()->create([
+            'subscription_status' => 'active',
+        ]);
+
         $this->adminUser = User::factory()->admin()->create();
         $this->adminUser->tenants()->attach($this->tenant);
         $this->actingAs($this->adminUser);
@@ -54,6 +60,7 @@ class ItemResourceTest extends TestCase
     {
         $otherTenant = Tenant::factory()->create();
         $itemInOtherTenant = Item::factory()->create(['tenant_id' => $otherTenant->id]);
+
         Livewire::test(ListItems::class)
             ->assertCanNotSeeTableRecords([$itemInOtherTenant]);
     }
@@ -67,17 +74,15 @@ class ItemResourceTest extends TestCase
     #[Test]
     public function it_can_create_an_item_with_attributes(): void
     {
-        // THE FIX: Setup with the new global structure
         $coinType = ItemType::factory()->create(['name' => 'coin']);
         $attribute = SharedAttribute::factory()->create(['type' => 'text', 'name' => 'Material']);
-        $attribute->itemTypes()->attach($coinType); // Link attribute to the item type
+        $attribute->itemTypes()->attach($coinType);
 
         $newItemData = Item::factory()->raw([
-            'type' => 'coin', // Use the name of the item type
+            'type' => 'coin',
         ]);
-        unset($newItemData['tenant_id'], $newItemData['slug']); // These are handled automatically
+        unset($newItemData['tenant_id'], $newItemData['slug']);
 
-        // Add attribute data to the form payload
         $newItemData['attributes'] = [
             $attribute->id => ['value' => 'Silver'],
         ];

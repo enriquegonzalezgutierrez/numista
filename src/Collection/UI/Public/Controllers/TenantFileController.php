@@ -1,7 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+// src/Collection/UI/Public/Controllers/TenantFileController.php
 
+namespace Numista\Collection\UI\Public\Controllers;
+
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;

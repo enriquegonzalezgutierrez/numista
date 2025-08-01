@@ -26,52 +26,94 @@
             </head>
     <body class="antialiased font-sans flex flex-col min-h-screen">
         <div class="flex-grow">
-            <header class="bg-white dark:bg-gray-800/50 backdrop-blur-sm shadow-sm sticky top-0 z-10">
-    <div class="mx-auto max-w-7xl py-3 px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center">
+            <header x-data="{ mobileMenuOpen: false }" class="bg-white dark:bg-gray-800/50 backdrop-blur-sm shadow-sm sticky top-0 z-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 justify-between items-center">
             
-            
-            <a href="http://localhost" class="flex items-center space-x-3">
-                 <img src="http://localhost/storage/logo.png" alt="Numista" class="h-10 w-auto">
-                 
-                 <span class="hidden sm:inline text-xl font-bold text-gray-800 dark:text-gray-200 tracking-tight">Numista</span>
-            </a>
+            <div class="flex">
+                <a href="http://localhost" class="flex flex-shrink-0 items-center space-x-3">
+                     <img src="http://localhost/storage/logo.png" alt="Numista" class="h-10 w-auto">
+                     <span class="hidden sm:inline text-xl font-bold text-gray-800 dark:text-gray-200 tracking-tight">Numista</span>
+                </a>
+            </div>
 
             
-            <nav class="flex items-center space-x-2 sm:space-x-4">
-                
-                
+            <nav class="hidden lg:flex lg:items-center lg:space-x-6">
                 <a href="http://localhost/marketplace" 
                    class="text-sm font-semibold transition-colors text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
                     Marketplace
                 </a>
                 
-                <div class="flow-root" x-data="{ cartCount: 0 }" @cart-updated.window="cartCount = $event.detail.cartCount">
-                    <a href="http://localhost/cart" class="group -m-2 flex items-center p-2">
-                        <svg class="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.658-.463 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                        </svg>
-                        <span x-text="cartCount" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-400 group-hover:text-gray-800"></span>
-                        <span class="sr-only">artículos en el carrito, ver cesta</span>
-                    </a>
-                </div>
-                
-                <span class="h-6 w-px bg-gray-200 dark:bg-gray-600" aria-hidden="true"></span>
-                
-                
-                                                            
-                        <a href="http://localhost/my-account/orders" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Mi Cuenta</a>
-                    
-                    <span class="h-6 w-px bg-gray-200 dark:bg-gray-600" aria-hidden="true"></span>
+                <a href="http://localhost/register-seller" 
+                   class="text-sm font-semibold transition-colors text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+                    Vender
+                </a>
+            </nav>
 
-                    <form method="POST" action="http://localhost/logout" class="inline">
-                        <input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">                        <a href="http://localhost/logout"
-                                onclick="event.preventDefault(); this.closest('form').submit();"
-                                class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+            
+            <div class="flex items-center">
+                <div class="flex items-center space-x-4">
+                    
+                    <div class="flow-root" x-data="{ cartCount: 0 }" @cart-updated.window="cartCount = $event.detail.cartCount">
+                        <a href="http://localhost/cart" class="group -m-2 flex items-center p-2">
+                            <svg class="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.658-.463 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                            </svg>
+                            <span x-text="cartCount" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-400 group-hover:text-gray-800"></span>
+                            <span class="sr-only">artículos en el carrito, ver cesta</span>
+                        </a>
+                    </div>
+                    
+                    
+                    <span class="h-6 w-px bg-gray-200 dark:bg-gray-600 hidden lg:inline-block" aria-hidden="true"></span>
+                    
+                    
+                    <div class="hidden lg:flex lg:items-center space-x-4">
+                                                                                    <a href="http://localhost/my-account" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Mi Cuenta</a>
+                            
+                            <span class="h-6 w-px bg-gray-200 dark:bg-gray-600" aria-hidden="true"></span>
+
+                            <form method="POST" action="http://localhost/logout" class="inline">
+                                <input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">                                <a href="http://localhost/logout"
+                                        onclick="event.preventDefault(); this.closest('form').submit();"
+                                        class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+                                    Cerrar Sesión
+                                </a>
+                            </form>
+                                            </div>
+                </div>
+
+                
+                <div class="flex items-center lg:hidden ml-4">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500 dark:hover:bg-gray-700" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        
+                        <svg x-show="!mobileMenuOpen" class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+                        
+                        <svg x-show="mobileMenuOpen" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div x-show="mobileMenuOpen" class="lg:hidden" id="mobile-menu" x-cloak>
+        <div class="space-y-1 px-2 pb-3 pt-2">
+            <a href="http://localhost/marketplace" class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Marketplace</a>
+            <a href="http://localhost/register-seller" class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Vender</a>
+        </div>
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-4 pb-3">
+            <div class="space-y-1 px-2">
+                                                              <a href="http://localhost/my-account" class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Mi Cuenta</a>
+                                        <form method="POST" action="http://localhost/logout">
+                        <input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">                        <a href="http://localhost/logout" 
+                           onclick="event.preventDefault(); this.closest('form').submit();"
+                           class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">
                             Cerrar Sesión
                         </a>
                     </form>
-                            </nav>
+                            </div>
         </div>
     </div>
 </header>

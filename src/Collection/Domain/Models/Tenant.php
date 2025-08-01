@@ -23,6 +23,10 @@ class Tenant extends Model
     protected $fillable = [
         'name',
         'slug',
+        // THE FIX: Add the new subscription fields to the fillable array
+        'stripe_customer_id',
+        'stripe_subscription_id',
+        'subscription_status',
     ];
 
     /**
@@ -38,12 +42,18 @@ class Tenant extends Model
         return $this->hasMany(Order::class);
     }
 
-    /**
-     * Get the items for the tenant.
-     */
     public function items(): HasMany
     {
         return $this->hasMany(Item::class);
+    }
+
+    /**
+     * Check if the tenant has an active subscription.
+     * This helper method will be very useful later.
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->subscription_status === 'active';
     }
 
     protected static function newFactory(): TenantFactory

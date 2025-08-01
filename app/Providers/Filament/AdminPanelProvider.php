@@ -1,7 +1,10 @@
 <?php
 
+// app/Providers/Filament/AdminPanelProvider.php
+
 namespace App\Providers\Filament;
 
+use App\Http\Middleware\CheckSubscriptionStatus; // THE FIX: Import the new middleware
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -69,6 +72,11 @@ class AdminPanelProvider extends PanelProvider
                 slugAttribute: 'slug',
                 ownershipRelationship: 'tenants'
             )
+            // THE FIX: This is the correct place for our subscription check middleware.
+            // It runs on tenant-aware routes, after the tenant has been identified.
+            ->tenantMiddleware([
+                CheckSubscriptionStatus::class,
+            ], isPersistent: true)
             ->tenantRegistration(RegisterTenant::class)
             ->tenantProfile(EditTenantProfile::class);
     }

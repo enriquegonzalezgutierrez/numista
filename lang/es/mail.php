@@ -51,4 +51,17 @@ return [
     'seller_notification_manage_order' => 'Puedes gestionar este pedido desde tu panel de control.',
     'seller_notification_cta' => 'Ir al Panel de Control',
     'seller_notification_team' => 'El equipo de :appName',
+
+    // THE FIX: Add new keys for the new tenant welcome email
+    'welcome_subject' => '¡Bienvenido a :appName!',
+    'welcome_title' => '¡Bienvenido a :appName, :userName!',
+    'welcome_intro' => 'Gracias por registrar tu colección con nosotros.',
+    'welcome_next_step' => 'Tu cuenta ha sido creada y estás a un solo paso de empezar. El siguiente paso es elegir un plan de suscripción para activar tu panel de administración.',
+    'welcome_ignore' => 'Si ya has completado el pago, ¡puedes ignorar este mensaje y empezar a disfrutar de la plataforma!',
+    'welcome_cta' => 'Ir a mi Panel de Control',
+
+    // THE FIX: Add keys for the subscription confirmation email
+    'subscription_activated_subject' => '¡Tu suscripción está activa!',
+    'subscription_activated_title' => '¡Suscripción Activada!',
+    'subscription_activated_body' => 'Tu suscripción para la colección ":tenantName" ha sido activada con éxito. ¡Ya puedes empezar a añadir tus ítems!',
 ];

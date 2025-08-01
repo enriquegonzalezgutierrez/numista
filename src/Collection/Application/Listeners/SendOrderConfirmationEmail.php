@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/Application/Listeners/SendOrderConfirmationEmail.php
+
 namespace Numista\Collection\Application\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,11 +16,10 @@ class SendOrderConfirmationEmail implements ShouldQueue
      */
     public function handle(OrderPlaced $event): void
     {
-        // THE FIX: Use the correct relationship name `customer` which points to the User model.
-        // This was the source of the error in the CheckoutControllerTest.
         $order = $event->order->load('customer', 'items.item');
 
-        Mail::to($order->customer->email)->send(
+        // THE FIX: Changed send() to queue() for asynchronous email dispatch.
+        Mail::to($order->customer->email)->queue(
             new OrderConfirmationMail($order)
         );
     }

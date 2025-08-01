@@ -2,13 +2,13 @@
 
 // routes/web.php
 
-use App\Http\Controllers\TenantFileController;
 use Illuminate\Support\Facades\Route;
 use Numista\Collection\UI\Public\Controllers\AddressController;
 use Numista\Collection\UI\Public\Controllers\Auth\AuthenticatedSessionController;
 use Numista\Collection\UI\Public\Controllers\Auth\NewPasswordController;
 use Numista\Collection\UI\Public\Controllers\Auth\PasswordResetLinkController;
 use Numista\Collection\UI\Public\Controllers\Auth\RegisteredUserController;
+use Numista\Collection\UI\Public\Controllers\Auth\TenantRegistrationController;
 use Numista\Collection\UI\Public\Controllers\CartController;
 use Numista\Collection\UI\Public\Controllers\CheckoutController;
 use Numista\Collection\UI\Public\Controllers\ContactSellerController;
@@ -17,26 +17,28 @@ use Numista\Collection\UI\Public\Controllers\MyAccountController;
 use Numista\Collection\UI\Public\Controllers\OrderController;
 use Numista\Collection\UI\Public\Controllers\ProfileController;
 use Numista\Collection\UI\Public\Controllers\PublicItemController;
+use Numista\Collection\UI\Public\Controllers\StripeWebhookController;
+use Numista\Collection\UI\Public\Controllers\SubscriptionController;
+use Numista\Collection\UI\Public\Controllers\TenantFileController;
 use Numista\Collection\UI\Public\Controllers\TenantProfileController;
 
 /*
 |--------------------------------------------------------------------------
-| Publicly Accessible Routes
+| Publicly Accessible & Main Navigation Routes
 |--------------------------------------------------------------------------
 */
-
 Route::get('/', LandingPageController::class)->name('landing');
-
-// Marketplace & Item Browsing
 Route::get('/marketplace', [PublicItemController::class, 'index'])->name('public.items.index');
 Route::get('/items/{item:slug}', [PublicItemController::class, 'show'])->name('public.items.show');
 Route::post('/items/{item:slug}/contact', ContactSellerController::class)->name('public.items.contact');
-
-// File Serving
 Route::get('/images/{image}', [TenantFileController::class, 'showImage'])->name('images.show');
 Route::get('/tenant-files/{path}', [TenantFileController::class, 'showFile'])->where('path', '.*')->name('tenant.files');
 
-// Shopping Cart
+/*
+|--------------------------------------------------------------------------
+| Shopping Cart Routes
+|--------------------------------------------------------------------------
+*/
 Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/add/{item}', [CartController::class, 'add'])->name('add');
@@ -50,10 +52,11 @@ Route::prefix('cart')->name('cart.')->group(function () {
 | Guest-Only Routes (Authentication)
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::get('register-seller', [TenantRegistrationController::class, 'create'])->name('register.seller');
+    Route::post('register-seller', [TenantRegistrationController::class, 'store'])->name('register.seller.store');
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
@@ -67,11 +70,11 @@ Route::middleware('guest')->group(function () {
 | Authenticated User Routes
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::get('/subscribe/{tenant:slug}', [SubscriptionController::class, 'create'])->name('subscription.create');
+    Route::post('/subscribe/{tenant:slug}', [SubscriptionController::class, 'store'])->name('subscription.store');
 
-    // Customer Account Area
     Route::prefix('my-account')->name('my-account.')->group(function () {
         Route::get('/', [MyAccountController::class, 'dashboard'])->name('dashboard');
         Route::get('/orders', [MyAccountController::class, 'orders'])->name('orders');
@@ -82,19 +85,22 @@ Route::middleware('auth')->group(function () {
         Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
     });
 
-    // Order & Checkout Flow
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('checkout', [CheckoutController::class, 'create'])->name('checkout.create');
     Route::post('checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-    // THE FIX: The success route no longer expects an {order} parameter.
     Route::get('checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Catch-All Routes (Must be last)
+| Webhook and Catch-All Routes
 |--------------------------------------------------------------------------
 */
-// This route is for tenant public profiles and must be last to avoid
-// capturing other top-level routes like /login or /marketplace.
+// Stripe Webhook Route
+Route::post(
+    'stripe/webhook',
+    [StripeWebhookController::class, 'handleWebhook']
+)->name('stripe.webhook');
+
+// Tenant public profile route must be last to avoid capturing other top-level routes.
 Route::get('/{tenant:slug}', TenantProfileController::class)->name('public.tenants.show');

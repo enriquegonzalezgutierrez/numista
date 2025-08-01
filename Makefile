@@ -139,6 +139,9 @@ bash: ## Get a shell ('sh') inside the app container
 db-shell: ## Connect to the PostgreSQL database shell
 	@docker-compose exec -u postgres db psql -d ${DB_DATABASE} -U ${DB_USERNAME}
 
+status: ## Check the status of the supervisor processes
+	@docker-compose exec -u root app supervisorctl -c /etc/supervisor/supervisord.conf status
+
 # ==============================================================================
 # Help Command
 # ==============================================================================
@@ -149,4 +152,4 @@ help: ## Show this help message
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 # Mark targets as not being actual files
-.PHONY: up down stop restart logs setup optimize cache-clear clear-all fix-permissions artisan migrate migrate-fresh key-generate composer composer-install npm test test-feature test-unit test-coverage lint fix bash db-shell help
+.PHONY: up down stop restart logs setup optimize cache-clear clear-all fix-permissions artisan migrate migrate-fresh key-generate composer composer-install npm test test-feature test-unit test-coverage lint fix bash db-shell status help

@@ -8,7 +8,7 @@ services:
     image: nginx:1.25-alpine
     container_name: numista_nginx
     ports:
-      - "8080:80" # Access the app via http://localhost:8080
+      - "8080:80"
     volumes:
       - ./:/var/www/html
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
@@ -23,8 +23,12 @@ services:
       context: .
       dockerfile: docker/app/Dockerfile
       args:
-        UID: ${UID:-1000} # Pass the host user's UID
+        UID: ${UID:-1000}
     container_name: numista_app
+    environment:
+      # Pass the Stripe secrets to be available for the supervisor process and the application.
+      STRIPE_SECRET: ${STRIPE_SECRET}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET} # THE FIX: Add this line
     volumes:
       - ./:/var/www/html
     depends_on:
@@ -38,7 +42,7 @@ services:
     container_name: numista_db
     restart: unless-stopped
     ports:
-      - "54320:5432" # Access the DB from host via port 54320 if needed
+      - "54320:5432"
     environment:
       POSTGRES_DB: ${DB_DATABASE:-numista}
       POSTGRES_USER: ${DB_USERNAME:-user}

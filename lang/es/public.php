@@ -47,6 +47,7 @@ return [
 
     'header' => [
         'marketplace' => 'Marketplace',
+        'sell' => 'Vender',
         'cart_sr_text' => 'artículos en el carrito, ver cesta',
     ],
     'marketplace_title' => 'Marketplace de Coleccionables',
@@ -153,4 +154,14 @@ return [
     'checkout_error_items_not_found' => 'Uno o más ítems en tu carrito ya no existen. Por favor, revisa tu carrito.',
     'checkout_error_item_not_available' => 'El ítem \':itemName\' ya no está disponible en la cantidad solicitada. Por favor, revisa tu carrito.',
     'cart_add_error_no_stock' => 'No hay suficiente stock para el ítem \':itemName\'.',
+    'subscribe_title' => 'Suscribirse',
+    'subscribe_page_title' => 'Elige tu Plan para :tenantName',
+    'subscribe_page_subtitle' => 'Estás a un paso de empezar a gestionar tu colección.',
+    'plan_monthly' => 'Plan Mensual',
+    'plan_yearly' => 'Plan Anual',
+    'monthly_billing' => 'Facturación mensual, cancela cuando quieras.',
+    'yearly_billing' => '¡Ahorra un 16% con el pago anual!',
+    'most_popular' => 'Más Popular',
+    'subscribe_button' => 'Suscribirse',
+    'redirecting_to_stripe' => 'Redirigiendo a Stripe...',
 ];
