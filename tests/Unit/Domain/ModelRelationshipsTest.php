@@ -2,7 +2,7 @@
 
 // tests/Feature/Domain/ModelRelationshipsTest.php
 
-namespace Tests\Feature\Domain;
+namespace Tests\Unit\Domain;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Numista\Collection\Domain\Models\Category;

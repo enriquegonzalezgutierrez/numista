@@ -2,7 +2,7 @@
 
 // tests/Feature/Application/Events/OrderPlacedEventsTest.php
 
-namespace Tests\Feature\Application\Events;
+namespace Tests\Unit\Application\Events;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

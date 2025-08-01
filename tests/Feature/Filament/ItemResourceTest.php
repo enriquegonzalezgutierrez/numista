@@ -104,4 +104,25 @@ class ItemResourceTest extends TestCase
             'value' => 'Silver',
         ]);
     }
+
+    #[Test]
+    public function a_tenant_cannot_access_another_tenants_items_in_panel(): void
+    {
+        // Create a second tenant with its own user and item
+        $tenantB = Tenant::factory()->create(['subscription_status' => 'active']);
+        /** @var User $userB */
+        $userB = User::factory()->admin()->create();
+        $userB->tenants()->attach($tenantB);
+        $itemOfTenantB = Item::factory()->create(['tenant_id' => $tenantB->id]);
+
+        // Acting as the original user from Tenant A
+        $this->actingAs($this->adminUser);
+        Filament::setTenant($this->tenant);
+
+        // Try to access the edit page of an item belonging to Tenant B
+        $response = $this->get(ItemResource::getUrl('edit', ['record' => $itemOfTenantB]));
+
+        // Filament should prevent this and return a 404 Not Found
+        $response->assertNotFound();
+    }
 }

@@ -2,7 +2,7 @@
 
 // tests/Feature/Domain/OrderRelationshipsTest.php
 
-namespace Tests\Feature\Domain;
+namespace Tests\Unit\Domain;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Numista\Collection\Domain\Models\Order;

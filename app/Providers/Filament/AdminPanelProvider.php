@@ -32,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->registration()
+            // ->registration() // THE FIX: This line has been removed or commented out.
             // --- START OF CUSTOMIZATION ---
             ->colors([
                 'primary' => Color::Teal,

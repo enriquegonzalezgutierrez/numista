@@ -54,7 +54,7 @@ class StripeWebhookController extends Controller
      * Handle the checkout.session.completed event.
      * This is triggered when a user successfully completes the Stripe Checkout page.
      */
-    protected function handleCheckoutSessionCompleted(object $session): void
+    public function handleCheckoutSessionCompleted(object $session): void
     {
         $stripeCustomerId = $session->customer;
         $tenant = Tenant::where('stripe_customer_id', $stripeCustomerId)->first();

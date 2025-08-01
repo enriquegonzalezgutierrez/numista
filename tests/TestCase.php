@@ -59,10 +59,11 @@ abstract class TestCase extends BaseTestCase
         // Replace dynamic IDs in HTML attributes like `for` and `id`
         $content = preg_replace('/(for|id)="quantity-\d+"/', '$1="quantity-[id]"', $content);
 
-        // Scrub CSRF tokens
+        // THE FIX: Scrub CSRF tokens from meta tags, input fields, and Alpine/Livewire attributes.
         $content = preg_replace('/<meta name="csrf-token" content=".*">/', '<meta name="csrf-token" content="[FILTERED]">', $content);
         $content = preg_replace('/<input type="hidden" name="_token" value=".*" autocomplete="off">/', '<input type="hidden" name="_token" value="[FILTERED]" autocomplete="off">', $content);
         $content = preg_replace('/(\'X-CSRF-TOKEN\': \')([a-zA-Z0-9]+)(\',)/', '$1[FILTERED]$3', $content);
+        $content = preg_replace('/(data-csrf=")([a-zA-Z0-9]+)(")/', '$1[FILTERED]$3', $content);
 
         return $content;
     }
