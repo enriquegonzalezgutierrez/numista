@@ -14,19 +14,55 @@ use Numista\Collection\Domain\Models\Item;
 class CartController extends Controller
 {
     /**
-     * Display the cart contents.
+     * Display the cart contents after validating stock.
      */
     public function index(): View
     {
         $cart = session()->get('cart', []);
+        $warnings = [];
+        $cartWasModified = false;
+
+        if (! empty($cart)) {
+            $itemIds = array_keys($cart);
+            $itemsInDb = Item::whereIn('id', $itemIds)->get()->keyBy('id');
+
+            foreach ($cart as $itemId => $cartItem) {
+                $item = $itemsInDb->get($itemId);
+
+                // Case 1: Item was removed from the store or is no longer for sale.
+                if (! $item || $item->status !== 'for_sale' || $item->quantity <= 0) {
+                    $warnings[] = __('public.cart_item_removed_no_stock', ['itemName' => $cartItem['name']]);
+                    unset($cart[$itemId]);
+                    $cartWasModified = true;
+
+                    continue; // Go to the next item in the cart
+                }
+
+                // Case 2: The quantity in cart is now greater than the available stock.
+                if ($cartItem['quantity'] > $item->quantity) {
+                    $warnings[] = __('public.cart_item_quantity_updated', [
+                        'itemName' => $item->name,
+                        'quantity' => $item->quantity,
+                    ]);
+                    $cart[$itemId]['quantity'] = $item->quantity;
+                    $cartWasModified = true;
+                }
+            }
+
+            // If we made any changes, update the session.
+            if ($cartWasModified) {
+                session()->put('cart', $cart);
+            }
+        }
+
+        // Fetch fresh item data for the view based on the (potentially modified) cart.
         $items = Item::with('images')->whereIn('id', array_keys($cart))->get();
         $total = 0;
-
         foreach ($items as $item) {
             $total += $item->sale_price * $cart[$item->id]['quantity'];
         }
 
-        return view('public.cart.index', compact('items', 'cart', 'total'));
+        return view('public.cart.index', compact('items', 'cart', 'total', 'warnings'));
     }
 
     /**

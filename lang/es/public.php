@@ -154,6 +154,8 @@ return [
     'checkout_error_items_not_found' => 'Uno o más ítems en tu carrito ya no existen. Por favor, revisa tu carrito.',
     'checkout_error_item_not_available' => 'El ítem \':itemName\' ya no está disponible en la cantidad solicitada. Por favor, revisa tu carrito.',
     'cart_add_error_no_stock' => 'No hay suficiente stock para el ítem \':itemName\'.',
+    'cart_item_quantity_updated' => 'La cantidad para el ítem ":itemName" se ha actualizado a :quantity debido a la disponibilidad de stock.',
+    'cart_item_removed_no_stock' => 'El ítem ":itemName" ha sido eliminado de tu carrito porque ya no está disponible.',
     'subscribe_title' => 'Suscribirse',
     'subscribe_page_title' => 'Elige tu Plan para :tenantName',
     'subscribe_page_subtitle' => 'Estás a un paso de empezar a gestionar tu colección.',
