@@ -166,4 +166,5 @@ return [
     'most_popular' => 'Más Popular',
     'subscribe_button' => 'Suscribirse',
     'redirecting_to_stripe' => 'Redirigiendo a Stripe...',
+    'error_tenant_not_found' => 'Inquilino o cliente de Stripe no encontrado.',
 ];

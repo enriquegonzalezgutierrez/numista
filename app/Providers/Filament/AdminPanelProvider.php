@@ -4,11 +4,12 @@
 
 namespace App\Providers\Filament;
 
-use App\Http\Middleware\CheckSubscriptionStatus; // THE FIX: Import the new middleware
+use App\Http\Middleware\CheckSubscriptionStatus;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -32,8 +33,6 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            // ->registration() // THE FIX: This line has been removed or commented out.
-            // --- START OF CUSTOMIZATION ---
             ->colors([
                 'primary' => Color::Teal,
                 'gray' => Color::Slate,
@@ -43,7 +42,6 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('storage/logo.png'))
             ->brandLogoHeight('48px')
             ->favicon(asset('storage/favicon.png'))
-            // --- END OF CUSTOMIZATION ---
             ->discoverResources(in: base_path('src/Collection/UI/Filament/Resources'), for: 'Numista\\Collection\\UI\\Filament\\Resources')
             ->discoverPages(in: base_path('src/Collection/UI/Filament/Pages'), for: 'Numista\\Collection\\UI\\Filament\\Pages')
             ->pages([
@@ -72,12 +70,24 @@ class AdminPanelProvider extends PanelProvider
                 slugAttribute: 'slug',
                 ownershipRelationship: 'tenants'
             )
-            // THE FIX: This is the correct place for our subscription check middleware.
-            // It runs on tenant-aware routes, after the tenant has been identified.
             ->tenantMiddleware([
                 CheckSubscriptionStatus::class,
             ], isPersistent: true)
             ->tenantRegistration(RegisterTenant::class)
-            ->tenantProfile(EditTenantProfile::class);
+            ->tenantProfile(EditTenantProfile::class)
+
+            // Add the user menu items using translation keys.
+            ->userMenuItems([
+                'profile' => MenuItem::make()
+                    ->label(__('panel.user_menu_profile'))
+                    ->url(fn (): string => EditTenantProfile::getUrl())
+                    ->icon('heroicon-o-user-circle'),
+                'subscription' => MenuItem::make()
+                    ->label(__('panel.user_menu_subscription'))
+                    ->url(fn (): string => route('my-account.subscription.manage'))
+                    ->icon('heroicon-o-credit-card'),
+                // Use the key from the lang/es.json file for logout.
+                'logout' => MenuItem::make()->label(__('Log Out')),
+            ]);
     }
 }

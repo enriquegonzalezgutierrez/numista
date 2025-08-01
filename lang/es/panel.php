@@ -198,4 +198,8 @@ return [
     'modal_change_order_status_heading' => 'Cambiar Estado del Pedido',
     'notification_order_status_updated_title' => 'Estado del Pedido Actualizado',
     'notification_order_status_updated_body' => 'El estado del pedido ha sido actualizado correctamente.',
+
+    // --- User Menu Items ---
+    'user_menu_profile' => 'Editar Perfil',
+    'user_menu_subscription' => 'Gestionar Suscripción',
 ];

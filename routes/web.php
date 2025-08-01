@@ -17,6 +17,8 @@ use Numista\Collection\UI\Public\Controllers\MyAccountController;
 use Numista\Collection\UI\Public\Controllers\OrderController;
 use Numista\Collection\UI\Public\Controllers\ProfileController;
 use Numista\Collection\UI\Public\Controllers\PublicItemController;
+// ADD THIS LINE
+use Numista\Collection\UI\Public\Controllers\StripePortalController;
 use Numista\Collection\UI\Public\Controllers\StripeWebhookController;
 use Numista\Collection\UI\Public\Controllers\SubscriptionController;
 use Numista\Collection\UI\Public\Controllers\TenantFileController;
@@ -83,6 +85,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
+
+        // ADD THIS ROUTE FOR STRIPE CUSTOMER PORTAL
+        Route::get('/subscription/manage', [StripePortalController::class, 'redirectToPortal'])->name('subscription.manage');
     });
 
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');

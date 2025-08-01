@@ -23,10 +23,14 @@ class Tenant extends Model
     protected $fillable = [
         'name',
         'slug',
-        // THE FIX: Add the new subscription fields to the fillable array
         'stripe_customer_id',
         'stripe_subscription_id',
         'subscription_status',
+        'subscription_ends_at',
+    ];
+
+    protected $casts = [
+        'subscription_ends_at' => 'datetime',
     ];
 
     /**
