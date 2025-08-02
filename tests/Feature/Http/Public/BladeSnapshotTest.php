@@ -17,11 +17,15 @@ class BladeSnapshotTest extends TestCase
 
     /**
      * This method runs before each test in this class.
-     * It seeds the predictable data that both tests will use.
      */
     protected function setUp(): void
     {
         parent::setUp();
+
+        // THE FINAL FIX: Ensure the search index is empty before running these tests.
+        // This makes the local test environment behave identically to the clean CI environment.
+        $this->artisan('scout:flush', ['model' => Item::class]);
+
         $this->seed(SnapshotSeeder::class);
     }
 
@@ -35,7 +39,6 @@ class BladeSnapshotTest extends TestCase
         $response = $this->get(route('public.items.show', $item));
         $response->assertOk();
 
-        // Use the scrubber from the parent TestCase before asserting.
         $this->assertMatchesSnapshot($this->scrubSnapshot($response->content()));
     }
 
@@ -46,7 +49,6 @@ class BladeSnapshotTest extends TestCase
         $response = $this->get(route('public.items.index'));
         $response->assertOk();
 
-        // Use the scrubber from the parent TestCase before asserting.
         $this->assertMatchesSnapshot($this->scrubSnapshot($response->content()));
     }
 }
