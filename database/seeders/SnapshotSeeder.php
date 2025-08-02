@@ -17,16 +17,21 @@ class SnapshotSeeder extends Seeder
     {
         $tenant = Tenant::factory()->create(['name' => 'Marketplace Test Collection']);
 
-        Item::factory(15)
+        // Create the items and store them in a collection variable.
+        $items = Item::factory(15)
             ->sequence(fn ($sequence) => [
                 'name' => "Item {$sequence->index}",
                 'sale_price' => 10 + $sequence->index,
-                // THE FIX: Add a predictable description
                 'description' => "This is a predictable description for Item {$sequence->index}.",
             ])
             ->create([
                 'status' => 'for_sale',
                 'tenant_id' => $tenant->id,
             ]);
+
+        // THE FINAL FIX: Instead of calling Artisan, we use the 'searchable' macro
+        // provided by Scout on the collection of items we just created.
+        // This runs in the same process as the test and correctly uses the in-memory database.
+        $items->searchable();
     }
 }

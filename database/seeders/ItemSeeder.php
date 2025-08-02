@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection as EloquentCollection;
+// ADD THIS LINE
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Numista\Collection\Domain\Models\AttributeOption;
@@ -94,7 +95,6 @@ class ItemSeeder extends Seeder
 
             if ($imagePath) {
                 $item->images()->create([
-                    // THE FIX: Removed the 'public/' prefix.
                     'path' => $imagePath,
                     'alt_text' => 'Image for '.$item->name,
                     'order_column' => 1,
@@ -133,10 +133,8 @@ class ItemSeeder extends Seeder
             if ($value === null) {
                 continue;
             }
-
             $attributeKey = strtolower(str_replace(' ', '_', $name));
             $attribute = $this->attributes->get($attributeKey);
-
             if (! $attribute) {
                 continue;
             }
@@ -154,7 +152,8 @@ class ItemSeeder extends Seeder
         }
 
         if (! empty($syncData)) {
-            $item->attributes()->sync($syncData);
+            // THE FIX #2: Use the correct relationship name 'customAttributes'
+            $item->customAttributes()->sync($syncData);
         }
     }
 

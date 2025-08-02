@@ -50,7 +50,10 @@ class CreateItemServiceTest extends TestCase
         $item = $this->service->handle($data);
 
         $this->assertDatabaseHas('item_attribute', ['item_id' => $item->id, 'shared_attribute_id' => $attribute->id, 'value' => 'Silver']);
-        // THE FIX: Use the correct relationship name
+
+        // THE FIX: Refresh the model instance to load the newly created relationship data.
+        $item->refresh();
+
         $this->assertCount(1, $item->customAttributes);
     }
 
