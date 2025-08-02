@@ -116,7 +116,7 @@
          x-data="{
             mobileFiltersOpen: false,
             loading: false,
-            nextPageUrl: 'http://localhost/marketplace?query=%2A&amp;page=2',
+            nextPageUrl: '',
 
             updateResults() {
                 this.loading = true;

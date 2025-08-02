@@ -21,11 +21,7 @@ class BladeSnapshotTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        // THE FINAL FIX: Ensure the search index is empty before running these tests.
-        // This makes the local test environment behave identically to the clean CI environment.
-        $this->artisan('scout:flush', ['model' => Item::class]);
-
+        // THE FIX: We no longer need scout:flush here as it's handled in the parent TestCase.
         $this->seed(SnapshotSeeder::class);
     }
 

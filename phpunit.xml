@@ -30,6 +30,8 @@
         <env name="QUEUE_CONNECTION" value="sync" />
         <env name="SESSION_DRIVER" value="array" />
         <env name="TELESCOPE_ENABLED" value="false" />
+        <!-- This isolates the test search index from the local development index. -->
+        <env name="SCOUT_PREFIX" value="test_"/>
         <env name="APP_LOCALE" value="es"/>
 
         <env name="APP_URL" value="http://localhost"/>

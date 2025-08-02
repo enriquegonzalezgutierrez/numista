@@ -26,12 +26,13 @@ class MarketplaceUserFlowsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        // THE FIX: We no longer need scout:flush or scout:setup here.
 
-        // Arrange: Create a common setup for all tests in this file
         $this->tenant = Tenant::factory()->create(['name' => 'The Seller Collection']);
         $this->seller = User::factory()->create();
         $this->tenant->users()->attach($this->seller);
 
+        // THE FIX #2: Item is created and then immediately synced.
         $this->item = Item::factory()->create([
             'tenant_id' => $this->tenant->id,
             'status' => 'for_sale',
@@ -41,26 +42,19 @@ class MarketplaceUserFlowsTest extends TestCase
     #[Test]
     public function it_can_display_a_public_tenant_profile_page_with_their_items(): void
     {
-        // Arrange: Create another item for the same tenant
         $item2 = Item::factory()->create(['tenant_id' => $this->tenant->id, 'status' => 'for_sale']);
-
-        // Arrange: Create an item that should NOT be visible (not for sale)
         Item::factory()->create(['tenant_id' => $this->tenant->id, 'status' => 'in_collection']);
-
-        // Arrange: Create an item from another tenant that should NOT be visible
         $otherTenantItem = Item::factory()->create(['status' => 'for_sale']);
 
-        // Act: Visit the public profile page of the first tenant
         $response = $this->get(route('public.tenants.show', $this->tenant));
 
-        // Assert: The page loads successfully and shows the correct information
         $response->assertOk();
         $response->assertSee($this->tenant->name);
         $response->assertSee($this->item->name);
         $response->assertSee($item2->name);
         $response->assertDontSee($otherTenantItem->name);
         $response->assertViewHas('items', function ($items) {
-            return $items->count() === 2; // Verify only the 2 items for sale are passed to the view
+            return $items->count() === 2;
         });
     }
 

@@ -6,6 +6,8 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Meilisearch\Client;
+// ADD THIS LINE
+use Numista\Collection\Domain\Models\Item;
 
 class SetupMeilisearch extends Command
 {
@@ -18,8 +20,16 @@ class SetupMeilisearch extends Command
         $this->info('Configuring Meilisearch indexes...');
 
         try {
-            // Configure the 'items' index
-            $meilisearch->index('items')->updateFilterableAttributes([
+            // THE FINAL FIX: Instead of hardcoding the index name, we get it from the model.
+            // The searchableAs() method on the Searchable trait automatically includes the SCOUT_PREFIX.
+            $itemIndexName = (new Item)->searchableAs();
+
+            $this->info("Configuring index: '{$itemIndexName}'");
+
+            // Configure the dynamically named index
+            $index = $meilisearch->index($itemIndexName);
+
+            $index->updateFilterableAttributes([
                 'status',
                 'type',
                 'tenant_name',
@@ -27,9 +37,12 @@ class SetupMeilisearch extends Command
                 'attributes',
             ]);
 
-            // Add any other indexes here in the future
+            $index->updateSortableAttributes([
+                'created_at',
+                'sale_price',
+            ]);
 
-            $this->info('✅ Meilisearch indexes configured successfully!');
+            $this->info("✅ Meilisearch index '{$itemIndexName}' configured successfully!");
 
         } catch (\Exception $e) {
             $this->error('Failed to connect or configure Meilisearch: '.$e->getMessage());

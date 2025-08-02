@@ -7,6 +7,7 @@ namespace Tests;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Numista\Collection\Domain\Models\Item;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -29,16 +30,16 @@ abstract class TestCase extends BaseTestCase
         return $app;
     }
 
-    /**
-     * This method is called before each test.
-     */
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Disable CSRF protection middleware for all tests.
-        $this->withoutMiddleware(VerifyCsrfToken::class);
+        // THE FINAL FIX: Prepare the Scout environment before every test.
+        // This ensures the `test_items` index exists and is correctly configured.
+        $this->artisan('scout:flush', ['model' => Item::class]);
+        $this->artisan('scout:setup');
 
+        $this->withoutMiddleware(VerifyCsrfToken::class);
         $this->withoutVite();
     }
 

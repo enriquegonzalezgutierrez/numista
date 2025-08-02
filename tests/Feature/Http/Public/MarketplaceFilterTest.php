@@ -27,8 +27,7 @@ class MarketplaceFilterTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        // It's a good practice to refresh Scout's index for each test.
-        $this->artisan('scout:flush', ['model' => Item::class]);
+        // THE FIX: We no longer need scout:flush or scout:setup here.
 
         $this->tenant = Tenant::factory()->create();
         $this->coinType = ItemType::factory()->create(['name' => 'coin']);
