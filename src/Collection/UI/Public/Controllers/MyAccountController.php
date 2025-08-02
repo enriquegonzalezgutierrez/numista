@@ -28,7 +28,7 @@ class MyAccountController extends Controller
      */
     public function orders(): View
     {
-        /** @var \App\Models\User $user */
+        /** @var \App\Models\User|null $user */
         $user = Auth::user();
 
         $orders = $user->orders()

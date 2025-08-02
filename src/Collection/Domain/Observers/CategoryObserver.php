@@ -1,10 +1,13 @@
 <?php
 
+// src/Collection/Domain/Observers/CategoryObserver.php
+
 namespace Numista\Collection\Domain\Observers;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Numista\Collection\Domain\Models\Category;
+use Numista\Collection\Domain\Models\Tenant; // THE FIX: Import Tenant model
 
 class CategoryObserver
 {
@@ -24,18 +27,38 @@ class CategoryObserver
 
     public function saved(Category $category): void
     {
-        $this->clearTenantWidgetsCache($category->tenant_id);
+        // THE FIX: Since categories are global, a change affects all tenants.
+        // We must clear the cache for every tenant.
+        $this->clearAllTenantWidgetsCache();
     }
 
     public function deleted(Category $category): void
     {
-        $this->clearTenantWidgetsCache($category->tenant_id);
+        // THE FIX: Same logic applies on deletion.
+        $this->clearAllTenantWidgetsCache();
     }
 
+    /**
+     * Clear the stats overview widget cache for all tenants.
+     */
+    protected function clearAllTenantWidgetsCache(): void
+    {
+        // Get all tenant IDs
+        $tenantIds = Tenant::pluck('id');
+
+        // Loop through each ID and forget its specific cache key
+        foreach ($tenantIds as $tenantId) {
+            Cache::forget("widgets:stats_overview:tenant_{$tenantId}");
+        }
+    }
+
+    // THE FIX: This old method is no longer used and can be removed.
+    /*
     protected function clearTenantWidgetsCache(int $tenantId): void
     {
         Cache::forget("widgets:stats_overview:tenant_{$tenantId}");
     }
+    */
 
     private function createUniqueSlug(string $name, ?int $exceptId = null): string
     {

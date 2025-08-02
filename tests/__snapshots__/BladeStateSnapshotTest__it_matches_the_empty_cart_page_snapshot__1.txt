@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-gray-100 dark:bg-gray-900">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Carrito de Compra</title>
+
+        <link rel="icon" href="http://localhost/storage/favicon.png" type-="image/png">
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
+
+        <!-- Styles handled by Vite -->
+                
+        
+                <style>
+            :root {
+                --c-500: 20, 184, 166;
+                --c-600: 13, 148, 136;
+                --c-700: 15, 118, 110;
+            }
+        </style>
+
+        
+            <!-- Livewire Styles --><style >[wire\:loading][wire\:loading], [wire\:loading\.delay][wire\:loading\.delay], [wire\:loading\.inline-block][wire\:loading\.inline-block], [wire\:loading\.inline][wire\:loading\.inline], [wire\:loading\.block][wire\:loading\.block], [wire\:loading\.flex][wire\:loading\.flex], [wire\:loading\.table][wire\:loading\.table], [wire\:loading\.grid][wire\:loading\.grid], [wire\:loading\.inline-flex][wire\:loading\.inline-flex] {display: none;}[wire\:loading\.delay\.none][wire\:loading\.delay\.none], [wire\:loading\.delay\.shortest][wire\:loading\.delay\.shortest], [wire\:loading\.delay\.shorter][wire\:loading\.delay\.shorter], [wire\:loading\.delay\.short][wire\:loading\.delay\.short], [wire\:loading\.delay\.default][wire\:loading\.delay\.default], [wire\:loading\.delay\.long][wire\:loading\.delay\.long], [wire\:loading\.delay\.longer][wire\:loading\.delay\.longer], [wire\:loading\.delay\.longest][wire\:loading\.delay\.longest] {display: none;}[wire\:offline][wire\:offline] {display: none;}[wire\:dirty]:not(textarea):not(input):not(select) {display: none;}:root {--livewire-progress-bar-color: #2299dd;}[x-cloak] {display: none !important;}[wire\:cloak] {display: none !important;}</style>
+</head>
+    <body class="antialiased font-sans flex flex-col min-h-screen">
+        <div class="flex-grow">
+            <header x-data="{ mobileMenuOpen: false }" class="bg-white dark:bg-gray-800/50 backdrop-blur-sm shadow-sm sticky top-0 z-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 justify-between items-center">
+            
+            <div class="flex">
+                <a href="http://localhost" class="flex flex-shrink-0 items-center space-x-3">
+                     <img src="http://localhost/storage/logo.png" alt="Numista" class="h-10 w-auto">
+                     <span class="hidden sm:inline text-xl font-bold text-gray-800 dark:text-gray-200 tracking-tight">Numista</span>
+                </a>
+            </div>
+
+            
+            <nav class="hidden lg:flex lg:items-center lg:space-x-6">
+                <a href="http://localhost/marketplace" 
+                   class="text-sm font-semibold transition-colors text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+                    Marketplace
+                </a>
+                
+                <a href="http://localhost/register-seller" 
+                   class="text-sm font-semibold transition-colors text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+                    Vender
+                </a>
+            </nav>
+
+            
+            <div class="flex items-center">
+                <div class="flex items-center space-x-4">
+                    
+                    <div class="flow-root" x-data="{ cartCount: 0 }" @cart-updated.window="cartCount = $event.detail.cartCount">
+                        <a href="http://localhost/cart" class="group -m-2 flex items-center p-2">
+                            <svg class="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.658-.463 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                            </svg>
+                            <span x-text="cartCount" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-400 group-hover:text-gray-800"></span>
+                            <span class="sr-only">artículos en el carrito, ver cesta</span>
+                        </a>
+                    </div>
+                    
+                    
+                    <span class="h-6 w-px bg-gray-200 dark:bg-gray-600 hidden lg:inline-block" aria-hidden="true"></span>
+                    
+                    
+                    <div class="hidden lg:flex lg:items-center space-x-4">
+                                                    <a href="http://localhost/login" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Acceso</a>
+                                                            <a href="http://localhost/register" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700">Registro</a>
+                                                                        </div>
+                </div>
+
+                
+                <div class="flex items-center lg:hidden ml-4">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500 dark:hover:bg-gray-700" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        
+                        <svg x-show="!mobileMenuOpen" class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+                        
+                        <svg x-show="mobileMenuOpen" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div x-show="mobileMenuOpen" class="lg:hidden" id="mobile-menu" x-cloak>
+        <div class="space-y-1 px-2 pb-3 pt-2">
+            <a href="http://localhost/marketplace" class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Marketplace</a>
+            <a href="http://localhost/register-seller" class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Vender</a>
+        </div>
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-4 pb-3">
+            <div class="space-y-1 px-2">
+                                     <a href="http://localhost/login" class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Acceso</a>
+                                            <a href="http://localhost/register" class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Registro</a>
+                                                </div>
+        </div>
+    </div>
+</header>
+            <main class="flex-grow py-8 sm:py-12">
+                    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Tu Carrito</h1>
+
+    
+    
+    <div class="mt-8 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12">
+        <section aria-labelledby="cart-heading" class="lg:col-span-7">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                <h2 id="cart-heading" class="sr-only">Artículos en tu cesta de compra</h2>
+                
+                <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                            <li class="text-center py-16 px-6">
+                            <p class="text-gray-500 dark:text-gray-400 text-lg">Tu carrito está vacío.</p>
+                        </li>
+                                    </ul>
+            </div>
+        </section>
+
+            </div>
+</div>
+            </main>
+        </div>
+
+        <footer class="bg-white dark:bg-gray-800" aria-labelledby="footer-heading">
+    <h2 id="footer-heading" class="sr-only">Footer</h2>
+    <div class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-8">
+            <p class="text-sm text-gray-500 dark:text-gray-400 md:text-center">
+                © 2025 Numista. Todos los derechos reservados.
+            </p>
+        </div>
+    </div>
+</footer>
+        <!-- Global notification live region, positioned in the bottom-right corner. -->
+        <div 
+            x-data="{
+                notifications: [],
+                add(notification) {
+                    notification.id = Date.now()
+                    this.notifications.push(notification)
+                    this.remove(notification.id)
+                },
+                remove(id) {
+                    setTimeout(() => {
+                        let i = this.notifications.findIndex(n => n.id === id)
+                        if (i !== -1) {
+                            this.notifications.splice(i, 1)
+                        }
+                    }, 5000)
+                }
+            }"
+            @notify.window="add($event.detail)"
+            aria-live="assertive" 
+            class="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6 z-50"
+        >
+            <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
+                
+                                                
+                
+                <template x-for="notification in notifications" :key="notification.id">
+                    <div
+                        x-data="{ show: false }"
+                        x-init="$nextTick(() => show = true)"
+                        x-show="show"
+                        x-transition:enter="transform ease-out duration-300 transition"
+                        x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
+                        x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        :class="{
+                            'bg-green-100 dark:bg-green-800/20': notification.type === 'success',
+                            'bg-red-100 dark:bg-red-800/20': notification.type === 'error',
+                        }"
+                        class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
+                    >
+                        <div class="p-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <template x-if="notification.type === 'success'">
+                                        <svg class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </template>
+                                    <template x-if="notification.type === 'error'">
+                                        <svg class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
+                                    </template>
+                                </div>
+                                <div class="ml-3 w-0 flex-1 pt-0.5">
+                                    <p 
+                                        :class="{
+                                            'text-green-800 dark:text-green-200': notification.type === 'success',
+                                            'text-red-800 dark:text-red-200': notification.type === 'error',
+                                        }"
+                                        class="text-sm font-medium" 
+                                        
+                                        x-html="notification.message"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+            <!-- Livewire Scripts -->
+<script src="/livewire/livewire.js?id=df3a17f2"   data-csrf="[FILTERED]" data-update-uri="/livewire/update" data-navigate-once="true"></script>
+</body>
+</html>

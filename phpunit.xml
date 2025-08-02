@@ -17,7 +17,6 @@
             <directory>app</directory>
         </include>
     </source>
-    <!-- phpunit.xml -->
     <php>
         <env name="APP_ENV" value="testing" />
         <env name="BCRYPT_ROUNDS" value="4" />
@@ -31,7 +30,14 @@
         <env name="QUEUE_CONNECTION" value="sync" />
         <env name="SESSION_DRIVER" value="array" />
         <env name="TELESCOPE_ENABLED" value="false" />
-
+        <!-- This isolates the test search index from the local development index. -->
+        <env name="SCOUT_PREFIX" value="test_"/>
         <env name="APP_LOCALE" value="es"/>
+
+        <env name="APP_URL" value="http://localhost"/>
+        <env name="APP_NAME" value="Numista"/>
+
+        <env name="STRIPE_KEY" value="pk_test_dummykey1234567890"/>
+        <env name="STRIPE_SECRET" value="sk_test_dummysecret1234567890"/>
     </php>
 </phpunit>

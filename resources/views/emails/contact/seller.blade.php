@@ -10,7 +10,9 @@
 
 **{{ __('mail.contact_message') }}:**
 
+<x-mail::panel>
 {{ $body }}
+</x-mail::panel>
 
 <x-mail::button :url="route('public.items.show', $item)">
 {{ __('mail.contact_view_item') }}

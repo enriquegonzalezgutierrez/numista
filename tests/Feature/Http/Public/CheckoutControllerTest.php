@@ -1,15 +1,19 @@
 <?php
 
+// tests/Feature/Http/Public/CheckoutControllerTest.php
+
 namespace Tests\Feature\Http\Public;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use Numista\Collection\Domain\Models\Address;
 use Numista\Collection\Domain\Models\Country;
 use Numista\Collection\Domain\Models\Customer;
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\Order;
 use PHPUnit\Framework\Attributes\Test;
+use Stripe\PaymentIntent; // THE FIX: Import the class
 use Tests\TestCase;
 
 class CheckoutControllerTest extends TestCase
@@ -24,7 +28,7 @@ class CheckoutControllerTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->has(Customer::factory())->create();
-        $this->item = Item::factory()->create(['status' => 'for_sale', 'sale_price' => 100]);
+        $this->item = Item::factory()->create(['status' => 'for_sale', 'sale_price' => 100, 'quantity' => 1]);
         Country::factory()->create(['iso_code' => 'ES']);
     }
 
@@ -53,6 +57,11 @@ class CheckoutControllerTest extends TestCase
     #[Test]
     public function authenticated_users_with_items_can_see_the_checkout_page(): void
     {
+        // THE FIX: Use the alias mock to intercept the static Stripe API call.
+        $this->mock('alias:'.PaymentIntent::class, function (Mockery\MockInterface $mock) {
+            $mock->shouldReceive('create')->andReturn((object) ['client_secret' => 'fake_client_secret']);
+        });
+
         $this->addItemToCart();
         $this->actingAs($this->user)->get(route('checkout.create'))
             ->assertStatus(200)
@@ -91,25 +100,19 @@ class CheckoutControllerTest extends TestCase
     {
         $this->addItemToCart();
         $newAddressData = [
-            'label' => 'New Address',
-            'recipient_name' => 'Jane Doe',
-            'street_address' => '456 New Ave',
-            'city' => 'Newville',
-            'postal_code' => '54321',
-            'country_code' => 'ES',
-            'state' => 'Seville',
-            'phone' => '123456789',
+            'label' => 'New Address', 'recipient_name' => 'Jane Doe', 'street_address' => '456 New Ave',
+            'city' => 'Newville', 'postal_code' => '54321', 'country_code' => 'ES',
+            'state' => 'Seville', 'phone' => '123456789',
         ];
 
         $response = $this->actingAs($this->user)->post(route('checkout.store'), [
-            'address_option' => 'new',
-            'shipping_address' => $newAddressData,
+            'address_option' => 'new', 'shipping_address' => $newAddressData,
         ]);
 
         $this->assertEquals(1, Order::count());
         $order = Order::first();
 
-        $response->assertRedirect(route('checkout.success', $order));
+        $response->assertRedirect(route('checkout.success', ['orders' => $order->id]));
         $this->assertDatabaseHas('orders', ['user_id' => $this->user->id]);
         $this->assertDatabaseHas('addresses', array_merge($newAddressData, ['customer_id' => $this->user->customer->id]));
         $this->assertEmpty(session('cart'));
@@ -122,17 +125,15 @@ class CheckoutControllerTest extends TestCase
         $existingAddress = Address::factory()->create(['customer_id' => $this->user->customer->id]);
 
         $response = $this->actingAs($this->user)->post(route('checkout.store'), [
-            'address_option' => 'existing',
-            'selected_address_id' => $existingAddress->id,
+            'address_option' => 'existing', 'selected_address_id' => $existingAddress->id,
         ]);
 
         $this->assertEquals(1, Order::count());
         $order = Order::first();
 
-        $response->assertRedirect(route('checkout.success', $order));
+        $response->assertRedirect(route('checkout.success', ['orders' => $order->id]));
         $this->assertDatabaseHas('orders', [
-            'user_id' => $this->user->id,
-            'address_id' => $existingAddress->id,
+            'user_id' => $this->user->id, 'address_id' => $existingAddress->id,
         ]);
         $this->assertEmpty(session('cart'));
     }

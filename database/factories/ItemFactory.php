@@ -6,51 +6,39 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use Numista\Collection\Domain\Models\Country;
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\Tenant;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Numista\Collection\Domain\Models\Item>
- */
 class ItemFactory extends Factory
 {
     protected $model = Item::class;
 
-    /**
-     * Define the model's default state.
-     * Contains only the fields that exist in the 'items' table.
-     */
     public function definition(): array
     {
-        // THE FIX: Use a closure for slug to ensure it's generated from the final 'name' attribute.
         return [
             'tenant_id' => Tenant::factory(),
             'name' => ucfirst(fake()->words(3, true)),
             'slug' => fn (array $attributes) => Str::slug($attributes['name']),
             'description' => fake()->paragraph(2),
-            'type' => 'object', // A generic default
-            'quantity' => fake()->numberBetween(1, 5),
+            'type' => 'object',
+            'quantity' => 1,
             'purchase_price' => fake()->randomFloat(2, 5, 100),
             'purchase_date' => fake()->date(),
             'status' => fake()->randomElement(['in_collection', 'for_sale', 'sold']),
         ];
     }
 
-    // A helper function to get the Spanish Country ID consistently
-    private function getSpainCountryId(): ?int
-    {
-        // Find or create Spain to ensure it exists for tests
-        return Country::firstOrCreate(['iso_code' => 'ES'], ['name' => 'España'])->id;
-    }
-
+    // THE FIX: The `coin` state now only returns attributes that will be processed
+    // by the seeder. It does not attempt to set columns that don't exist on the `items` table.
     public function coin(): static
     {
         return $this->state(fn (array $attributes) => [
             'type' => 'coin',
             'name' => 'Coin: '.ucfirst(fake()->words(2, true)),
-            'country_id' => $this->getSpainCountryId(),
+            // These keys are not columns in the `items` table.
+            // They are temporary attributes that the ItemSeeder will use.
             'year' => fake()->numberBetween(1800, 2023),
+            'country' => fake()->country(),
             'denomination' => fake()->randomElement(['1 Dollar', '50 Pesetas', '100 Pesos', '2 Euros']),
             'mint_mark' => fake()->randomElement(['S', 'D', 'P', 'O', 'M']),
             'composition' => fake()->randomElement(['90% Silver', 'Copper-Nickel', 'Bronze', 'Gold']),
@@ -64,8 +52,8 @@ class ItemFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'type' => 'banknote',
             'name' => 'Banknote: '.ucfirst(fake()->words(2, true)),
-            'country_id' => $this->getSpainCountryId(),
             'year' => fake()->numberBetween(1900, 2020),
+            'country' => fake()->country(),
             'denomination' => fake()->randomElement(['100 Pesetas', '5 Dollars', '20 Euros']),
             'serial_number' => fake()->bothify('??########?'),
             'grade' => fake()->randomElement(['unc', 'au', 'xf', 'vf']),
@@ -77,13 +65,11 @@ class ItemFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'type' => 'stamp',
             'name' => 'Stamp: '.fake()->country().' '.fake()->year(),
-            'country_id' => $this->getSpainCountryId(),
             'year' => fake()->numberBetween(1840, 2020),
+            'country' => fake()->country(),
             'face_value' => fake()->randomElement(['5c', '10p', '1.00€']),
         ]);
     }
-
-    // ... (the other states like comic, watch, etc., don't have a country_id and don't need changes)
 
     public function comic(): static
     {
@@ -102,6 +88,7 @@ class ItemFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'type' => 'watch',
             'name' => 'Watch: '.fake()->company(),
+            'year' => fake()->numberBetween(1950, 2024),
             'brand' => fake()->randomElement(['Rolex', 'Omega', 'Seiko', 'Casio']),
             'model' => fake()->word().' '.fake()->randomNumber(4),
             'material' => fake()->randomElement(['Stainless Steel', 'Gold', 'Titanium']),
@@ -130,5 +117,17 @@ class ItemFactory extends Factory
             'dimensions' => fake()->numberBetween(20, 150).'x'.fake()->numberBetween(20, 150).' cm',
             'material' => fake()->randomElement(['Oil on canvas', 'Watercolor', 'Bronze sculpture']),
         ]);
+    }
+
+    /**
+     * THE FIX: Add a 'searchable' state.
+     * This uses a 'afterCreating' callback to ensure the model is synced with Meilisearch
+     * right after it's persisted to the database.
+     */
+    public function searchable(): static
+    {
+        return $this->afterCreating(function (Item $item) {
+            $item->searchable();
+        });
     }
 }

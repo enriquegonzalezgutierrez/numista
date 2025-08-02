@@ -6,7 +6,9 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Numista\Collection\Domain\Models\Category;
-use Numista\Collection\Domain\Models\Tenant;
+
+// THE FIX: Tenant is no longer needed here.
+// use Numista\Collection\Domain\Models\Tenant;
 
 class CategoryFactory extends Factory
 {
@@ -25,7 +27,7 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => Tenant::factory(),
+            // THE FIX: Removed 'tenant_id' => Tenant::factory(),
             'name' => fake()->words(2, true),
             'description' => fake()->sentence(),
             'is_visible' => fake()->boolean(),

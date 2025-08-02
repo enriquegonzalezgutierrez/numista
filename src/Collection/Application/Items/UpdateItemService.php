@@ -1,8 +1,10 @@
 <?php
 
+// src/Collection/Application/Items/UpdateItemService.php
+
 namespace Numista\Collection\Application\Items;
 
-use Numista\Collection\Domain\Models\AttributeValue;
+use Numista\Collection\Domain\Models\AttributeOption;
 use Numista\Collection\Domain\Models\Item;
 
 class UpdateItemService
@@ -24,11 +26,11 @@ class UpdateItemService
         $syncData = [];
         foreach ($attributesData as $attributeId => $data) {
             $value = null;
-            $attributeValueId = null;
+            $attributeOptionId = null;
 
-            if (isset($data['attribute_value_id']) && $data['attribute_value_id']) {
-                $attributeValueId = $data['attribute_value_id'];
-                $value = AttributeValue::find($attributeValueId)?->value;
+            if (isset($data['attribute_option_id']) && $data['attribute_option_id']) {
+                $attributeOptionId = $data['attribute_option_id'];
+                $value = AttributeOption::find($attributeOptionId)?->value;
             } elseif (isset($data['value'])) {
                 $value = $data['value'];
             }
@@ -36,10 +38,11 @@ class UpdateItemService
             if ($value !== null && $value !== '') {
                 $syncData[$attributeId] = [
                     'value' => $value,
-                    'attribute_value_id' => $attributeValueId,
+                    'attribute_option_id' => $attributeOptionId,
                 ];
             }
         }
-        $item->attributes()->sync($syncData);
+        // THE FIX: Use the renamed relationship 'customAttributes'
+        $item->customAttributes()->sync($syncData);
     }
 }

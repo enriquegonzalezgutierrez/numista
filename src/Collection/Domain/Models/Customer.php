@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/Domain/Models/Customer.php
+
 namespace Numista\Collection\Domain\Models;
 
 use App\Models\User;
@@ -8,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Customer extends Model
 {
@@ -41,6 +44,23 @@ class Customer extends Model
     public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);
+    }
+
+    /**
+     * Get the tenants this customer has ordered from.
+     * This relationship is crucial for Filament's multi-tenancy to work correctly.
+     * A Customer has many Tenants through its Orders.
+     */
+    public function tenants(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Tenant::class,      // The final model we want to access (Tenant)
+            Order::class,       // The intermediate model (Order)
+            'user_id',          // Foreign key on the intermediate model (orders table)
+            'id',               // Foreign key on the final model (tenants table)
+            'user_id',          // Local key on the starting model (customers table)
+            'tenant_id'         // Local key on the intermediate model (orders table)
+        );
     }
 
     protected static function newFactory(): CustomerFactory

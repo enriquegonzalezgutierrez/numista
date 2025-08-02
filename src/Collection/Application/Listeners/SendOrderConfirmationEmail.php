@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/Application/Listeners/SendOrderConfirmationEmail.php
+
 namespace Numista\Collection\Application\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,7 +18,8 @@ class SendOrderConfirmationEmail implements ShouldQueue
     {
         $order = $event->order->load('customer', 'items.item');
 
-        Mail::to($order->customer->email)->send(
+        // THE FIX: Changed send() to queue() for asynchronous email dispatch.
+        Mail::to($order->customer->email)->queue(
             new OrderConfirmationMail($order)
         );
     }

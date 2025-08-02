@@ -1,65 +1,73 @@
 <?php
 
+// database/seeders/ItemSeeder.php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection as EloquentCollection;
+// ADD THIS LINE
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Numista\Collection\Domain\Models\Attribute;
+use Numista\Collection\Domain\Models\AttributeOption;
 use Numista\Collection\Domain\Models\Category;
 use Numista\Collection\Domain\Models\Collection;
 use Numista\Collection\Domain\Models\Item;
+use Numista\Collection\Domain\Models\SharedAttribute;
 use Numista\Collection\Domain\Models\Tenant;
 
 class ItemSeeder extends Seeder
 {
-    /**
-     * @var \Illuminate\Support\Collection<string, \Numista\Collection\Domain\Models\Attribute>
-     */
     private EloquentCollection $attributes;
+
+    private EloquentCollection $attributeOptions;
 
     public function run(): void
     {
-        $tenant = Tenant::where('slug', 'coleccion-numista')->first();
-        if (! $tenant) {
-            $this->command->warn('Default tenant "coleccion-numista" not found. Skipping ItemSeeder.');
+        Item::truncate();
+        $this->command->info('Cleaned previous items.');
+
+        $this->attributes = SharedAttribute::all()->keyBy(fn ($attr) => strtolower(str_replace(' ', '_', $attr->name)));
+        $this->attributeOptions = AttributeOption::all()->groupBy('shared_attribute_id');
+
+        $tenants = Tenant::all();
+        if ($tenants->isEmpty()) {
+            $this->command->warn('No tenants found. Skipping ItemSeeder.');
 
             return;
         }
 
-        $this->attributes = Attribute::where('tenant_id', $tenant->id)->get()->keyBy(fn ($attr) => strtolower(str_replace(' ', '_', $attr->name)));
+        foreach ($tenants as $tenant) {
+            $this->command->info("Seeding items for tenant: {$tenant->name}");
+            $this->createItemsForTenant($tenant);
 
-        // THE FIX: Only delete the item-specific directory, not the entire tenant directory.
-        Item::where('tenant_id', $tenant->id)->get()->each(fn ($item) => $item->delete());
-        Storage::disk('tenants')->deleteDirectory("tenant-{$tenant->id}/item-images");
-        $this->command->info('Cleaned previous items and item images for the tenant.');
-
-        $this->command->info('Creating a large volume of items with multiple placeholders...');
-
-        $this->createItemsForCategory($tenant, 'moneda-espanola', 'coin', 100, true);
-        $this->createItemsForCategory($tenant, 'marvel', 'comic', 50);
-        $this->createItemsForCategory($tenant, 'relojes-de-pulsera', 'watch', 75, true);
-        $this->createItemsForCategory($tenant, 'sellos', 'stamp', 150, true);
-        $this->createItemsForCategory($tenant, 'libros-y-manuscritos', 'book', 75);
-        $this->createItemsForCategory($tenant, 'arte-y-antiguedades', 'art', 50, true);
-
-        // Assign items to collections
-        $allItems = Item::where('tenant_id', $tenant->id)->get();
-        $allCollections = Collection::where('tenant_id', $tenant->id)->get();
-
-        if ($allCollections->isNotEmpty() && $allItems->isNotEmpty()) {
-            $this->attachItemsToCollections($allItems, $allCollections);
+            $allItems = Item::where('tenant_id', $tenant->id)->get();
+            $allCollections = Collection::where('tenant_id', $tenant->id)->get();
+            if ($allCollections->isNotEmpty() && $allItems->isNotEmpty()) {
+                $this->attachItemsToCollections($allItems, $allCollections);
+            }
         }
-
-        $this->command->info("Item seeder finished. {$allItems->count()} items created with relations and images.");
     }
 
-    private function createItemsForCategory(Tenant $tenant, string $categorySlug, string $itemType, int $count, bool $isForSale = false): void
+    private function createItemsForTenant(Tenant $tenant): void
     {
-        $category = Category::where('slug', $categorySlug)->first();
+        $itemTypes = [
+            ['category_name' => 'Moneda Española', 'type' => 'coin', 'count' => 10, 'for_sale' => true],
+            ['category_name' => 'Relojes de Pulsera', 'type' => 'watch', 'count' => 5, 'for_sale' => true],
+            ['category_name' => 'Marvel', 'type' => 'comic', 'count' => 8, 'for_sale' => false],
+            ['category_name' => 'Sellos', 'type' => 'stamp', 'count' => 12, 'for_sale' => true],
+        ];
+
+        foreach ($itemTypes as $itemTypeInfo) {
+            $this->createItemsForCategory($tenant, $itemTypeInfo['category_name'], $itemTypeInfo['type'], $itemTypeInfo['count'], $itemTypeInfo['for_sale']);
+        }
+    }
+
+    private function createItemsForCategory(Tenant $tenant, string $categoryName, string $itemType, int $count, bool $isForSale): void
+    {
+        $category = Category::where('name', $categoryName)->first();
         if (! $category) {
-            $this->command->warn("Category '{$categorySlug}' not found. Skipping item creation.");
+            $this->command->warn("Global category '{$categoryName}' not found. Skipping item creation for this category.");
 
             return;
         }
@@ -67,97 +75,95 @@ class ItemSeeder extends Seeder
         $imagePath = $this->copyPlaceholderImage($itemType, $tenant->id);
 
         for ($i = 0; $i < $count; $i++) {
-            $itemData = Item::factory()->{$itemType}()->make(['tenant_id' => $tenant->id]);
+            $itemData = Item::factory()->{$itemType}()->make();
+            $salePrice = $isForSale ? ($itemData->purchase_price ?? 20) * 1.5 : null;
+
             $item = Item::create([
                 'tenant_id' => $tenant->id,
                 'name' => $itemData->name,
                 'description' => $itemData->description,
                 'type' => $itemData->type,
-                'quantity' => $itemData->quantity,
+                'quantity' => 1,
                 'purchase_price' => $itemData->purchase_price,
                 'purchase_date' => $itemData->purchase_date,
                 'status' => $isForSale ? 'for_sale' : 'in_collection',
-                'sale_price' => $isForSale ? $itemData->purchase_price * fake()->randomFloat(2, 1.2, 2.5) : null,
+                'sale_price' => $salePrice,
             ]);
+
             $item->categories()->attach($category->id);
-            $this->attachAllAttributes($item, $itemData, $itemType);
+            $this->attachAttributesForItem($item, $itemData->toArray());
+
             if ($imagePath) {
-                $item->images()->create(['path' => $imagePath, 'alt_text' => 'Main image for '.$item->name, 'order_column' => 1]);
-                $secondaryImageCount = rand(2, 4);
-                for ($j = 2; $j <= $secondaryImageCount + 1; $j++) {
-                    $item->images()->create(['path' => $imagePath, 'alt_text' => "Secondary image {$j} for ".$item->name, 'order_column' => $j]);
-                }
+                $item->images()->create([
+                    'path' => $imagePath,
+                    'alt_text' => 'Image for '.$item->name,
+                    'order_column' => 1,
+                ]);
             }
         }
     }
 
-    private function attachAllAttributes(Item $item, Item $itemData, string $itemType): void
+    private function attachAttributesForItem(Item $item, array $itemData): void
     {
-        $this->attachAttribute($item, 'Grade', $itemData->grade ?? null);
-        $this->attachAttribute($item, 'Year', $itemData->year ?? null);
-        $this->attachAttribute($item, 'Country', $itemData->country?->name ?? null);
-        switch ($itemType) {
-            case 'coin':
-                $this->attachAttribute($item, 'Denomination', $itemData->denomination);
-                $this->attachAttribute($item, 'Mint Mark', $itemData->mint_mark);
-                $this->attachAttribute($item, 'Composition', $itemData->composition);
-                $this->attachAttribute($item, 'Weight', $itemData->weight);
-                break;
-            case 'banknote':
-                $this->attachAttribute($item, 'Denomination', $itemData->denomination);
-                $this->attachAttribute($item, 'Serial Number', $itemData->serial_number);
-                break;
-            case 'comic':
-                $this->attachAttribute($item, 'Publisher', $itemData->publisher);
-                $this->attachAttribute($item, 'Issue Number', $itemData->issue_number);
-                $this->attachAttribute($item, 'Cover Date', $itemData->cover_date);
-                break;
-            case 'watch':
-                $this->attachAttribute($item, 'Brand', $itemData->brand);
-                $this->attachAttribute($item, 'Model', $itemData->model);
-                $this->attachAttribute($item, 'Material', $itemData->material);
-                break;
-            case 'stamp':
-                $this->attachAttribute($item, 'Face Value', $itemData->face_value);
-                break;
-            case 'book':
-                $this->attachAttribute($item, 'Author', $itemData->author);
-                $this->attachAttribute($item, 'Publisher', $itemData->publisher);
-                $this->attachAttribute($item, 'ISBN', $itemData->isbn);
-                break;
-            case 'art':
-                $this->attachAttribute($item, 'Artist', $itemData->artist);
-                $this->attachAttribute($item, 'Dimensions', $itemData->dimensions);
-                $this->attachAttribute($item, 'Material', $itemData->material);
-                break;
-        }
-    }
+        $map = [
+            'Year' => $itemData['year'] ?? null,
+            'Country' => $itemData['country'] ?? null,
+            'Grade' => $itemData['grade'] ?? null,
+            'Material' => $itemData['material'] ?? null,
+            'Denomination' => $itemData['denomination'] ?? null,
+            'Mint Mark' => $itemData['mint_mark'] ?? null,
+            'Composition' => $itemData['composition'] ?? null,
+            'Weight' => $itemData['weight'] ?? null,
+            'Serial Number' => $itemData['serial_number'] ?? null,
+            'Publisher' => $itemData['publisher'] ?? null,
+            'Issue Number' => $itemData['issue_number'] ?? null,
+            'Cover Date' => $itemData['cover_date'] ?? null,
+            'Author' => $itemData['author'] ?? null,
+            'ISBN' => $itemData['isbn'] ?? null,
+            'Brand' => $itemData['brand'] ?? null,
+            'Model' => $itemData['model'] ?? null,
+            'Face Value' => $itemData['face_value'] ?? null,
+            'Artist' => $itemData['artist'] ?? null,
+            'Dimensions' => $itemData['dimensions'] ?? null,
+        ];
 
-    private function attachAttribute(Item $item, string $attributeName, mixed $value): void
-    {
-        if ($value === null || $value === '') {
-            return;
-        }
+        $syncData = [];
 
-        $attributeKey = strtolower(str_replace(' ', '_', $attributeName));
-        $attribute = $this->attributes->get($attributeKey);
+        foreach ($map as $name => $value) {
+            if ($value === null) {
+                continue;
+            }
+            $attributeKey = strtolower(str_replace(' ', '_', $name));
+            $attribute = $this->attributes->get($attributeKey);
+            if (! $attribute) {
+                continue;
+            }
 
-        if ($attribute) {
-            $pivotData = ['value' => $value];
+            $pivotData = ['value' => $value, 'attribute_option_id' => null];
+
             if ($attribute->type === 'select') {
-                $attributeValue = $attribute->values()->where('value', $value)->first();
-                if ($attributeValue) {
-                    $pivotData['attribute_value_id'] = $attributeValue->id;
+                $option = $this->attributeOptions->get($attribute->id, collect())->firstWhere('value', $value);
+                if ($option) {
+                    $pivotData['attribute_option_id'] = $option->id;
                 }
             }
-            $item->attributes()->attach($attribute->id, $pivotData);
+
+            $syncData[$attribute->id] = $pivotData;
+        }
+
+        if (! empty($syncData)) {
+            // THE FIX #2: Use the correct relationship name 'customAttributes'
+            $item->customAttributes()->sync($syncData);
         }
     }
 
     private function attachItemsToCollections(EloquentCollection $items, EloquentCollection $collections): void
     {
+        if ($items->count() < 5) {
+            return;
+        }
         $collections->each(function (Collection $collection) use ($items) {
-            $itemsToAttach = $items->random(min($items->count(), rand(15, 50)))->pluck('id');
+            $itemsToAttach = $items->random(min($items->count(), rand(5, 10)))->pluck('id');
             $collection->items()->sync($itemsToAttach);
         });
     }
@@ -168,15 +174,15 @@ class ItemSeeder extends Seeder
         $disk = Storage::disk('tenants');
         $targetDirectory = "tenant-{$tenantId}/item-images";
         $disk->makeDirectory($targetDirectory);
+
         $sourcePath = "{$sourceDir}/{$itemType}.png";
         if (! File::exists($sourcePath)) {
             $sourcePath = "{$sourceDir}/object.png";
-            if (! File::exists($sourcePath)) {
-                $this->command->warn("Placeholder not found for '{$itemType}.png' or 'object.png'.");
-
-                return null;
-            }
         }
+        if (! File::exists($sourcePath)) {
+            return null;
+        }
+
         $newFilename = uniqid().'-'.basename($sourcePath);
         $newPath = "{$targetDirectory}/{$newFilename}";
         $disk->put($newPath, File::get($sourcePath));

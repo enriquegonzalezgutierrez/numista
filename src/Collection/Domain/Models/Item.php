@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/Domain/Models/Item.php
+
 namespace Numista\Collection\Domain\Models;
 
 use Database\Factories\ItemFactory;
@@ -9,12 +11,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Laravel\Scout\Searchable;
 
 class Item extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
-    // THE FIX: Add 'tenant_id' to the fillable array.
     protected $fillable = [
         'tenant_id', 'name', 'slug', 'description', 'type', 'quantity',
         'purchase_price', 'purchase_date', 'status', 'sale_price',
@@ -23,6 +25,26 @@ class Item extends Model
     protected $casts = [
         'purchase_date' => 'date',
     ];
+
+    public function toSearchableArray(): array
+    {
+        $this->load(['tenant', 'categories', 'customAttributes']);
+
+        $array = [
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'type' => $this->type,
+            'status' => $this->status,
+            'sale_price' => $this->sale_price,
+        ];
+
+        $array['tenant_name'] = $this->tenant->name;
+        $array['categories'] = $this->categories->pluck('name')->all();
+        $array['attributes'] = $this->customAttributes->pluck('pivot.value')->all();
+
+        return $array;
+    }
 
     public function getMainImage(): ?Image
     {
@@ -39,6 +61,9 @@ class Item extends Model
         return $this->morphMany(Image::class, 'imageable')->orderBy('order_column');
     }
 
+    /**
+     * THE FIX: The relationship to Category must be belongsToMany.
+     */
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
@@ -54,10 +79,13 @@ class Item extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function attributes(): BelongsToMany
+    /**
+     * The relationship to SharedAttribute, renamed to avoid conflicts.
+     */
+    public function customAttributes(): BelongsToMany
     {
-        return $this->belongsToMany(Attribute::class, 'item_attribute_value')
-            ->withPivot('value', 'attribute_value_id')
+        return $this->belongsToMany(SharedAttribute::class, 'item_attribute')
+            ->withPivot('value', 'attribute_option_id')
             ->withTimestamps();
     }
 

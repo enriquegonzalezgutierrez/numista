@@ -46,8 +46,8 @@ return [
     'not_a_member' => '¿No eres miembro?',
 
     'header' => [
-        // THE FIX: Add the key for the new link
         'marketplace' => 'Marketplace',
+        'sell' => 'Vender',
         'cart_sr_text' => 'artículos en el carrito, ver cesta',
     ],
     'marketplace_title' => 'Marketplace de Coleccionables',
@@ -75,6 +75,11 @@ return [
     'contact_seller' => 'Contactar al Vendedor',
     'back_to_marketplace' => 'Volver al Marketplace',
     'no_items_found' => 'No se encontraron ítems a la venta en este momento.',
+    // THE FIX: Add the new translation key
+    'tenant_no_items' => 'Este vendedor no tiene ítems a la venta en este momento.',
+    // THE FIX: Add keys for the "Load More" button
+    'load_more' => 'Cargar más',
+    'loading' => 'Cargando...',
     'lightbox' => [
         'close' => 'Cerrar',
     ],
@@ -128,8 +133,38 @@ return [
         'state' => 'Provincia / Estado',
         'country' => 'País',
         'phone' => 'Teléfono (Opcional)',
+        'placeholder' => [
+            'label' => 'Ej: Casa, Apartamento Triana',
+            'recipient_name' => 'Ej: María García',
+            'street_address' => 'Ej: Av. de la Constitución, 22, 1ºA',
+            'city' => 'Ej: Sevilla',
+            'postal_code' => 'Ej: 41004',
+            'state' => 'Ej: Sevilla',
+            'phone' => 'Ej: 954000000',
+        ],
     ],
     'auth' => [
         'forgot_password_desc' => 'No hay problema. Simplemente dinos tu dirección de correo y te enviaremos un enlace para restablecer tu clave de acceso.',
     ],
+    'payment_details' => 'Detalles del Pago',
+    'pay_amount' => 'Pagar :amount',
+    'processing' => 'Procesando...',
+    'payment_error_unexpected' => 'Ocurrió un error inesperado.',
+    'cart_is_empty' => 'Tu carrito está vacío.',
+    'checkout_error_items_not_found' => 'Uno o más ítems en tu carrito ya no existen. Por favor, revisa tu carrito.',
+    'checkout_error_item_not_available' => 'El ítem \':itemName\' ya no está disponible en la cantidad solicitada. Por favor, revisa tu carrito.',
+    'cart_add_error_no_stock' => 'No hay suficiente stock para el ítem \':itemName\'.',
+    'cart_item_quantity_updated' => 'La cantidad para el ítem ":itemName" se ha actualizado a :quantity debido a la disponibilidad de stock.',
+    'cart_item_removed_no_stock' => 'El ítem ":itemName" ha sido eliminado de tu carrito porque ya no está disponible.',
+    'subscribe_title' => 'Suscribirse',
+    'subscribe_page_title' => 'Elige tu Plan para :tenantName',
+    'subscribe_page_subtitle' => 'Estás a un paso de empezar a gestionar tu colección.',
+    'plan_monthly' => 'Plan Mensual',
+    'plan_yearly' => 'Plan Anual',
+    'monthly_billing' => 'Facturación mensual, cancela cuando quieras.',
+    'yearly_billing' => '¡Ahorra un 16% con el pago anual!',
+    'most_popular' => 'Más Popular',
+    'subscribe_button' => 'Suscribirse',
+    'redirecting_to_stripe' => 'Redirigiendo a Stripe...',
+    'error_tenant_not_found' => 'Inquilino o cliente de Stripe no encontrado.',
 ];

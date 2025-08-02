@@ -1,15 +1,13 @@
-# .github/workflows/laravel.yml
-
-name: Laravel CI/CD
+name: Laravel CI
 
 on:
   push:
-    branches: [ "main", "development" ]
+    branches: ["main", "development"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  # --- JOB 1: LINTING (Static Analysis) ---
+  # --- JOB 1: LINTING ---
   lint:
     name: Check Code Style (Pint)
     runs-on: ubuntu-latest
@@ -23,11 +21,9 @@ jobs:
           php-version: '8.2'
           tools: composer:v2
 
-      # --- CACHE COMPOSER ---
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
         uses: actions/cache@v4
@@ -38,16 +34,45 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
+        run: composer install --prefer-dist --no-progress --no-scripts
 
       - name: Run Laravel Pint
         run: ./vendor/bin/pint --test
 
-  # --- JOB 2: TESTING (Unit & Feature Tests) ---
+  # --- JOB 2: TESTING ---
   tests:
     name: Run PHPUnit/Pest Tests
     runs-on: ubuntu-latest
     needs: [lint]
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: numista_test
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      
+      # THE FIX #1: Add the Meilisearch service to the testing job.
+      meilisearch:
+        image: getmeili/meilisearch:v1.9
+        env:
+          MEILI_MASTER_KEY: masterKey # Use a simple, non-secret key for CI
+          MEILI_NO_ANALYTICS: true # Disable analytics for CI
+        ports:
+          - 7700:7700
+        options: >-
+          --health-cmd "curl -f http://localhost:7700/health || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -56,16 +81,14 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: pdo, pdo_pgsql, pdo_sqlite, zip, intl, gd
+          extensions: pdo, pdo_pgsql, zip, intl, gd
           
       - name: Copy .env file
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      # --- CACHE COMPOSER ---
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
         uses: actions/cache@v4
@@ -76,22 +99,38 @@ jobs:
             ${{ runner.os }}-composer-
             
       - name: Install Composer dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
+        run: composer install --prefer-dist --no-progress
 
       - name: Generate app key
         run: php artisan key:generate
 
+      # THE FIX #2: Add a step to configure Meilisearch before running tests.
+      - name: Configure Meilisearch
+        run: php artisan scout:setup
+        env:
+          SCOUT_DRIVER: meilisearch
+          MEILISEARCH_HOST: http://127.0.0.1:7700
+          MEILISEARCH_KEY: masterKey
+
       - name: Execute tests (Pest)
         run: php artisan test
         env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: ':memory:'
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: numista_test
+          DB_USERNAME: user
+          DB_PASSWORD: password
+          # THE FIX #3: Pass the Meilisearch environment variables to the test runner.
+          SCOUT_DRIVER: meilisearch
+          MEILISEARCH_HOST: http://127.0.0.1:7700
+          MEILISEARCH_KEY: masterKey
 
   # --- JOB 3: BUILD FRONTEND ASSETS ---
   build:
     name: Build Frontend Assets
     runs-on: ubuntu-latest
-    needs: [tests]
+    needs: [tests] # We can keep this dependency as well
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -101,17 +140,17 @@ jobs:
         with:
           node-version: '20'
 
-      # --- CACHE NPM ---
-      - name: Cache Node dependencies
+      - name: Cache Node modules
         uses: actions/cache@v4
         with:
-          path: ~/.npm
+          # THE FIX: No change needed here, this was correct
+          path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - name: Install NPM dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build assets
         run: npm run build

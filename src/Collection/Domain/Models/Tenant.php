@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/Domain/Models/Tenant.php
+
 namespace Numista\Collection\Domain\Models;
 
 use App\Models\User;
@@ -21,6 +23,14 @@ class Tenant extends Model
     protected $fillable = [
         'name',
         'slug',
+        'stripe_customer_id',
+        'stripe_subscription_id',
+        'subscription_status',
+        'subscription_ends_at',
+    ];
+
+    protected $casts = [
+        'subscription_ends_at' => 'datetime',
     ];
 
     /**
@@ -36,12 +46,18 @@ class Tenant extends Model
         return $this->hasMany(Order::class);
     }
 
-    /**
-     * Get the items for the tenant.
-     */
     public function items(): HasMany
     {
         return $this->hasMany(Item::class);
+    }
+
+    /**
+     * Check if the tenant has an active subscription.
+     * This helper method will be very useful later.
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->subscription_status === 'active';
     }
 
     protected static function newFactory(): TenantFactory

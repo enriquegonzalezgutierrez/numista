@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/Infrastructure/Mail/Contact/ContactSellerMail.php
+
 namespace Numista\Collection\Infrastructure\Mail\Contact;
 
 use Illuminate\Bus\Queueable;
@@ -16,6 +18,11 @@ class ContactSellerMail extends Mailable implements ShouldQueue
 
     /**
      * Create a new message instance.
+     *
+     * @param  \Numista\Collection\Domain\Models\Item  $item  The item being inquired about.
+     * @param  string  $fromName  The name of the person sending the message.
+     * @param  string  $fromEmail  The email of the person sending the message.
+     * @param  string  $body  The message content.
      */
     public function __construct(
         public Item $item,
@@ -31,7 +38,7 @@ class ContactSellerMail extends Mailable implements ShouldQueue
     {
         return new Envelope(
             from: config('mail.from.address'),
-            replyTo: $this->fromEmail,
+            replyTo: $this->fromEmail, // Allows the seller to reply directly to the buyer's email.
             subject: __('mail.contact_subject', ['itemName' => $this->item->name]),
         );
     }
@@ -44,15 +51,5 @@ class ContactSellerMail extends Mailable implements ShouldQueue
         return new Content(
             markdown: 'emails.contact.seller',
         );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
     }
 }

@@ -20,13 +20,24 @@ return [
     'label_order' => 'Pedido',
     'label_orders' => 'Pedidos',
     'label_order_items' => 'Artículos del Pedido',
+    'nav_customers' => 'Clientes',
+    'label_customer' => 'Cliente',
+    'label_customers' => 'Clientes',
     'nav_group_settings' => 'Configuración',
     'nav_attributes' => 'Atributos',
     'label_attribute' => 'Atributo',
     'label_attributes' => 'Atributos',
+    'label_addresses' => 'Direcciones',
 
     // --- General Field & Column Labels ---
     'field_name' => 'Nombre',
+    'field_email' => 'Email',
+    'section_user_information' => 'Información del Usuario',
+    'section_contact_information' => 'Información de Contacto',
+    'field_phone_number' => 'Número de Teléfono',
+    'field_shipping_address_legacy' => 'Dirección de Envío Principal (Legacy)',
+    'field_orders_count' => 'Nº Pedidos',
+    'field_registration_date' => 'Fecha de Registro',
     'field_slug' => 'Slug (URL)',
     'field_description' => 'Descripción',
     'field_image_preview' => 'Vista Previa',
@@ -49,8 +60,22 @@ return [
     'field_is_filterable' => 'Es filtrable',
     'field_value' => 'Valor',
     'label_predefined_options' => 'Opciones Predefinidas',
+    'label_applicable_item_types' => 'Tipos de Ítem Aplicables', // THE FIX: New translation key
 
-    // --- Attribute Name Translations ---
+    // --- Attribute Type Options ---
+    'attribute_type_text' => 'Texto',
+    'attribute_type_number' => 'Número',
+    'attribute_type_date' => 'Fecha',
+    'attribute_type_select' => 'Opciones Seleccionables', // THE FIX: New translation key
+
+    'field_address_label' => 'Etiqueta',
+    'field_recipient_name' => 'Destinatario',
+    'field_street_address' => 'Dirección',
+    'field_city' => 'Ciudad',
+    'field_postal_code' => 'C. Postal',
+    'field_is_default' => 'Por Defecto',
+
+    // ... (el resto del fichero se mantiene igual)
     'attribute_name_artist' => 'Artista',
     'attribute_name_author' => 'Autor',
     'attribute_name_brand' => 'Marca',
@@ -89,6 +114,7 @@ return [
     'placeholder_none' => 'Ninguna',
     'helper_alt_text' => 'Describe la imagen para accesibilidad y SEO.',
     'helper_is_filterable' => 'Permitir filtrar por este atributo en el marketplace público.',
+    'helper_options_info' => 'Para añadir opciones, por favor, guarda primero el atributo con el tipo "Opciones Seleccionables". La tabla de opciones aparecerá en la página de edición.', // THE FIX: New key added
     'search_placeholder' => 'Buscar...',
 
     // --- Table Filters ---
@@ -106,6 +132,7 @@ return [
     'action_create_image' => 'Añadir Imagen',
     'action_create_attribute' => 'Crear Atributo',
     'action_create_option' => 'Añadir Opción',
+    'label_options' => 'Opciones',
     'action_bulk_change_status' => 'Cambiar estado',
     'action_bulk_attach_category' => 'Asignar categoría',
     'action_bulk_change_visibility' => 'Cambiar visibilidad',
@@ -140,6 +167,17 @@ return [
     'widget_stats_categories_desc' => 'Total de categorías para organizar ítems',
     'widget_stats_collections_desc' => 'Agrupaciones temáticas de ítems',
 
+    'widget_sales_revenue' => 'Ingresos (30d)',
+    'widget_sales_revenue_desc' => 'Ingresos totales de los últimos 30 días',
+    'widget_sales_orders' => 'Pedidos (30d)',
+    'widget_sales_orders_desc' => 'Número de pedidos en los últimos 30 días',
+    'widget_sales_avg_value' => 'Valor Medio Pedido (30d)',
+    'widget_sales_avg_value_desc' => 'Valor medio de cada pedido en los últimos 30 días',
+    'widget_chart_sales_by_month' => 'Ventas por Mes',
+    'widget_chart_sales_dataset_label' => 'Ingresos',
+    'widget_table_top_selling' => 'Ítems Más Vendidos',
+    'widget_table_column_units_sold' => 'Unidades Vendidas',
+
     'My Orders' => 'Mis Pedidos',
     'Order Number' => 'Nº de Pedido',
     'Date' => 'Fecha',
@@ -160,4 +198,25 @@ return [
     'modal_change_order_status_heading' => 'Cambiar Estado del Pedido',
     'notification_order_status_updated_title' => 'Estado del Pedido Actualizado',
     'notification_order_status_updated_body' => 'El estado del pedido ha sido actualizado correctamente.',
+
+    // --- User Menu Items ---
+    'user_menu_profile' => 'Editar Perfil',
+    'user_menu_subscription' => 'Gestionar Suscripción',
+
+    // --- Subscription Widget ---
+    'widget_subscription_title_active' => 'Suscripción Activa',
+    'widget_subscription_desc_active' => 'Tu plan se renovará automáticamente.',
+    'widget_subscription_button_manage' => 'Gestionar Suscripción',
+    'widget_subscription_title_cancels_on' => 'Suscripción Activa (Cancelación Programada)',
+    'widget_subscription_desc_cancels_on' => 'Tu acceso continuará hasta el :date.',
+    'widget_subscription_button_reactivate' => 'Reactivar',
+    'widget_subscription_title_inactive' => 'Acción Requerida: Pago Fallido',
+    'widget_subscription_desc_inactive' => 'No pudimos procesar tu pago. Actualiza tus datos para continuar.',
+    'widget_subscription_button_renew' => 'Actualizar Pago',
+    'widget_subscription_title_canceled' => 'Suscripción Cancelada',
+    'widget_subscription_desc_canceled' => 'Tu acceso ha sido revocado.',
+    'widget_subscription_button_resubscribe' => 'Volver a Suscribirse',
+    'widget_subscription_title_none' => 'Sin Suscripción',
+    'widget_subscription_desc_none' => 'Elige un plan para empezar a vender en la plataforma.',
+    'widget_subscription_button_subscribe' => 'Suscribirse Ahora',
 ];

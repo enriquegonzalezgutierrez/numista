@@ -16,14 +16,19 @@ class Category extends Model
 {
     use HasFactory, HasRecursiveRelationships;
 
-    protected $fillable = ['tenant_id', 'name', 'slug', 'description', 'parent_id', 'is_visible'];
+    // THE FIX: Removed 'tenant_id' from the fillable array.
+    protected $fillable = ['name', 'slug', 'description', 'parent_id', 'is_visible'];
 
     protected $casts = ['is_visible' => 'boolean'];
 
+    /*
+     * THE FIX: The relationship to a Tenant is removed, as categories are now global.
+     *
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
     }
+    */
 
     public function parent(): BelongsTo
     {
@@ -40,11 +45,6 @@ class Category extends Model
         return $this->belongsToMany(Item::class);
     }
 
-    /**
-     * Create a new factory instance for the model.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
-     */
     protected static function newFactory(): CategoryFactory
     {
         return CategoryFactory::new();

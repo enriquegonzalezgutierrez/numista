@@ -2,8 +2,9 @@
 
 namespace Numista\Collection\Domain\Models;
 
-use Database\Factories\CountryFactory; // Import the factory
-use Illuminate\Database\Eloquent\Factories\HasFactory; // Import the trait
+// THE FIX: Import the factory
+use Database\Factories\CountryFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Country extends Model

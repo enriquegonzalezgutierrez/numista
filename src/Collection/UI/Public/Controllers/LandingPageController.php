@@ -11,7 +11,7 @@ class LandingPageController extends Controller
 {
     public function __invoke(): View
     {
-        // THE FIX: Constrain the 'items_count' to only include items that are for sale.
+        // THE FIX: Ensure 'image' relationship is eager-loaded for collections.
         $featuredCollections = Collection::query()
             ->with('image')
             ->withCount(['items' => function ($query) {
@@ -21,6 +21,7 @@ class LandingPageController extends Controller
             ->take(3)
             ->get();
 
+        // THE FIX: Ensure 'images' and 'tenant' relationships are eager-loaded for items.
         $latestItems = Item::query()
             ->where('status', 'for_sale')
             ->with(['images', 'tenant'])

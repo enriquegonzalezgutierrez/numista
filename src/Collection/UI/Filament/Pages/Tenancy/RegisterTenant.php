@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/UI/Filament/Pages/Tenancy/RegisterTenant.php
+
 namespace Numista\Collection\UI\Filament\Pages\Tenancy;
 
 use Filament\Forms\Components\TextInput;
@@ -34,12 +36,12 @@ class RegisterTenant extends BaseRegisterTenant
             ]);
     }
 
-    protected function handleRegistration(array $data): Tenant
+    /**
+     * THE FIX: Override the default redirect URL after tenant registration.
+     * Instead of going to the dashboard, we send the user to the subscription page.
+     */
+    protected function getRedirectUrl(): string
     {
-        $tenant = Tenant::create($data);
-
-        $tenant->users()->attach(auth()->user());
-
-        return $tenant;
+        return route('subscription.create', ['tenant' => $this->tenant]);
     }
 }

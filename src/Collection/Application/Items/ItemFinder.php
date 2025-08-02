@@ -1,11 +1,15 @@
 <?php
 
+// src/Collection/Application/Items/ItemFinder.php
+
 namespace Numista\Collection\Application\Items;
 
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Builder;
-use Numista\Collection\Domain\Models\Attribute;
+use Numista\Collection\Domain\Models\AttributeOption;
+use Numista\Collection\Domain\Models\Category;
 use Numista\Collection\Domain\Models\Item;
+use Numista\Collection\Domain\Models\SharedAttribute;
+use Numista\Collection\Domain\Models\Tenant;
 
 class ItemFinder
 {
@@ -13,65 +17,78 @@ class ItemFinder
 
     public function forMarketplace(array $filters = []): Paginator
     {
-        $query = Item::query()
-            ->where('status', 'for_sale')
-            ->with(['images', 'tenant', 'attributes']);
+        $query = Item::search($filters['search'] ?? '*', function ($meilisearch, $query, $options) use ($filters) {
 
-        $this->applyFilters($query, $filters);
+            $filterClauses = ['status = for_sale'];
 
-        // THE FIX: Change to simplePaginate for "Load More" functionality.
-        return $query->latest('created_at')->simplePaginate($this->perPage)->withQueryString();
+            // Handle category IDs from the filter, converting them to names for the search index.
+            if (! empty($filters['categories'])) {
+                $categoryNames = Category::whereIn('id', $filters['categories'])->pluck('name')->all();
+                if (! empty($categoryNames)) {
+                    $categoryFilters = collect($categoryNames)->map(fn ($cat) => "categories = '{$cat}'")->implode(' OR ');
+                    $filterClauses[] = "({$categoryFilters})";
+                }
+            }
+
+            // Handle attribute filters, converting them to text values for the search index.
+            if (! empty($filters['attributes'])) {
+                $attributeValues = $this->resolveAttributeValues($filters['attributes']);
+                foreach ($attributeValues as $value) {
+                    // Escape single quotes in the value to prevent errors in Meilisearch filter syntax
+                    $escapedValue = str_replace("'", "\'", $value);
+                    $filterClauses[] = "attributes = '{$escapedValue}'";
+                }
+            }
+
+            $options['filter'] = implode(' AND ', $filterClauses);
+
+            return $meilisearch->search($query, $options);
+        });
+
+        $query->query(fn ($builder) => $builder->with(['images', 'tenant']));
+
+        return $query->simplePaginate($this->perPage)->withQueryString();
     }
 
-    private function applyFilters(Builder $query, array $filters): void
+    public function forTenantProfile(Tenant $tenant, array $filters = []): Paginator
     {
-        // Search filter for item name
-        $query->when($filters['search'] ?? null, function ($query, $search) {
-            $query->where('name', 'like', '%'.$search.'%');
-        });
+        // This method would need similar logic if you use advanced filters on the tenant page.
+        $query = Item::search($filters['search'] ?? '*', function ($meilisearch, $query, $options) use ($tenant) {
+            $filterClauses = ['status = for_sale', "tenant_name = '{$tenant->name}'"];
+            // You can add the same category/attribute filter logic here if needed for tenant pages
+            $options['filter'] = implode(' AND ', $filterClauses);
 
-        // Category filter
-        $query->when($filters['categories'] ?? null, function ($query, $categories) {
-            if (! is_array($categories)) {
-                return;
+            return $meilisearch->search($query, $options);
+        });
+        $query->query(fn ($builder) => $builder->with('images'));
+
+        return $query->simplePaginate($this->perPage)->withQueryString();
+    }
+
+    /**
+     * Resolves an array of attribute filters into an array of text values for Meilisearch.
+     * It correctly distinguishes between select option IDs and direct text/number values.
+     */
+    private function resolveAttributeValues(array $attributes): array
+    {
+        $attributeTypes = SharedAttribute::whereIn('id', array_keys($attributes))->pluck('type', 'id');
+        $resolvedValues = [];
+        $optionIdsToTranslate = [];
+
+        foreach ($attributes as $attributeId => $value) {
+            $type = $attributeTypes->get($attributeId);
+            if ($type === 'select') {
+                $optionIdsToTranslate[] = $value;
+            } else {
+                $resolvedValues[] = $value;
             }
-            $query->whereHas('categories', function ($q) use ($categories) {
-                $q->whereIn('category_id', $categories);
-            });
-        });
+        }
 
-        // THE FIX: Add the logic for the collections filter
-        $query->when($filters['collections'] ?? null, function ($query, $collections) {
-            if (! is_array($collections)) {
-                return;
-            }
-            $query->whereHas('collections', function ($q) use ($collections) {
-                $q->whereIn('collection_id', $collections);
-            });
-        });
+        if (! empty($optionIdsToTranslate)) {
+            $translatedValues = AttributeOption::whereIn('id', $optionIdsToTranslate)->pluck('value')->all();
+            $resolvedValues = array_merge($resolvedValues, $translatedValues);
+        }
 
-        // Dynamic Attribute Filter
-        $query->when($filters['attributes'] ?? null, function ($query, $attributes) {
-            foreach ($attributes as $attributeId => $value) {
-                if (empty($value)) {
-                    continue;
-                }
-
-                $attribute = Attribute::find($attributeId);
-                if (! $attribute) {
-                    continue;
-                }
-
-                $query->whereHas('attributes', function ($q) use ($attribute, $value) {
-                    $q->where('attribute_id', $attribute->id);
-
-                    if ($attribute->type === 'select') {
-                        $q->where('attribute_value_id', $value);
-                    } else {
-                        $q->where('value', 'like', '%'.$value.'%');
-                    }
-                });
-            }
-        });
+        return $resolvedValues;
     }
 }

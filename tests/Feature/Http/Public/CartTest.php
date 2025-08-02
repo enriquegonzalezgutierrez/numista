@@ -36,8 +36,9 @@ class CartTest extends TestCase
     #[Test]
     public function adding_the_same_item_increments_its_quantity(): void
     {
-        // Arrange
-        $item = Item::factory()->create(['status' => 'for_sale']);
+        // THE FIX: Ensure the item has enough stock for the test.
+        $item = Item::factory()->create(['status' => 'for_sale', 'quantity' => 2]);
+
         // Add the item to the cart once
         $this->post(route('cart.add', $item));
 
@@ -52,9 +53,9 @@ class CartTest extends TestCase
     #[Test]
     public function the_quantity_of_an_item_in_the_cart_can_be_updated(): void
     {
-        // Arrange
-        $item = Item::factory()->create(['status' => 'for_sale']);
-        $this->post(route('cart.add', $item)); // Initial quantity is 1
+        // THE FIX: Create the item with enough stock to handle the update.
+        $item = Item::factory()->create(['status' => 'for_sale', 'quantity' => 5]);
+        $this->post(route('cart.add', $item)); // Initial quantity in cart is 1
 
         // Act: Update the quantity to 3
         $response = $this->patch(route('cart.update', $item), ['quantity' => 3]);
@@ -67,11 +68,9 @@ class CartTest extends TestCase
     #[Test]
     public function an_item_can_be_removed_from_the_cart(): void
     {
-        // Arrange
         $item = Item::factory()->create(['status' => 'for_sale']);
         $this->post(route('cart.add', $item));
 
-        // Sanity check: ensure the item is in the cart
         $this->assertNotNull(session('cart.'.$item->id));
 
         // Act: Remove the item

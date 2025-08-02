@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/Application/Listeners/UpdateSoldItemStatus.php
+
 namespace Numista\Collection\Application\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,9 +15,12 @@ class UpdateSoldItemStatus implements ShouldQueue
     public function handle(OrderPlaced $event): void
     {
         foreach ($event->order->items as $orderItem) {
-            // This assumes a quantity of 1 for simplicity.
-            // A more complex system would handle stock reduction.
-            $orderItem->item->update(['status' => 'sold']);
+            $item = $orderItem->item;
+
+            // Only change status to 'sold' if the quantity is zero after the purchase.
+            if ($item->quantity <= 0) {
+                $item->update(['status' => 'sold']);
+            }
         }
     }
 }

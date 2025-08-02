@@ -6,6 +6,7 @@ namespace Numista\Collection\UI\Public\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Numista\Collection\Domain\Models\Item;
@@ -13,55 +14,112 @@ use Numista\Collection\Domain\Models\Item;
 class CartController extends Controller
 {
     /**
-     * Display the cart contents.
+     * Display the cart contents after validating stock.
      */
     public function index(): View
     {
         $cart = session()->get('cart', []);
+        $warnings = [];
+        $cartWasModified = false;
+
+        if (! empty($cart)) {
+            $itemIds = array_keys($cart);
+            $itemsInDb = Item::whereIn('id', $itemIds)->get()->keyBy('id');
+
+            foreach ($cart as $itemId => $cartItem) {
+                $item = $itemsInDb->get($itemId);
+
+                // Case 1: Item was removed from the store or is no longer for sale.
+                if (! $item || $item->status !== 'for_sale' || $item->quantity <= 0) {
+                    $warnings[] = __('public.cart_item_removed_no_stock', ['itemName' => $cartItem['name']]);
+                    unset($cart[$itemId]);
+                    $cartWasModified = true;
+
+                    continue; // Go to the next item in the cart
+                }
+
+                // Case 2: The quantity in cart is now greater than the available stock.
+                if ($cartItem['quantity'] > $item->quantity) {
+                    $warnings[] = __('public.cart_item_quantity_updated', [
+                        'itemName' => $item->name,
+                        'quantity' => $item->quantity,
+                    ]);
+                    $cart[$itemId]['quantity'] = $item->quantity;
+                    $cartWasModified = true;
+                }
+            }
+
+            // If we made any changes, update the session.
+            if ($cartWasModified) {
+                session()->put('cart', $cart);
+            }
+        }
+
+        // Fetch fresh item data for the view based on the (potentially modified) cart.
         $items = Item::with('images')->whereIn('id', array_keys($cart))->get();
         $total = 0;
-
         foreach ($items as $item) {
             $total += $item->sale_price * $cart[$item->id]['quantity'];
         }
 
-        return view('public.cart.index', compact('items', 'cart', 'total'));
+        return view('public.cart.index', compact('items', 'cart', 'total', 'warnings'));
     }
 
     /**
-     * Add an item to the cart.
+     * Add an item to the cart (synchronous request).
      */
-    public function add(Request $request, Item $item)
+    public function add(Request $request, Item $item): RedirectResponse
     {
-        $cart = session()->get('cart', []);
+        // Use a shared private method to handle the logic, then handle the response.
+        $result = $this->addToCartLogic($item);
 
-        if (isset($cart[$item->id])) {
-            // Item already in cart, increment quantity
-            $cart[$item->id]['quantity']++;
-        } else {
-            // Add new item to cart
-            $cart[$item->id] = [
-                'name' => $item->name,
-                'quantity' => 1,
-                'price' => $item->sale_price,
-            ];
+        if (! $result['success']) {
+            return redirect()->back()->with('error', $result['message']);
         }
 
-        session()->put('cart', $cart);
-
-        return redirect()->route('cart.index')->with('success', __('public.cart_add_success'));
+        return redirect()->route('cart.index')->with('success', $result['message']);
     }
 
     /**
-     * THE FIX: Add an item to the cart asynchronously and return a JSON response.
+     * Add an item to the cart asynchronously.
      */
     public function addAsync(Request $request, Item $item): JsonResponse
     {
-        $cart = session()->get('cart', []);
+        // Use the same shared logic.
+        $result = $this->addToCartLogic($item);
 
+        $statusCode = $result['success'] ? 200 : 409; // 409 Conflict for stock issues
+
+        // Add the current cart count to the JSON response.
+        $result['cartCount'] = count(session()->get('cart', []));
+
+        return response()->json($result, $statusCode);
+    }
+
+    /**
+     * Shared logic to add an item to the cart, with stock validation.
+     *
+     * @return array{success: bool, message: string}
+     */
+    private function addToCartLogic(Item $item): array
+    {
+        if ($item->status !== 'for_sale' || $item->quantity <= 0) {
+            return ['success' => false, 'message' => __('public.checkout_error_item_not_available', ['itemName' => $item->name])];
+        }
+
+        $cart = session()->get('cart', []);
+        $quantityInCart = $cart[$item->id]['quantity'] ?? 0;
+
+        // Check if adding one more exceeds the available stock.
+        if ($item->quantity < $quantityInCart + 1) {
+            return ['success' => false, 'message' => __('public.cart_add_error_no_stock', ['itemName' => $item->name])];
+        }
+
+        // If item is already in cart, increment quantity.
         if (isset($cart[$item->id])) {
             $cart[$item->id]['quantity']++;
         } else {
+            // Otherwise, add new item to cart.
             $cart[$item->id] = [
                 'name' => $item->name,
                 'quantity' => 1,
@@ -71,20 +129,21 @@ class CartController extends Controller
 
         session()->put('cart', $cart);
 
-        return response()->json([
-            'message' => __('public.cart_add_success'),
-            'cartCount' => count($cart),
-        ]);
+        return ['success' => true, 'message' => __('public.cart_add_success')];
     }
 
     /**
      * Update an item's quantity in the cart.
      */
-    public function update(Request $request, Item $item)
+    public function update(Request $request, Item $item): RedirectResponse
     {
         $cart = session()->get('cart');
 
         if (isset($cart[$item->id]) && $request->quantity) {
+            // We should also validate stock here for security.
+            if ($item->quantity < $request->quantity) {
+                return redirect()->route('cart.index')->with('error', __('public.cart_add_error_no_stock', ['itemName' => $item->name]));
+            }
             $cart[$item->id]['quantity'] = $request->quantity;
             session()->put('cart', $cart);
         }
@@ -95,7 +154,7 @@ class CartController extends Controller
     /**
      * Remove an item from the cart.
      */
-    public function remove(Item $item)
+    public function remove(Item $item): RedirectResponse
     {
         $cart = session()->get('cart');
 

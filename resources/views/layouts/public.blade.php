@@ -25,6 +25,9 @@
                 --c-700: {{ $primaryColor[700] }};
             }
         </style>
+
+        {{-- This stack allows child views to push scripts into the <head> --}}
+        @stack('head-scripts')
     </head>
     <body class="antialiased font-sans flex flex-col min-h-screen">
         <div class="flex-grow">
@@ -71,7 +74,7 @@
                     <x-public.notification type="error" message="{{ __('Whoops! Something went wrong.') }}" />
                 @endif
 
-                {{-- THE FIX: Template for async Alpine.js notifications --}}
+                {{-- Template for async Alpine.js notifications --}}
                 <template x-for="notification in notifications" :key="notification.id">
                     <div
                         x-data="{ show: false }"
@@ -105,7 +108,9 @@
                                             'text-green-800 dark:text-green-200': notification.type === 'success',
                                             'text-red-800 dark:text-red-200': notification.type === 'error',
                                         }"
-                                        class="text-sm font-medium" x-text="notification.message"></p>
+                                        class="text-sm font-medium" 
+                                        {{-- THE FIX: Changed from x-text to x-html --}}
+                                        x-html="notification.message"></p>
                                 </div>
                             </div>
                         </div>

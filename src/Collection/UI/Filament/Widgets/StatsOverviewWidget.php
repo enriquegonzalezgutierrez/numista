@@ -1,11 +1,13 @@
 <?php
 
+// src/Collection/UI/Filament/Widgets/StatsOverviewWidget.php
+
 namespace Numista\Collection\UI\Filament\Widgets;
 
 use Filament\Facades\Filament;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Facades\Cache; // Import Cache facade
+use Illuminate\Support\Facades\Cache;
 use Numista\Collection\Domain\Models\Category;
 use Numista\Collection\Domain\Models\Collection;
 use Numista\Collection\Domain\Models\Item;
@@ -13,7 +15,6 @@ use Numista\Collection\Domain\Models\Tenant;
 
 class StatsOverviewWidget extends BaseWidget
 {
-    // Make the widget poll for new data every 30 seconds.
     protected static ?string $pollingInterval = '30s';
 
     protected function getStats(): array
@@ -21,16 +22,24 @@ class StatsOverviewWidget extends BaseWidget
         /** @var Tenant $currentTenant */
         $currentTenant = Filament::getTenant();
 
-        // Define a unique cache key for this tenant's stats
         $cacheKey = "widgets:stats_overview:tenant_{$currentTenant->id}";
 
-        // Cache the data for 10 minutes, or forever until an item/category/collection is changed
         $stats = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($currentTenant) {
+
+            // THE FIX: To count categories used by the tenant, we query through the items.
+            // We count the distinct categories associated with items belonging to the current tenant.
+            $usedCategoriesCount = Category::query()
+                ->whereHas('items', function ($query) use ($currentTenant) {
+                    $query->where('tenant_id', $currentTenant->id);
+                })
+                ->distinct()
+                ->count();
+
             return [
                 'totalItems' => Item::where('tenant_id', $currentTenant->id)->count(),
                 'totalValue' => Item::where('tenant_id', $currentTenant->id)->sum('purchase_price'),
                 'itemsForSale' => Item::where('tenant_id', $currentTenant->id)->where('status', 'for_sale')->count(),
-                'totalCategories' => Category::where('tenant_id', $currentTenant->id)->count(),
+                'totalCategories' => $usedCategoriesCount, // Use the new calculated count
                 'totalCollections' => Collection::where('tenant_id', $currentTenant->id)->count(),
             ];
         });
