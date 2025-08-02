@@ -176,6 +176,7 @@
                         <div class="border-b border-gray-200 dark:border-gray-700">
                             <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                                 <button @click="activeTab = 'description'" :class="{ 'border-teal-500 text-teal-600': activeTab === 'description', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab !== 'description' }" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">Descripción</button>
+                                
                                                                                             </nav>
                         </div>
                         <div class="py-6">
@@ -184,6 +185,7 @@
         <p>This is a predictable description for Item 0.</p>
     </div>
 </div>
+
 
 
                         </div>
@@ -207,6 +209,7 @@
         </div>
     </div>
 </div>
+
 
 
                 </div>
@@ -371,7 +374,9 @@
                                             'text-green-800 dark:text-green-200': notification.type === 'success',
                                             'text-red-800 dark:text-red-200': notification.type === 'error',
                                         }"
-                                        class="text-sm font-medium" x-text="notification.message"></p>
+                                        class="text-sm font-medium" 
+                                        
+                                        x-html="notification.message"></p>
                                 </div>
                             </div>
                         </div>

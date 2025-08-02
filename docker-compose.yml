@@ -62,10 +62,27 @@ services:
     networks:
       - numista-network
 
+  # Meilisearch - Search Engine
+  meilisearch:
+    image: 'getmeili/meilisearch:v1.9' # Use a specific version for stability
+    container_name: numista_meilisearch
+    ports:
+      - "7700:7700" # Expose the Meilisearch API port
+    volumes:
+      - meili-data:/meili_data
+    environment:
+      # In production, this should be a secure, randomly generated key.
+      # For local development, 'masterKey' is fine.
+      - MEILI_MASTER_KEY=masterKey
+    networks:
+      - numista-network
+
 networks:
   numista-network:
     driver: bridge
 
 volumes:
   numista-db-data:
+    driver: local
+  meili-data:
     driver: local

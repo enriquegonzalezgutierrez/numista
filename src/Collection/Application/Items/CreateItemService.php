@@ -44,6 +44,7 @@ class CreateItemService
                 ];
             }
         }
-        $item->attributes()->sync($syncData);
+        // THE FIX: Use the renamed relationship 'customAttributes'
+        $item->customAttributes()->sync($syncData);
     }
 }

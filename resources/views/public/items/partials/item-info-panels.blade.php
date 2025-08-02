@@ -5,11 +5,13 @@
     </div>
 </div>
 
-@if($item->attributes->isNotEmpty())
+{{-- THE FIX: Use the correct relationship name 'customAttributes' --}}
+@if($item->customAttributes->isNotEmpty())
 <div x-show="activeTab === 'details'" x-cloak>
     <div class="mt-4">
         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-            @foreach($item->attributes->sortBy('name') as $attribute)
+            {{-- THE FIX: Use the correct relationship name 'customAttributes' --}}
+            @foreach($item->customAttributes->sortBy('name') as $attribute)
                 <div>
                     <dt class="font-medium text-gray-500 dark:text-gray-400">
                         @php
@@ -22,6 +24,7 @@
                             $displayValue = $attribute->pivot->value; // Default value
 
                             if ($attribute->type === 'select' && $attribute->pivot->attribute_option_id) {
+                                // THE FIX: Use the correct relationship name 'customAttributes' to get the options
                                 $option = $attribute->options->firstWhere('id', $attribute->pivot->attribute_option_id);
                                 
                                 if ($option) {
@@ -31,7 +34,7 @@
                                 }
                             }
                             
-                            echo e($displayValue); // THE FIX: Use echo and escape the output
+                            echo e($displayValue);
                         @endphp
                     </dd>
                 </div>

@@ -202,4 +202,21 @@ return [
     // --- User Menu Items ---
     'user_menu_profile' => 'Editar Perfil',
     'user_menu_subscription' => 'Gestionar Suscripción',
+
+    // --- Subscription Widget ---
+    'widget_subscription_title_active' => 'Suscripción Activa',
+    'widget_subscription_desc_active' => 'Tu plan se renovará automáticamente.',
+    'widget_subscription_button_manage' => 'Gestionar Suscripción',
+    'widget_subscription_title_cancels_on' => 'Suscripción Activa (Cancelación Programada)',
+    'widget_subscription_desc_cancels_on' => 'Tu acceso continuará hasta el :date.',
+    'widget_subscription_button_reactivate' => 'Reactivar',
+    'widget_subscription_title_inactive' => 'Acción Requerida: Pago Fallido',
+    'widget_subscription_desc_inactive' => 'No pudimos procesar tu pago. Actualiza tus datos para continuar.',
+    'widget_subscription_button_renew' => 'Actualizar Pago',
+    'widget_subscription_title_canceled' => 'Suscripción Cancelada',
+    'widget_subscription_desc_canceled' => 'Tu acceso ha sido revocado.',
+    'widget_subscription_button_resubscribe' => 'Volver a Suscribirse',
+    'widget_subscription_title_none' => 'Sin Suscripción',
+    'widget_subscription_desc_none' => 'Elige un plan para empezar a vender en la plataforma.',
+    'widget_subscription_button_subscribe' => 'Suscribirse Ahora',
 ];

@@ -4,18 +4,60 @@
 
 @section('content')
 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    {{-- ... (Cabecera de la página se mantiene igual) --}}
+    {{-- Page Header --}}
     <div class="py-12 border-b border-gray-200 dark:border-gray-700">
         <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">{{ __('public.marketplace_title') }}</h1>
         <p class="mt-4 text-base text-gray-500 dark:text-gray-400">{{ __('public.marketplace_subtitle') }}</p>
     </div>
 
-    <div class="pt-12" x-data="{ mobileFiltersOpen: false }">
+    {{-- Main container with all AlpineJS logic consolidated --}}
+    <div class="pt-12" 
+         x-data="{
+            mobileFiltersOpen: false,
+            loading: false,
+            nextPageUrl: '{{ $items->nextPageUrl() }}',
+
+            updateResults() {
+                this.loading = true;
+                const form = document.getElementById('desktop-filter-form');
+                const formData = new FormData(form);
+                const params = new URLSearchParams(formData);
+                params.forEach((value, key) => { if (!value) params.delete(key); });
+                const searchUrl = form.action + '?' + params.toString();
+                window.history.pushState({}, '', searchUrl);
+
+                fetch(searchUrl, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(response => {
+                        this.nextPageUrl = response.headers.get('X-Next-Page-Url') || null;
+                        return response.text();
+                    })
+                    .then(html => {
+                        this.$refs.itemsContainer.innerHTML = html;
+                        this.loading = false;
+                    })
+                    .catch(() => this.loading = false);
+            },
+
+            loadMore() {
+                if (!this.nextPageUrl) return;
+                this.loading = true;
+                fetch(this.nextPageUrl, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(response => {
+                        this.nextPageUrl = response.headers.get('X-Next-Page-Url') || null;
+                        return response.text();
+                    })
+                    .then(html => {
+                        this.$refs.itemsContainer.insertAdjacentHTML('beforeend', html);
+                        this.loading = false;
+                    });
+            }
+         }" 
+         @update-results.window="updateResults()">
         <div class="lg:grid lg:grid-cols-4 lg:gap-x-8">
             
+            {{-- Desktop Filters --}}
             <aside class="hidden lg:block bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm h-fit sticky top-24">
                 <form action="{{ route('public.items.index') }}" method="GET" id="desktop-filter-form">
-                    {{-- THE FIX: Pass the categories collection to the component --}}
                     <x-public.filter-form 
                         :categories="$categories"
                         :filterableAttributes="$filterableAttributes" 
@@ -33,13 +75,12 @@
                 <div class="fixed inset-0 z-40 flex">
                     <div x-show="mobileFiltersOpen" @click.away="mobileFiltersOpen = false" x-transition:enter="transition ease-in-out duration-300 transform" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in-out duration-300 transform" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white dark:bg-gray-800 py-4 pb-12 shadow-xl">
                         <div class="flex items-center justify-between px-4">
-                            <h2 class="text-lg font-medium text-gray-900 dark:text-white">Filters</h2>
-                            <button @click="mobileFiltersOpen = false" type="button" class="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white dark:bg-gray-800 p-2 text-gray-400"><span class="sr-only">Close menu</span><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                            <h2 class="text-lg font-medium text-gray-900 dark:text-white">{{ __('public.filters.title') }}</h2>
+                            <button @click="mobileFiltersOpen = false" type="button" class="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white dark:bg-gray-800 p-2 text-gray-400"><span class="sr-only">{{ __('public.filters.close_menu') }}</span><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
                         </div>
                         
                         <form action="{{ route('public.items.index') }}" method="GET" class="flex flex-col h-full">
                             <div class="mt-4 border-t border-gray-200 dark:border-gray-700 px-4 py-6 overflow-y-auto">
-                                {{-- THE FIX: Pass the categories collection to the mobile component call --}}
                                 <x-public.filter-form :categories="$categories" :filterableAttributes="$filterableAttributes" :is-mobile="true" />
                             </div>
                             <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-4 mt-auto space-y-3">
@@ -51,25 +92,8 @@
                 </div>
             </div>
 
-            {{-- ... (El resto de la vista del product grid se mantiene igual) --}}
-            <div class="lg:col-span-3" x-data="{
-                nextPageUrl: '{{ $items->nextPageUrl() }}',
-                loading: false,
-                loadMore() {
-                    if (!this.nextPageUrl) return;
-                    this.loading = true;
-                    fetch(this.nextPageUrl, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
-                        .then(response => {
-                            const nextUrl = response.headers.get('X-Next-Page-Url');
-                            this.nextPageUrl = nextUrl ? nextUrl : null;
-                            return response.text();
-                        })
-                        .then(html => {
-                            this.$refs.itemsContainer.insertAdjacentHTML('beforeend', html);
-                            this.loading = false;
-                        });
-                }
-            }">
+            {{-- Product grid area --}}
+            <div class="lg:col-span-3">
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
                     <div class="flex items-center justify-between mb-4">
                         <div></div>
@@ -78,23 +102,16 @@
                         </div>
                     </div>
                     
-                    @if($items->isNotEmpty())
-                        <div x-ref="itemsContainer" class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
-                            @include('public.items.partials._items-grid', ['items' => $items])
-                        </div>
-                        <div class="mt-12 text-center" x-show="nextPageUrl">
-                            <button @click="loadMore" :disabled="loading" class="rounded-md bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 disabled:opacity-50">
-                                {{-- THE FIX: Use translation keys --}}
-                                <span x-show="!loading">{{ __('public.load_more') }}</span>
-                                <span x-show="loading">{{ __('public.loading') }}</span>
-                            </button>
-                        </div>
-                    @else
-                        <div class="rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 p-12 text-center">
-                            <p class="text-lg font-medium text-gray-700 dark:text-gray-300">{{ __('public.no_items_found_filtered') }}</p>
-                            <a href="{{ route('public.items.index') }}" class="mt-4 inline-block rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700">{{ __('public.clear_filters_link') }}</a>
-                        </div>
-                    @endif
+                    <div x-ref="itemsContainer" class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
+                        @include('public.items.partials._items-grid', ['items' => $items])
+                    </div>
+                    
+                    <div class="mt-12 text-center" x-show="nextPageUrl">
+                        <button @click="loadMore" :disabled="loading" class="rounded-md bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 disabled:opacity-50">
+                            <span x-show="!loading">{{ __('public.load_more') }}</span>
+                            <span x-show="loading" style="display: none;">{{ __('public.loading') }}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

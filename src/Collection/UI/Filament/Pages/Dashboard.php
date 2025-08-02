@@ -8,6 +8,7 @@ use Numista\Collection\UI\Filament\Widgets\LatestItemsWidget;
 use Numista\Collection\UI\Filament\Widgets\SalesChart;
 use Numista\Collection\UI\Filament\Widgets\SalesOverviewWidget;
 use Numista\Collection\UI\Filament\Widgets\StatsOverviewWidget;
+use Numista\Collection\UI\Filament\Widgets\SubscriptionStatusWidget;
 use Numista\Collection\UI\Filament\Widgets\TopSellingItemsWidget;
 use Numista\Collection\UI\Filament\Widgets\ValuableItemsWidget;
 
@@ -21,6 +22,7 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
+            SubscriptionStatusWidget::class,
             SalesOverviewWidget::class,
             StatsOverviewWidget::class,
             SalesChart::class,

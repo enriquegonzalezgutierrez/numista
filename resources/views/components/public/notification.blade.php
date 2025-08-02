@@ -39,7 +39,7 @@
                     'text-sm font-medium',
                     'text-green-800 dark:text-green-200' => $type === 'success',
                     'text-red-800 dark:text-red-200' => $type === 'error',
-                ])>{{ $message }}</p>
+                ])>{!! $message !!}</p> {{-- THE FIX: Changed {{ }} to {!! !!} to render HTML entities correctly --}}
             </div>
         </div>
     </div>

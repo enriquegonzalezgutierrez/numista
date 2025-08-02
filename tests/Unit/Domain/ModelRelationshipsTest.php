@@ -1,6 +1,6 @@
 <?php
 
-// tests/Feature/Domain/ModelRelationshipsTest.php
+// tests/Unit/Domain/ModelRelationshipsTest.php
 
 namespace Tests\Unit\Domain;
 
@@ -21,7 +21,6 @@ class ModelRelationshipsTest extends TestCase
     public function an_item_can_have_categories_attached(): void
     {
         $item = Item::factory()->create();
-        // THE FIX: Categories are now global and don't need a tenant_id.
         $category1 = Category::factory()->create();
         $category2 = Category::factory()->create();
 
@@ -74,9 +73,10 @@ class ModelRelationshipsTest extends TestCase
         $attribute = SharedAttribute::factory()->create();
         $value = '1984';
 
-        $item->attributes()->attach($attribute->id, ['value' => $value]);
+        // THE FIX: Use the renamed relationship 'customAttributes'
+        $item->customAttributes()->attach($attribute->id, ['value' => $value]);
 
-        $this->assertCount(1, $item->fresh()->attributes);
-        $this->assertEquals($value, $item->fresh()->attributes->first()->pivot->value);
+        $this->assertCount(1, $item->fresh()->customAttributes);
+        $this->assertEquals($value, $item->fresh()->customAttributes->first()->pivot->value);
     }
 }

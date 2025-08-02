@@ -64,14 +64,12 @@ class ItemResource extends Resource
                             ->schema([
                                 TextInput::make('name')->label(__('item.field_name'))->required()->maxLength(255)->live(onBlur: true)->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
                                 TextInput::make('slug')->label(__('panel.field_slug'))->required()->unique(Item::class, 'slug', ignoreRecord: true)->disabled()->dehydrated(),
+                                // THE FIX: Add the 'type' field to the form to ensure attribute logic runs on edit.
                                 Select::make('type')
                                     ->label(__('item.field_type'))
                                     ->options(fn (ItemTypeManager $manager): array => $manager->getTypesForSelect())
                                     ->required()
-                                    ->live()
-                                    // THE FIX: Do not reset the 'attributes' state when the type changes.
-                                    // This preserves the data if the user switches back and forth.
-                                    ->afterStateUpdated(fn (Set $set) => $set('attributes', $form->getRawState()['attributes'] ?? [])),
+                                    ->live(),
                                 Textarea::make('description')->label(__('panel.field_description'))->columnSpanFull(),
                             ])->columns(2),
 
@@ -82,21 +80,14 @@ class ItemResource extends Resource
                                     return [];
                                 }
 
-                                // Find the ItemType model by its name
                                 $itemType = ItemType::where('name', $itemTypeName)->first();
                                 if (! $itemType) {
                                     return [];
                                 }
 
-                                // THE FIX: This is the correct query. It joins on the pivot table
-                                // and filters by the correct `item_type_id`.
                                 $attributes = SharedAttribute::query()
-                                    ->whereHas('itemTypes', function ($query) use ($itemType) {
-                                        $query->where('item_type_id', $itemType->id);
-                                    })
-                                    ->with('options')
-                                    ->orderBy('name')
-                                    ->get();
+                                    ->whereHas('itemTypes', fn ($query) => $query->where('item_type_id', $itemType->id))
+                                    ->with('options')->orderBy('name')->get();
 
                                 if ($attributes->isEmpty()) {
                                     return [];
@@ -110,7 +101,6 @@ class ItemResource extends Resource
                                         'date' => Forms\Components\DatePicker::make("attributes.{$attribute->id}.value"),
                                         default => Forms\Components\TextInput::make("attributes.{$attribute->id}.value"),
                                     };
-
                                     $key = 'panel.attribute_name_'.strtolower(str_replace(' ', '_', $attribute->name));
 
                                     return $field->label(trans()->has($key) ? __($key) : $attribute->name);

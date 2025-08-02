@@ -11,10 +11,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Laravel\Scout\Searchable;
 
 class Item extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $fillable = [
         'tenant_id', 'name', 'slug', 'description', 'type', 'quantity',
@@ -24,6 +25,26 @@ class Item extends Model
     protected $casts = [
         'purchase_date' => 'date',
     ];
+
+    public function toSearchableArray(): array
+    {
+        $this->load(['tenant', 'categories', 'customAttributes']);
+
+        $array = [
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'type' => $this->type,
+            'status' => $this->status,
+            'sale_price' => $this->sale_price,
+        ];
+
+        $array['tenant_name'] = $this->tenant->name;
+        $array['categories'] = $this->categories->pluck('name')->all();
+        $array['attributes'] = $this->customAttributes->pluck('pivot.value')->all();
+
+        return $array;
+    }
 
     public function getMainImage(): ?Image
     {
@@ -40,6 +61,9 @@ class Item extends Model
         return $this->morphMany(Image::class, 'imageable')->orderBy('order_column');
     }
 
+    /**
+     * THE FIX: The relationship to Category must be belongsToMany.
+     */
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
@@ -56,13 +80,12 @@ class Item extends Model
     }
 
     /**
-     * The attributes that belong to the item.
-     * This is the updated relationship pointing to the new shared attributes structure.
+     * The relationship to SharedAttribute, renamed to avoid conflicts.
      */
-    public function attributes(): BelongsToMany
+    public function customAttributes(): BelongsToMany
     {
         return $this->belongsToMany(SharedAttribute::class, 'item_attribute')
-            ->withPivot('value', 'attribute_option_id') // We now store the value directly in this pivot table.
+            ->withPivot('value', 'attribute_option_id')
             ->withTimestamps();
     }
 

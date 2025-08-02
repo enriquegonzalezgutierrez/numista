@@ -1,5 +1,7 @@
 <?php
 
+// src/Collection/UI/Filament/Resources/ItemResource/Pages/EditItem.php
+
 namespace Numista\Collection\UI\Filament\Resources\ItemResource\Pages;
 
 use Filament\Actions;
@@ -23,7 +25,8 @@ class EditItem extends EditRecord
     {
         $data = $this->getRecord()->toArray();
 
-        $data['attributes'] = $this->getRecord()->attributes->mapWithKeys(function ($attribute) {
+        // THE FIX: Use the correct relationship name 'customAttributes'
+        $data['attributes'] = $this->getRecord()->customAttributes->mapWithKeys(function ($attribute) {
             $pivot = $attribute->pivot;
 
             $payload = [

@@ -5,8 +5,8 @@
 namespace Numista\Collection\Application\Items;
 
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
+use Numista\Collection\Domain\Models\AttributeOption;
+use Numista\Collection\Domain\Models\Category;
 use Numista\Collection\Domain\Models\Item;
 use Numista\Collection\Domain\Models\SharedAttribute;
 use Numista\Collection\Domain\Models\Tenant;
@@ -17,87 +17,78 @@ class ItemFinder
 
     public function forMarketplace(array $filters = []): Paginator
     {
-        $query = Item::query()
-            ->where('status', 'for_sale')
-            ->where('quantity', '>', 0) // THE FIX: Only show items with stock available
-            ->with(['images', 'tenant']);
+        $query = Item::search($filters['search'] ?? '*', function ($meilisearch, $query, $options) use ($filters) {
 
-        $this->applyFilters($query, $filters);
+            $filterClauses = ['status = for_sale'];
 
-        return $query->latest('created_at')->orderBy('id', 'desc')->simplePaginate($this->perPage)->withQueryString();
+            // Handle category IDs from the filter, converting them to names for the search index.
+            if (! empty($filters['categories'])) {
+                $categoryNames = Category::whereIn('id', $filters['categories'])->pluck('name')->all();
+                if (! empty($categoryNames)) {
+                    $categoryFilters = collect($categoryNames)->map(fn ($cat) => "categories = '{$cat}'")->implode(' OR ');
+                    $filterClauses[] = "({$categoryFilters})";
+                }
+            }
+
+            // Handle attribute filters, converting them to text values for the search index.
+            if (! empty($filters['attributes'])) {
+                $attributeValues = $this->resolveAttributeValues($filters['attributes']);
+                foreach ($attributeValues as $value) {
+                    // Escape single quotes in the value to prevent errors in Meilisearch filter syntax
+                    $escapedValue = str_replace("'", "\'", $value);
+                    $filterClauses[] = "attributes = '{$escapedValue}'";
+                }
+            }
+
+            $options['filter'] = implode(' AND ', $filterClauses);
+
+            return $meilisearch->search($query, $options);
+        });
+
+        $query->query(fn ($builder) => $builder->with(['images', 'tenant']));
+
+        return $query->simplePaginate($this->perPage)->withQueryString();
     }
 
     public function forTenantProfile(Tenant $tenant, array $filters = []): Paginator
     {
-        $query = $tenant->items()->getQuery()
-            ->where('status', 'for_sale')
-            ->where('quantity', '>', 0) // THE FIX: Only show items with stock available
-            ->with('images');
+        // This method would need similar logic if you use advanced filters on the tenant page.
+        $query = Item::search($filters['search'] ?? '*', function ($meilisearch, $query, $options) use ($tenant) {
+            $filterClauses = ['status = for_sale', "tenant_name = '{$tenant->name}'"];
+            // You can add the same category/attribute filter logic here if needed for tenant pages
+            $options['filter'] = implode(' AND ', $filterClauses);
 
-        $this->applyFilters($query, $filters);
+            return $meilisearch->search($query, $options);
+        });
+        $query->query(fn ($builder) => $builder->with('images'));
 
-        return $query->latest()->simplePaginate($this->perPage)->withQueryString();
+        return $query->simplePaginate($this->perPage)->withQueryString();
     }
 
     /**
-     * Applies a set of filters to the item query builder.
+     * Resolves an array of attribute filters into an array of text values for Meilisearch.
+     * It correctly distinguishes between select option IDs and direct text/number values.
      */
-    public function applyFilters(Builder $query, array $filters): void
+    private function resolveAttributeValues(array $attributes): array
     {
-        $query->when($filters['search'] ?? null, function ($query, $search) {
-            if (DB::getDriverName() === 'pgsql') {
-                $searchQuery = implode(' & ', explode(' ', trim($search)));
-                $query->whereRaw(
-                    "to_tsvector('spanish', name || ' ' || description) @@ to_tsquery('spanish', ?)",
-                    [$searchQuery]
-                );
+        $attributeTypes = SharedAttribute::whereIn('id', array_keys($attributes))->pluck('type', 'id');
+        $resolvedValues = [];
+        $optionIdsToTranslate = [];
+
+        foreach ($attributes as $attributeId => $value) {
+            $type = $attributeTypes->get($attributeId);
+            if ($type === 'select') {
+                $optionIdsToTranslate[] = $value;
             } else {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', '%'.$search.'%')
-                        ->orWhere('description', 'like', '%'.$search.'%');
-                });
+                $resolvedValues[] = $value;
             }
-        });
+        }
 
-        $query->when($filters['categories'] ?? null, function ($query, $categories) {
-            if (! is_array($categories)) {
-                return;
-            }
-            $query->whereHas('categories', function ($q) use ($categories) {
-                $q->whereIn('category_id', $categories);
-            });
-        });
+        if (! empty($optionIdsToTranslate)) {
+            $translatedValues = AttributeOption::whereIn('id', $optionIdsToTranslate)->pluck('value')->all();
+            $resolvedValues = array_merge($resolvedValues, $translatedValues);
+        }
 
-        $query->when($filters['collections'] ?? null, function ($query, $collections) {
-            if (! is_array($collections)) {
-                return;
-            }
-            $query->whereHas('collections', function ($q) use ($collections) {
-                $q->whereIn('collection_id', $collections);
-            });
-        });
-
-        $query->when($filters['attributes'] ?? null, function ($query, $attributes) {
-            foreach ($attributes as $attributeId => $value) {
-                if (empty($value)) {
-                    continue;
-                }
-
-                $attribute = SharedAttribute::find($attributeId);
-                if (! $attribute) {
-                    continue;
-                }
-
-                $query->whereHas('attributes', function ($q) use ($attribute, $value) {
-                    $q->where('shared_attribute_id', $attribute->id);
-
-                    if ($attribute->type === 'select') {
-                        $q->where('attribute_option_id', $value);
-                    } else {
-                        $q->where('value', $value);
-                    }
-                });
-            }
-        });
+        return $resolvedValues;
     }
 }

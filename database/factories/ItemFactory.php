@@ -38,7 +38,7 @@ class ItemFactory extends Factory
             // These keys are not columns in the `items` table.
             // They are temporary attributes that the ItemSeeder will use.
             'year' => fake()->numberBetween(1800, 2023),
-            'country' => fake()->country(), // <-- AÑADIDO
+            'country' => fake()->country(),
             'denomination' => fake()->randomElement(['1 Dollar', '50 Pesetas', '100 Pesos', '2 Euros']),
             'mint_mark' => fake()->randomElement(['S', 'D', 'P', 'O', 'M']),
             'composition' => fake()->randomElement(['90% Silver', 'Copper-Nickel', 'Bronze', 'Gold']),
@@ -53,7 +53,7 @@ class ItemFactory extends Factory
             'type' => 'banknote',
             'name' => 'Banknote: '.ucfirst(fake()->words(2, true)),
             'year' => fake()->numberBetween(1900, 2020),
-            'country' => fake()->country(), // <-- AÑADIDO
+            'country' => fake()->country(),
             'denomination' => fake()->randomElement(['100 Pesetas', '5 Dollars', '20 Euros']),
             'serial_number' => fake()->bothify('??########?'),
             'grade' => fake()->randomElement(['unc', 'au', 'xf', 'vf']),
@@ -66,7 +66,7 @@ class ItemFactory extends Factory
             'type' => 'stamp',
             'name' => 'Stamp: '.fake()->country().' '.fake()->year(),
             'year' => fake()->numberBetween(1840, 2020),
-            'country' => fake()->country(), // <-- AÑADIDO
+            'country' => fake()->country(),
             'face_value' => fake()->randomElement(['5c', '10p', '1.00€']),
         ]);
     }
@@ -88,7 +88,7 @@ class ItemFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'type' => 'watch',
             'name' => 'Watch: '.fake()->company(),
-            'year' => fake()->numberBetween(1950, 2024), // <-- AÑADIDO
+            'year' => fake()->numberBetween(1950, 2024),
             'brand' => fake()->randomElement(['Rolex', 'Omega', 'Seiko', 'Casio']),
             'model' => fake()->word().' '.fake()->randomNumber(4),
             'material' => fake()->randomElement(['Stainless Steel', 'Gold', 'Titanium']),
@@ -117,5 +117,17 @@ class ItemFactory extends Factory
             'dimensions' => fake()->numberBetween(20, 150).'x'.fake()->numberBetween(20, 150).' cm',
             'material' => fake()->randomElement(['Oil on canvas', 'Watercolor', 'Bronze sculpture']),
         ]);
+    }
+
+    /**
+     * THE FIX: Add a 'searchable' state.
+     * This uses a 'afterCreating' callback to ensure the model is synced with Meilisearch
+     * right after it's persisted to the database.
+     */
+    public function searchable(): static
+    {
+        return $this->afterCreating(function (Item $item) {
+            $item->searchable();
+        });
     }
 }

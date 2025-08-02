@@ -91,7 +91,8 @@
                         <div class="border-b border-gray-200 dark:border-gray-700">
                             <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                                 <button @click="activeTab = 'description'" :class="{ 'border-teal-500 text-teal-600': activeTab === 'description', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab !== 'description' }" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">{{ __('public.description') }}</button>
-                                @if($item->attributes->isNotEmpty())
+                                {{-- THE FIX: Use the correct relationship name --}}
+                                @if($item->customAttributes->isNotEmpty())
                                 <button @click="activeTab = 'details'" :class="{ 'border-teal-500 text-teal-600': activeTab === 'details', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab !== 'details' }" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">{{ __('public.item_details') }}</button>
                                 @endif
                                 @if($item->categories->isNotEmpty())
